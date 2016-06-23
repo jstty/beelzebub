@@ -3,14 +3,18 @@
   "version": "0.0.1",
   "description": "One hell of a task master!",
   "main": "index.js",
-  "scripts": {
-    "compile:legacy": "babel lib --out-dir legacy",
-    "prepublish": "npm run-script compile:legacy",
-    "pretest": "npm run-script compile:legacy",
-    "test": "istanbul --config=test/.istanbul.yml cover _mocha -- --check-leaks -t 5000 -b -R spec test/tests.js",
-    "coveralls": "cat ./test/.coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
-    "clean": "rm -rf node_modules"
-  },
+  "license": "MIT",
+  "homepage": "https://github.com/jstty/beelzebub#readme",
+  "keywords": [
+    "node.js",
+    "javascript",
+    "beelzebub",
+    "taskmaster",
+    "task",
+    "tasks",
+    "tasker",
+    "builder"
+  ],
   "author": {
     "name": "Joseph E. Sutton",
     "email": "joe@jstty.com",
@@ -22,7 +26,21 @@
       "email": "joe@jstty.com"
     }
   ],
-  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jstty/beelzebub/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jstty/beelzebub.git"
+  },
+  "scripts": {
+    "compile:legacy": "babel lib --out-dir legacy",
+    "prepublish": "npm run-script compile:legacy",
+    "pretest": "npm run-script compile:legacy",
+    "test": "istanbul --config=test/.istanbul.yml cover _mocha -- --check-leaks -t 5000 -b -R spec test/tests.js",
+    "coveralls": "cat ./test/.coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
+    "clean": "rm -rf node_modules"
+  },
   "dependencies": {
     "gulp": "^3.9.1",
     "lodash": "^4.13.1",
@@ -35,5 +53,8 @@
     "mocha": "~2.3.0",
     "supertest": "~1.1.0",
     "babel": "^5.8.23"
+  },
+  "engines": {
+    "node": ">=0.10.0"
   }
 }

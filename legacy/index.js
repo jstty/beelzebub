@@ -431,8 +431,6 @@ var BaseTasks = (function () {
     return BaseTasks;
 })();
 
-Beelzebub.BaseTasks = BaseTasks;
-
 var beelzebubInst = null;
 var Beelzebubmod = function Beelzebubmod(config) {
     if (!beelzebubInst) {
