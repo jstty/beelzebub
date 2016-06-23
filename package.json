@@ -1,0 +1,39 @@
+{
+  "name": "beelzebub",
+  "version": "0.0.1",
+  "description": "One hell of a task master!",
+  "main": "index.js",
+  "scripts": {
+    "compile:legacy": "babel lib --out-dir legacy",
+    "prepublish": "npm run-script compile:legacy",
+    "pretest": "npm run-script compile:legacy",
+    "test": "istanbul --config=test/.istanbul.yml cover _mocha -- --check-leaks -t 5000 -b -R spec test/tests.js",
+    "coveralls": "cat ./test/.coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
+    "clean": "rm -rf node_modules"
+  },
+  "author": {
+    "name": "Joseph E. Sutton",
+    "email": "joe@jstty.com",
+    "url": "http://www.jstty.com"
+  },
+  "maintainers": [
+    {
+      "name": "jstty",
+      "email": "joe@jstty.com"
+    }
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "gulp": "^3.9.1",
+    "lodash": "^4.13.1",
+    "when": "^3.7.7"
+  },
+  "devDependencies": {
+    "chai": "~3.2.0",
+    "coveralls": "^2.11.4",
+    "istanbul": "^0.3.19",
+    "mocha": "~2.3.0",
+    "supertest": "~1.1.0",
+    "babel": "^5.8.23"
+  }
+}
