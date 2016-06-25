@@ -25,6 +25,7 @@ class MyRootLevel extends Beelzebub.Tasks {
 class MyTasks extends Beelzebub.Tasks {
     constructor(config) {
         super(config);
+        this.$setName("MyTasks");
         this.$setDefault('myDefault');
     }
 
@@ -38,7 +39,5 @@ beelzebub.add( MyTasks );
 
 
 console.log('-------------------------');
-beelzebub.run('default');
-beelzebub.run('task1');
-//beelzebub.run('blah');
-beelzebub.run('task2');
+beelzebub.run('default', 'task1', 'task2', 'MyTasks');
+

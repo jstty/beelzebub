@@ -7,24 +7,26 @@ Hightly modular promise/yield based build task pipeline, compatiable with gulp, 
 Easy to create modular tasks and import tasks using npm.
 
 # TODO
-* [x] support generators
-* [/] support pipe/steams
-    * [x] add function
-    * [ ] add example
-* [ ] support root level tasks
-* [ ] support default task for the given task group
+* [ ] support decorators
+* [/] support async/await
+* [ ] add tests
 * [ ] ??? pre/post task functions?
 * [ ] ??? how to handle configs/options pass to sub groups
-* [ ] support decorators
-* [ ] support async/await
 * [ ] ??? change task functions to special names or use decorators
 * [ ] ??? gulp.util type utils? like logging
 * [ ] ??? hotfoot (previously called YANPM) add string libs
+
 * [ ] add CLI app
-* [ ] add tests
 * [ ] add travis... badges to README
 * [ ] add logo/icon
 * [ ] propaganda page
+
+* [x] support root level tasks
+* [x] support default task for the given task group
+* [x] support generators
+* [x] support pipe/steams
+    * [x] add function
+    * [x] add example
 
 # Install
 ```shell

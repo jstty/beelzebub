@@ -55,14 +55,14 @@ Beelzebub.add( MyTasks );
 
 console.log('-------------------------');
 
-//Beelzebub.parallel(
-//    'MyTasks.task1',
-//    'MyTasks.task2'
-//    //, 'MyTasks.task3'
-//);
 
-Beelzebub.sequance(
+Beelzebub.run( // all args run in sequance
     'MyTasks.task1',
-    'MyTasks.task2'
-    //,'MyTasks.task3'
+    'MyTasks.task2',
+    //'MyTasks.task3',
+    [ // arrays run in parallel
+        'MyTasks.task1',
+        'MyTasks.task2'
+        //, 'MyTasks.task3'
+    ]
 );

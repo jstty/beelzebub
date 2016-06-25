@@ -25,9 +25,4 @@ Beelzebub.add( MyTasks );
 
 
 console.log('-------------------------');
-Beelzebub.run('MyTasks.task1');
-
-// 5 seconds later run task2
-setTimeout(() => {
-  Beelzebub.run('MyTasks.task2');
-}, 5000);
+Beelzebub.run('MyTasks.task1', 'MyTasks.task2');
