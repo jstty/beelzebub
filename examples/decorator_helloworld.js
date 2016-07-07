@@ -1,7 +1,13 @@
+'use strict'
+
 var Beelzebub = require('../');
 Beelzebub({
     verbose: true
 });
+
+function defaultTask (target) {
+    target.isTestable = true;
+}
 
 class MyTasks extends Beelzebub.Tasks {
     constructor(config) {
@@ -9,6 +15,7 @@ class MyTasks extends Beelzebub.Tasks {
         this.$setName("MyTasks");
     }
 
+    @defaultTask
     task1(){
         this.logger.log('MyTasks task1');
     }
@@ -23,6 +30,5 @@ class MyTasks extends Beelzebub.Tasks {
 }
 Beelzebub.add( MyTasks );
 
+console.log('-------------------------');
 Beelzebub.run('MyTasks.task1', 'MyTasks.task2');
-
-module.exports = MyTasks;

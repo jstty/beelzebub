@@ -66,3 +66,5 @@ Beelzebub.run( // all args run in sequance
         //, 'MyTasks.task3'
     ]
 );
+
+module.exports = MyTasks;

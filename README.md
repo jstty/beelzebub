@@ -7,26 +7,34 @@ Hightly modular promise/yield based build task pipeline, compatiable with gulp, 
 Easy to create modular tasks and import tasks using npm.
 
 # TODO
-* [ ] support decorators
-* [/] support async/await
 * [ ] add tests
-* [ ] ??? pre/post task functions?
-* [ ] ??? how to handle configs/options pass to sub groups
-* [ ] ??? change task functions to special names or use decorators
-* [ ] ??? gulp.util type utils? like logging
-* [ ] ??? hotfoot (previously called YANPM) add string libs
-
-* [ ] add CLI app
 * [ ] add travis... badges to README
 * [ ] add logo/icon
 * [ ] propaganda page
+* [ ] support decorators (need to wait for offical spec)
+* [ ] support async/await (need to wait for offical spec)
 
+# Add ???
+* [ ] gulp.util type utils? like logging?
+* [ ] add hotfoot
+* [ ] pre/post task functions?
+* [ ] how to handle configs/options pass to sub groups
+* [ ] change task functions to special names?
+  * Add string libs
+    ```javascript
+    bz.use('bz-webpack', 'bz-native-electron', 'bz-native-cordova')
+    ```
+
+# DONE!
+* [x] add CLI app
+  * [x] load 'beelzebub.js' and/or 'beelzebub.json' file like gulpfile.js
+  * [x] load file -f
 * [x] support root level tasks
 * [x] support default task for the given task group
 * [x] support generators
 * [x] support pipe/steams
-    * [x] add function
-    * [x] add example
+  * [x] add function
+  * [x] add example
 
 # Install
 ```shell

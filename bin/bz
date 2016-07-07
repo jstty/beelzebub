@@ -1,0 +1,49 @@
+#!/usr/bin/env node
+const _          = require('lodash');
+const path       = require('path');
+const cli        = require('commander');
+const beelzebub  = require('../index.js');
+const manifest   = require('../package.json');
+const currentDir = process.cwd();
+
+cli.version(manifest.version)
+   .option('-f, --file <file>', 'Load file')
+   .parse(process.argv);
+
+// '../examples/basic_helloworld.js'
+
+let allTasks = [];
+function loadFile(tasks, file, displayError){
+  try {
+    // need to join the current dir,
+    // because require is relative to THIS file not the running process
+    let fTasks = require( path.join(currentDir, file) );
+    if(fTasks) {
+      tasks = _.merge(tasks, fTasks);
+    }
+  } catch(err) {
+    if(displayError) {
+      console.error('File ('+file+') Load Error:', err);
+    }
+  }
+
+  return tasks;
+}
+
+// console.info('BZ CLI file:', cli.file);
+if(cli.file) {
+  allTasks = loadFile(allTasks, cli.file, true);
+}
+
+// check if beelzebub.js/json file
+allTasks = loadFile(allTasks, './beelzebub.js');
+allTasks = loadFile(allTasks, './beelzebub.json');
+
+// console.log('tasks:', tasks);
+if(!allTasks.length) {
+  console.error('No Tasks to run');
+  process.exit();
+  return;
+}
+
+beelzebub.runCLI(allTasks);

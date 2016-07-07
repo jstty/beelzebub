@@ -40,4 +40,4 @@ beelzebub.add( MyTasks );
 
 console.log('-------------------------');
 beelzebub.run('default', 'task1', 'task2', 'MyTasks');
-
+module.exports = MyTasks;

@@ -1,10 +1,10 @@
 'use strict';
 
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var _ = require('lodash');
 var co = require('co');
@@ -76,7 +76,7 @@ function isStream(s) {
  * Beelzebub Class
  ****************************************************** */
 
-var Beelzebub = (function () {
+var Beelzebub = function () {
     function Beelzebub(config) {
         _classCallCheck(this, Beelzebub);
 
@@ -156,6 +156,7 @@ var Beelzebub = (function () {
          * @param task (function or string)
          * @returns {Promise}
          */
+
     }, {
         key: '_runPromiseTask',
         value: function _runPromiseTask(parent, task) {
@@ -214,6 +215,7 @@ var Beelzebub = (function () {
          * @param task(s) (function or string)
          * @returns {Promise}
          */
+
     }, {
         key: 'runCLI',
         value: function runCLI() {
@@ -230,6 +232,7 @@ var Beelzebub = (function () {
          * @param task(s) (function or string)
          * @returns {Promise}
          */
+
     }, {
         key: 'run',
         value: function run(parent) {
@@ -259,6 +262,7 @@ var Beelzebub = (function () {
         }
 
         // TODO: remove parent?
+
     }, {
         key: 'sequance',
         value: function sequance(parent) {
@@ -275,19 +279,20 @@ var Beelzebub = (function () {
                 //this.vLogger.log('sequance args:', args, ', parent:', parent);
             }
 
-            _.forEach(args, (function (task) {
+            _.forEach(args, function (task) {
                 var _this = this;
 
                 aTasks.push(function () {
                     return _this._runPromiseTask(parent, task);
                 });
-            }).bind(this));
+            }.bind(this));
 
             //this.vLogger.log('sequance args:', aTasks);
             return whenSequence(aTasks);
         }
 
         // TODO: remove parent?
+
     }, {
         key: 'parallel',
         value: function parallel(parent) {
@@ -315,9 +320,9 @@ var Beelzebub = (function () {
     }]);
 
     return Beelzebub;
-})();
+}();
 
-var BaseTasks = (function () {
+var BaseTasks = function () {
     function BaseTasks(config) {
         _classCallCheck(this, BaseTasks);
 
@@ -413,7 +418,7 @@ var BaseTasks = (function () {
         value: function _addTasks(tList, task) {
             this.vLogger.log('addTasksToGulp tList:', tList);
 
-            _.forEach(tList, (function (funcName) {
+            _.forEach(tList, function (funcName) {
                 var taskId = '';
 
                 if (this != task && this.name) {
@@ -434,7 +439,7 @@ var BaseTasks = (function () {
                     tasksObj: task,
                     func: task[funcName]
                 };
-            }).bind(this));
+            }.bind(this));
         }
     }, {
         key: '_bfsTaskBuilder',
@@ -451,10 +456,10 @@ var BaseTasks = (function () {
                     //this.vLogger.log('name:', name, 'oproto:', oproto, ', oproto instanceof BaseTasks:', (oproto === BaseTasks.prototype));
 
                     var tList = Object.getOwnPropertyNames(oproto);
-                    tList = tList.filter((function (p) {
+                    tList = tList.filter(function (p) {
                         return _.isFunction(task[p]) && p !== 'constructor' /* NOT constructor */ && p[0] !== '_' /* doesn't start with underscore */
                         ;
-                    }).bind(this));
+                    }.bind(this));
 
                     //this.vLogger.log('name:', name, ', oproto:', oproto, ', tList:', tList);
 
@@ -499,7 +504,7 @@ var BaseTasks = (function () {
     }]);
 
     return BaseTasks;
-})();
+}();
 
 var BeelzebubMod = function BeelzebubMod(config) {
     if (!beelzebubInst) {
