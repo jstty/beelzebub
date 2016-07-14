@@ -7,6 +7,8 @@ Hightly modular promise/yield based build task pipeline, compatiable with gulp, 
 Easy to create modular tasks and import tasks using npm.
 
 # TODO
+* [ ] fix root level example
+* [ ] fix kitcken sink example
 * [ ] add tests
 * [ ] add travis... badges to README
 * [ ] add logo/icon
