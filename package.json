@@ -1,10 +1,11 @@
 {
   "name": "beelzebub",
-  "version": "0.0.2",
+  "version": "0.0.4",
   "description": "One hell of a task master!",
   "main": "index.js",
   "bin": {
-    "bz": "./bin/bz"
+    "bz": "./bin/beelzebub",
+    "beelzebub": "./bin/beelzebub"
   },
   "license": "MIT",
   "homepage": "https://github.com/jstty/beelzebub#readme",

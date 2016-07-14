@@ -14,18 +14,19 @@ Easy to create modular tasks and import tasks using npm.
 * [ ] support decorators (need to wait for offical spec)
 * [ ] support async/await (need to wait for offical spec)
 
-# Add ???
-* [ ] gulp.util type utils? like logging?
-* [ ] add hotfoot
-* [ ] pre/post task functions?
+# Add/change ???
+* [ ] gulp.util type utils? like logging
+* [ ] pre/post task functions
 * [ ] how to handle configs/options pass to sub groups
-* [ ] change task functions to special names?
+* [ ] change task functions to special names
+* [ ] add hotfoot
   * Add string libs
     ```javascript
-    bz.use('bz-webpack', 'bz-native-electron', 'bz-native-cordova')
+    bz.add('bz-webpack', 'bz-native-electron', 'bz-native-cordova')
     ```
 
 # DONE!
+* [x] add $init (return promise) auto run for async adding tasks
 * [x] add CLI app
   * [x] load 'beelzebub.js' and/or 'beelzebub.json' file like gulpfile.js
   * [x] load file -f
@@ -66,23 +67,25 @@ Beelzebub.run('MyTasks.task1');
 ```
 
 --------
-## Future example
-### in 'bz-tasks.js' file
-```javascript
-const bz = Beelzebub();
+## CLI Example
 
-bz.add('bz-frontend-react');
-bz.add('bz-frontend-babel');
-bz.add( require('mytask.js') );
-
-bz.runCli(); // runs commands from CLI
+```shell
+$ bz MyTasks.task1
 ```
 
-### Running the beelzebub command will auto load the `bz-tasks.js` file
-```shell
-$ bz MyTasks.task1 --my-custom-flag
+### 'beelzebub.js' file
+```javascript
+module.exports = [
+  'bz-frontend-react',
+  'bz-frontend-babel',
+  require('mytask.js')
+];
 ```
 ### OR
-```shell
-$ node bz-tasks.js MyTasks.task1 --my-custom-flag
+### 'beelzebub.json' file
+```javascript
+[
+  'bz-frontend-react',
+  'bz-frontend-babel',
+]
 ```
