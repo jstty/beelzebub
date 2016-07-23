@@ -48,7 +48,7 @@ _.forEach(list, function(testList, item){
                     // console.log("cwd:", process.cwd(), "\n");
 
                     var stumpy = new Stumpy({
-                        display: false,
+                        // display: false,
                         buffer:  { size: 100 }
                     });
                     app.config = {
