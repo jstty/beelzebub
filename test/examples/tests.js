@@ -1,3 +1,5 @@
+'use strict';
+
 var _        = require('lodash');
 var path     = require('path');
 var Stumpy   = require('stumpy');
@@ -21,7 +23,7 @@ _.forEach(list, function(testList, item){
     describe(item, function() {
         this.timeout(timeoutSec * 1000);
 
-       å // iterate over all tests in group
+        // iterate over all tests in group
         _.forEach(testList, function(appName, name) {
 
             describe(name, function() {

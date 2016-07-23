@@ -1,5 +1,4 @@
-# beelzebub
-One hell of a task master!
+# Beelzebub - One hell of a task master!
 ==========================
 [![Build Status](https://secure.travis-ci.org/jstty/beelzebub.png?branch=master)](http://travis-ci.org/jstty/beelzebub)
 [![bitHound Score](https://www.bithound.io/github/jstty/beelzebub/badges/score.svg?branch=master)](https://www.bithound.io/github/jstty/beelzebub)
@@ -16,6 +15,7 @@ Hightly modular promise/genorator based build task pipeline, compatiable with gu
 Easy to create modular tasks and import tasks using npm.
 
 # TODO
+* [ ] CLI tests
 * [ ] gulp.util type utils? like logging, transfuser
 * [ ] add hotfoot
   * Add string libs
