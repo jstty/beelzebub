@@ -80,6 +80,7 @@ var Beelzebub = function () {
     function Beelzebub(config) {
         _classCallCheck(this, Beelzebub);
 
+        this.reset();
         this.init(config);
     }
 
@@ -87,33 +88,55 @@ var Beelzebub = function () {
         key: 'init',
         value: function init(config) {
             this._processConfig(config);
-
             this._rootTasks = new BaseTasks(this._config);
-            // this._rootTasks = {};
-            // this._running = null;
         }
     }, {
-        key: '_processConfig',
-        value: function _processConfig(config) {
-            // TODO: use transfuser to merge configs/load files
-            this._config = _.merge(DefaultConfig, config || {});
-
-            if (this._config.silent) {
-                this.logger = nullLogger;
-            } else {
-                this.logger = this._config.logger;
-            }
-
+        key: 'reset',
+        value: function reset() {
+            // logger util
+            // TODO: move this to util
+            this.logger = console;
+            // verbose logger
+            // TODO: move over to stumpy
             this.vLogger = {
                 log: function log() {},
                 info: function info() {}
             };
+
+            this._config = _.cloneDeep(DefaultConfig);
+            this._rootTasks = null;
+        }
+
+        // TODO: unify the config loading from bz and the BaseTasks
+        // TODO: use transfuser to merge configs/load files
+
+    }, {
+        key: '_processConfig',
+        value: function _processConfig(config) {
+            if (config.logger) {
+                this.logger = config.logger;
+            } else {
+                this.logger = DefaultConfig.logger;
+            }
+
+            this._config = _.merge(DefaultConfig, config || {});
+
+            if (this._config.silent) {
+                this.logger = nullLogger;
+            }
+            this._config.logger = this.logger;
+
             if (this._config.verbose) {
                 this.vLogger = {
                     log: this.logger.log,
                     info: this.logger.info
                 };
             }
+        }
+    }, {
+        key: 'getRunning',
+        value: function getRunning() {
+            return this._rootTasks.$getRunning();
         }
     }, {
         key: 'add',
@@ -197,7 +220,8 @@ var Beelzebub = function () {
             }
 
             args.unshift(parent);
-            this._rootTasks.$run.apply(this._rootTasks, args);
+            // use internal function, because $run bounces back to root level
+            return this._rootTasks._run.apply(this._rootTasks, args);
         }
     }, {
         key: 'sequance',
@@ -207,7 +231,8 @@ var Beelzebub = function () {
             }
 
             args.unshift(parent);
-            this._rootTasks.$sequance.apply(this._rootTasks, args);
+            // use internal function, because $sequance bounces back to root level
+            return this._rootTasks._sequance.apply(this._rootTasks, args);
         }
     }, {
         key: 'parallel',
@@ -217,7 +242,8 @@ var Beelzebub = function () {
             }
 
             args.unshift(parent);
-            this._rootTasks.$parallel.apply(this._rootTasks, args);
+            // use internal function, because $parallel bounces back to root level
+            return this._rootTasks._parallel.apply(this._rootTasks, args);
         }
     }]);
 
@@ -244,18 +270,28 @@ var BaseTasks = function () {
 
         this._loadPromise = when.resolve();
         this._loading = false;
+        this._running = null;
     }
+
+    // TODO: unify the config loading from bz and the BaseTasks
+    // TODO: use transfuser to merge configs/load files
+
 
     _createClass(BaseTasks, [{
         key: '_processConfig',
         value: function _processConfig(config) {
+            if (config.logger) {
+                this.logger = config.logger;
+            } else {
+                this.logger = DefaultConfig.logger;
+            }
+
             this._config = _.merge(DefaultConfig, config || {});
 
             if (this._config.silent) {
                 this.logger = nullLogger;
-            } else {
-                this.logger = this._config.logger;
             }
+            this._config.logger = this.logger;
 
             this.vLogger = {
                 log: function log() {},
@@ -313,6 +349,11 @@ var BaseTasks = function () {
         key: '$init',
         value: function $init() {
             return null;
+        }
+    }, {
+        key: '$getRunning',
+        value: function $getRunning() {
+            return this._running;
         }
     }, {
         key: '$isLoading',
@@ -415,12 +456,21 @@ var BaseTasks = function () {
             }
             // func is a generator function
             else if (isGenerator(func)) {
+
                     // run generator using co
-                    p = co(func.bind(parent));
+                    if (parent) {
+                        p = co(func.bind(parent));
+                    } else {
+                        p = co(func);
+                    }
                 }
                 // if task is function, run it
                 else if (_.isFunction(func)) {
-                        p = func.apply(parent);
+                        if (parent) {
+                            p = func.apply(parent);
+                        } else {
+                            p = func();
+                        }
                     } else {
                         // TODO: check other
                         this.logger.warn('other type?? task:', task, ', parent:', parent);
@@ -469,15 +519,174 @@ var BaseTasks = function () {
         }
 
         /**
-         * run a task
-         * @param task {String}
+         * Runs task(s) in sequance
+         * @param task(s) (function or string)
          * @returns {Promise}
          */
 
     }, {
-        key: '$runTask',
-        value: function $runTask(task) {
+        key: '$sequance',
+        value: function $sequance() {
+            var _beelzebub;
+
+            // TODO: prevent infinite loop
+            return (_beelzebub = this.beelzebub).sequance.apply(_beelzebub, arguments);
+        }
+
+        /**
+         * Runs task(s) in parallel
+         * @param task(s) (function or string)
+         * @returns {Promise}
+         */
+
+    }, {
+        key: '$parallel',
+        value: function $parallel() {
+            var _beelzebub2;
+
+            // TODO: prevent infinite loop
+            return (_beelzebub2 = this.beelzebub).parallel.apply(_beelzebub2, arguments);
+        }
+
+        /**
+         * Runs task(s) - multi args run in sequance, arrays are run in parallel
+         * @param task(s) (function or string)
+         * @returns {Promise}
+         */
+
+    }, {
+        key: '$run',
+        value: function $run() {
+            var _beelzebub3;
+
+            // TODO: prevent infinite loop
+            return (_beelzebub3 = this.beelzebub).run.apply(_beelzebub3, arguments);
+        }
+
+        /**
+         * Internal Run task(s) in sequance
+         * @param task(s) (function or string)
+         * @returns {Promise}
+         */
+
+    }, {
+        key: '_sequance',
+        value: function _sequance(parent) {
             var _this3 = this;
+
+            for (var _len5 = arguments.length, args = Array(_len5 > 1 ? _len5 - 1 : 0), _key5 = 1; _key5 < _len5; _key5++) {
+                args[_key5 - 1] = arguments[_key5];
+            }
+
+            // this.vLogger.log('sequance args:', args);
+
+            if (_.isFunction(parent) || !_.isObject(parent)) {
+                args.unshift(parent);
+                parent = undefined;
+                // this.vLogger.log('sequance args:', args);
+            }
+
+            var aTasks = [];
+            _.forEach(args, function (task) {
+                aTasks.push(function () {
+                    return _this3._runPromiseTask(parent, task);
+                });
+            });
+
+            //this.vLogger.log('sequance args:', aTasks);
+            return whenSequence(aTasks);
+        }
+
+        /**
+         * Internal Runs task(s) in parallel
+         * @param task(s) (function or string)
+         * @returns {Promise}
+         */
+
+    }, {
+        key: '_parallel',
+        value: function _parallel(parent) {
+            var _this4 = this;
+
+            for (var _len6 = arguments.length, args = Array(_len6 > 1 ? _len6 - 1 : 0), _key6 = 1; _key6 < _len6; _key6++) {
+                args[_key6 - 1] = arguments[_key6];
+            }
+
+            // this.vLogger.log('parallel args:', args);
+
+            if (parent && !_.isObject(parent)) {
+                args.unshift(parent);
+                parent = undefined;
+                //this.vLogger.log('parallel args:', args);
+            }
+
+            var pList = _.map(args, function (task) {
+                return _this4._runPromiseTask(parent, task);
+            });
+
+            //this.vLogger.log('parallel pList:', pList);
+            return when.all(pList);
+
+            // args.unshift(this);
+            // return this.beelzebub.parallel.apply(this.beelzebub, args);
+        }
+
+        /**
+         * Runs task(s) - multi args run in sequance, arrays are run in parallel
+         * @param task(s) (function or string)
+         * @returns {Promise}
+         */
+
+    }, {
+        key: '_run',
+        value: function _run(parent) {
+            var _this5 = this;
+
+            var taskName = 'default';
+            var promise = null;
+
+            // if(this._running) {
+            //     this.logger.error('Already running a task:', this._running);
+            //     return when.reject();
+            // }
+
+            for (var _len7 = arguments.length, args = Array(_len7 > 1 ? _len7 - 1 : 0), _key7 = 1; _key7 < _len7; _key7++) {
+                args[_key7 - 1] = arguments[_key7];
+            }
+
+            if (!_.isObject(parent)) {
+                args.unshift(parent);
+                parent = undefined;
+                //this.vLogger.log('run args:', args);
+            }
+
+            if (args.length === 1) {
+                taskName = args[0];
+                promise = this._runPromiseTask(parent, taskName);
+            } else {
+                // multi args mean, run in sequance
+                promise = this._sequance.apply(this, args);
+            }
+
+            this._running = promise.then(function (result) {
+                _this5._running = null;
+                return result;
+            });
+
+            return this._running;
+        }
+
+        /**
+         * run a task
+         * @param task {String}
+         * @returns {Promise}
+         */
+        // TODO: should this be private?
+
+    }, {
+        key: '_runTask',
+        value: function _runTask(task) {
+            var _this6 = this;
 
             var p = null;
 
@@ -500,128 +709,15 @@ var BaseTasks = function () {
                     var taskParts = task.split('.');
                     var taskName = taskParts.shift();
 
-                    if (_this3._subTasks[taskName]) {
-                        return _this3._subTasks[taskName].$runTask(taskParts.join('.'));
-                    } else if (_this3.$getTask(taskName)) {
-                        var taskObj = _this3.$getTask(taskName);
-                        return _this3._normalizeExecFuncToPromise(taskObj.func, taskObj.tasksObj);
+                    if (_this6._subTasks[taskName]) {
+                        return _this6._subTasks[taskName]._runTask(taskParts.join('.'));
+                    } else if (_this6.$getTask(taskName)) {
+                        var taskObj = _this6.$getTask(taskName);
+                        return _this6._normalizeExecFuncToPromise(taskObj.func, taskObj.tasksObj);
                     }
                     // Error ???
                 }
                 // what else could this be?
-            });
-        }
-
-        /**
-         * Runs task(s) in sequance
-         * @param task(s) (function or string)
-         * @returns {Promise}
-         */
-
-    }, {
-        key: '$sequance',
-        value: function $sequance(parent) {
-            var _this4 = this;
-
-            for (var _len5 = arguments.length, args = Array(_len5 > 1 ? _len5 - 1 : 0), _key5 = 1; _key5 < _len5; _key5++) {
-                args[_key5 - 1] = arguments[_key5];
-            }
-
-            //this.vLogger.log('sequance args:', args);
-
-            if (!_.isObject(parent)) {
-                args.unshift(parent);
-                parent = undefined;
-                //this.vLogger.log('sequance args:', args);
-            }
-
-            var aTasks = [];
-            _.forEach(args, function (task) {
-                aTasks.push(function () {
-                    return _this4._runPromiseTask(parent, task);
-                });
-            });
-
-            //this.vLogger.log('sequance args:', aTasks);
-            return whenSequence(aTasks);
-        }
-
-        /**
-         * Runs task(s) in parallel
-         * @param task(s) (function or string)
-         * @returns {Promise}
-         */
-
-    }, {
-        key: '$parallel',
-        value: function $parallel(parent) {
-            var _this5 = this;
-
-            for (var _len6 = arguments.length, args = Array(_len6 > 1 ? _len6 - 1 : 0), _key6 = 1; _key6 < _len6; _key6++) {
-                args[_key6 - 1] = arguments[_key6];
-            }
-
-            //this.vLogger.log('parallel args:', args);
-
-            if (!_.isObject(parent)) {
-                args.unshift(parent);
-                parent = undefined;
-                //this.vLogger.log('parallel args:', args);
-            }
-
-            var pList = _.map(args, function (task) {
-                return _this5._runPromiseTask(parent, task);
-            });
-
-            //this.vLogger.log('parallel pList:', pList);
-            return when.all(pList);
-
-            // args.unshift(this);
-            // return this.beelzebub.parallel.apply(this.beelzebub, args);
-        }
-
-        /**
-         * Runs task(s) - multi args run in sequance, arrays are run in parallel
-         * @param task(s) (function or string)
-         * @returns {Promise}
-         */
-
-    }, {
-        key: '$run',
-        value: function $run(parent) {
-            var _this6 = this;
-
-            var taskName = 'default';
-            var promise = null;
-
-            if (this._running) {
-                this.logger.error('Already running a task:', this._running);
-                return when.reject();
-            }
-
-            for (var _len7 = arguments.length, args = Array(_len7 > 1 ? _len7 - 1 : 0), _key7 = 1; _key7 < _len7; _key7++) {
-                args[_key7 - 1] = arguments[_key7];
-            }
-
-            if (!_.isObject(parent)) {
-                args.unshift(parent);
-                parent = undefined;
-                //this.vLogger.log('run args:', args);
-            }
-
-            this._running = true;
-
-            if (args.length === 1) {
-                taskName = args[0];
-                promise = this._runPromiseTask(parent, taskName);
-            } else {
-                // multi args mean, run in sequance
-                promise = this.$sequance.apply(this, args);
-            }
-
-            return promise.then(function (result) {
-                _this6._running = false;
-                return result;
             });
         }
 
@@ -631,6 +727,7 @@ var BaseTasks = function () {
          * @param task (function or string)
          * @returns {Promise}
          */
+        // TODO: issues, need to circle back around to top level BZ and trickle down
         // TODO: can we merge this with runTask?
         // so it can recursivly chain down to resolve promises all the way down
 
@@ -641,7 +738,7 @@ var BaseTasks = function () {
 
             // if task is array, then run in parallel
             if (_.isArray(task)) {
-                return this.$parallel.apply(this, [parent].concat(_toConsumableArray(task)));
+                return this._parallel.apply(this, [parent].concat(_toConsumableArray(task)));
             }
 
             // if task is string, then find function and parent in list
@@ -652,17 +749,19 @@ var BaseTasks = function () {
                 if (!this._tasks.hasOwnProperty(taskName)) {
                     // now check if in sub level
                     if (this._subTasks.hasOwnProperty(taskName)) {
-                        p = this._subTasks[taskName].$runTask(taskParts.join('.'));
+                        p = this._subTasks[taskName]._runTask(taskParts.join('.'));
                         // this._subTasks[taskName].$getTask('default')
-                        // p = this._subTasks[taskName].$runTask('default');
+                        // p = this._subTasks[taskName]._runTask('default');
                     } else {
-                        p = when.reject('task name not found: "' + task + '"');
+                        var error = 'task name not found: "' + task + '"';
+                        this.logger.error(error);
+                        p = when.reject(error);
                     }
                 }
 
                 if (!p) {
                     if (taskParts.length > 0) {
-                        p = this._tasks[taskName].$runTask(taskParts.join('.'));
+                        p = this._tasks[taskName]._runTask(taskParts.join('.'));
                     } else {
                         if (this._tasks[taskName]) {
                             task = this._tasks[taskName].func;
@@ -670,18 +769,29 @@ var BaseTasks = function () {
 
                             p = this._normalizeExecFuncToPromise(task, parent);
                         } else {
-                            p = when.reject('task name not found: "' + task + '"');
+                            var _error = 'task name not found: "' + task + '"';
+                            this.logger.error(_error);
+                            p = when.reject(_error);
                         }
                     }
                 }
+            } else if (_.isFunction(task)) {
+                // if(!parent) {
+                //     parent = task;
+                // }
+                p = this._normalizeExecFuncToPromise(task, parent);
+            } else {
+                var _error2 = 'task type not supported: "' + task + '"';
+                this.logger.trace(_error2);
+                p = when.reject(_error2);
             }
 
-            // TODO: not sure if this need, want to remove, infavor of $runTask in class
+            // TODO: not sure if this need, want to remove, infavor of _runTask in class
             //if(parent.$isLoading && parent.$isLoading()) {
             //    p = parent.$loading()
             //        .then( (result) => {
             //            //this.vLogger.log( 'runPromiseTask all tasks:', _.keys(this._tasks), ', result:', result );
-            //            return this.normalizeExecFuncToPromise(task, parent);
+            //            return this._normalizeExecFuncToPromise(task, parent);
             //        });
             //} else {
             //    p = this.normalizeExecFuncToPromise(task, parent);
@@ -702,7 +812,10 @@ var BeelzebubMod = function BeelzebubMod(config) {
     return beelzebubInst;
 };
 
-// TODO: find a better way to procedurlly create these functions
+// TODO: find a better way to create these functions
+BeelzebubMod.delete = function () {
+    beelzebubInst = null;
+};
 BeelzebubMod.create = function (config) {
     return new Beelzebub(config);
 };

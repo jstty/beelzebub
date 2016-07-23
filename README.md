@@ -1,4 +1,12 @@
-# beelzebub
+# beelzebub [![Build Status](https://secure.travis-ci.org/jstty/beelzebub.png?branch=master)](http://travis-ci.org/jstty/beelzebub)
+[![bitHound Score](https://www.bithound.io/github/jstty/beelzebub/badges/score.svg?branch=master)](https://www.bithound.io/github/jstty/beelzebub)
+[![Coverage Status](https://coveralls.io/repos/jstty/beelzebub/badge.svg?branch=master&service=github)](https://coveralls.io/github/jstty/beelzebub?branch=master)
+![License](https://img.shields.io/npm/l/beelzebub.svg)
+
+[![Dependency Status](https://david-dm.org/jstty/beelzebub.png?theme=shields.io&branch=master)](https://david-dm.org/jstty/beelzebub)
+[![devDependency Status](https://david-dm.org/jstty/beelzebub/dev-status.png?theme=shields.io&branch=master)](https://david-dm.org/jstty/beelzebub#info=devDependencies) 
+[![NPM](https://nodei.co/npm/beelzebub.png)](https://nodei.co/npm/beelzebub/)
+
 One hell of a task master!
 ==========================
 
@@ -7,8 +15,6 @@ Hightly modular promise/genorator based build task pipeline, compatiable with gu
 Easy to create modular tasks and import tasks using npm.
 
 # TODO
-* [ ] add travis
-* [ ] badges to README (this)
 * [ ] gulp.util type utils? like logging, transfuser
 * [ ] add hotfoot
   * Add string libs
@@ -26,6 +32,8 @@ Easy to create modular tasks and import tasks using npm.
 * [ ] change task functions to special names
 
 # DONE!
+* [x] add travis
+* [x] badges to README (this)
 * [x] add tests
 * [x] moved almost all functions to base class for simplicity
 * [x] more examples
