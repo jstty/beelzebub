@@ -1,20 +1,25 @@
-var Beelzebub = require('../');
-Beelzebub({
-    verbose: true
-});
+'use strict';
+// !-- FOR TESTS
+let wrapper = function(options) {
+// --!
+
+
+// =====================================================
+let Beelzebub = require('../../');
+let bz = Beelzebub(options || { verbose: true });
 
 class MyTasks extends Beelzebub.Tasks {
     constructor(config) {
         super(config);
         this.$setName("MyTasks");
 
-        this._delayTime = 1000;
+        this._delayTime = 200;
     }
 
     _delay(message) {
         return new Promise((resolve, reject) => {
             setTimeout(() => {
-                this.logger.info(message);
+                this.logger.log(message);
                 resolve();
             }, this._delayTime);
         });
@@ -50,13 +55,9 @@ class MyTasks extends Beelzebub.Tasks {
     //    this.logger.log('MyTasks task3: after');
     //}
 }
-Beelzebub.add( MyTasks );
+bz.add( MyTasks );
 
-
-console.log('-------------------------');
-
-
-Beelzebub.run( // all args run in sequance
+bz.run( // all args run in sequance
     'MyTasks.task1',
     'MyTasks.task2',
     //'MyTasks.task3',
@@ -66,5 +67,12 @@ Beelzebub.run( // all args run in sequance
         //, 'MyTasks.task3'
     ]
 );
+// =====================================================
 
-module.exports = MyTasks;
+
+// !-- FOR TESTS
+return bz; };
+module.exports = wrapper;
+// if not running in test, then run wrapper
+if(typeof global.it !== 'function') wrapper();
+// --!

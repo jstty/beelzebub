@@ -1,7 +1,12 @@
-var Beelzebub = require('../');
-var beelzebub = Beelzebub.create({
-   verbose: true
-});
+'use strict';
+// !-- FOR TESTS
+let wrapper = function(options) {
+// --!
+
+
+// =====================================================
+let Beelzebub = require('../../');
+let bz = Beelzebub(options || { verbose: true });
 
 class MyRootLevel extends Beelzebub.Tasks {
     constructor(config) {
@@ -9,15 +14,15 @@ class MyRootLevel extends Beelzebub.Tasks {
         this.$useAsRoot();
     }
 
-    default(){
+    default() {
         this.logger.log('MyRootLevel myDefault');
     }
 
-    task1(){
+    task1() {
         this.logger.log('MyRootLevel task1');
     }
 
-    task2(){
+    task2() {
         this.logger.log('MyRootLevel task2');
     }
 }
@@ -29,20 +34,26 @@ class MyTasks extends Beelzebub.Tasks {
         this.$setDefault('myDefault');
     }
 
-    myDefault(){
+    myDefault() {
         this.logger.log('MyTasks myDefault');
     }
 }
 
-beelzebub.add( MyRootLevel );
-beelzebub.add( MyTasks );
+bz.add( MyRootLevel );
+bz.add( MyTasks );
 
-
-console.log('-------------------------');
-beelzebub.run(
+bz.run(
     'default',
     'task1',
     'task2',
     'MyTasks'
 );
-module.exports = MyTasks;
+// =====================================================
+
+
+// !-- FOR TESTS
+return bz; };
+module.exports = wrapper;
+// if not running in test, then run wrapper
+if(typeof global.it !== 'function') wrapper();
+// --!

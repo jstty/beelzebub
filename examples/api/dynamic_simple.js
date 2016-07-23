@@ -1,9 +1,14 @@
+'use strict';
+// !-- FOR TESTS
+let wrapper = function(options) {
+// --!
+
+
+// =====================================================
 const _ = require('lodash');
 
-const Beelzebub = require('../');
-Beelzebub({
-    verbose: true
-});
+let Beelzebub = require('../../');
+let bz = Beelzebub(options || { verbose: true });
 
 class MyBaseTasks extends Beelzebub.Tasks {
     constructor(config) {
@@ -11,20 +16,20 @@ class MyBaseTasks extends Beelzebub.Tasks {
         this.$setName(config.name || "MyBaseTasks");
 
         this.value = config.value;
-        this._delayTime = config.delayTime || 2000;
+        this._delayTime = 300;
     }
 
     // TODO: why is this being added to the tasks?
     $init() {
-        return this._delay(this.name + ' init', 500);
+        return this._delay('MyBaseTasks init');
     }
 
-    _delay(message, delay) {
+    _delay(message) {
         return new Promise((resolve, reject) => {
             setTimeout(() => {
-                this.logger.info(message);
+                this.logger.log(message);
                 resolve();
-            }, delay || this._delayTime);
+            }, this._delayTime);
         });
     }
 
@@ -44,21 +49,28 @@ class MyTasks extends Beelzebub.Tasks {
         return new Promise((resolve, reject) => {
             setTimeout(() => {
                 this.$addSubTasks( MyBaseTasks, { name: 'MyBaseTasks1', value: 123 } );
-                this.$addSubTasks( MyBaseTasks, { name: 'MyBaseTasks2', value: 456, delayTime: 100000 } );
+                this.$addSubTasks( MyBaseTasks, { name: 'MyBaseTasks2', value: 456 } );
                 // done
                 resolve(1234);
-            }, 2000);
+            }, 200);
         });
     }
 
     task1() {
         this.logger.log('MyTasks task1');
+
         return this.$sequance('MyTasks.MyBaseTasks1.task1', 'MyTasks.MyBaseTasks2.task1');
     }
 }
 
-Beelzebub.add( MyTasks );
+bz.add( MyTasks );
+bz.run('MyTasks.task1');
+// =====================================================
 
-Beelzebub.run('MyTasks.MyBaseTasks1.task1');
 
-module.exports = MyTasks;
+// !-- FOR TESTS
+return bz; };
+module.exports = wrapper;
+// if not running in test, then run wrapper
+if(typeof global.it !== 'function') wrapper();
+// --!

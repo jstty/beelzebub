@@ -1,11 +1,12 @@
-var Beelzebub = require('../');
-Beelzebub({
-    verbose: true
-});
+'use strict';
+// !-- FOR TESTS
+let wrapper = function(options) {
+// --!
 
-//var Beelzebub = Beelzebub.create({
-//    //verbose: true
-//});
+
+// =====================================================
+let Beelzebub = require('../../');
+let bz = Beelzebub(options || { verbose: true });
 
 class MyBaseTasks extends Beelzebub.Tasks {
     constructor(config) {
@@ -26,8 +27,6 @@ class MyBaseTasks extends Beelzebub.Tasks {
     }
 }
 
-Beelzebub.add( MyBaseTasks );
-
 class MyTasks extends MyBaseTasks {
     constructor(config) {
         super(config);
@@ -42,9 +41,6 @@ class MyTasks extends MyBaseTasks {
         this.logger.log('MyTasks task3');
     }
 }
-
-Beelzebub.add( MyTasks );
-
 
 class SuperTasks extends Beelzebub.Tasks {
     constructor(config) {
@@ -68,7 +64,7 @@ class SuperTasks extends Beelzebub.Tasks {
                     resolve();
                 }
                 this.logger.log('SuperTasks task1:', count);
-            }.bind(this), 1000);
+            }.bind(this), 200);
         }.bind(this));
     }
     task2() {
@@ -82,18 +78,18 @@ class SuperTasks extends Beelzebub.Tasks {
                     resolve();
                 }
                 this.logger.log('SuperTasks task2:', count);
-            }.bind(this), 1100);
+            }.bind(this), 300);
         }.bind(this) );
     }
 
     seqTask() {
         //this.logger.log('SuperTasks seqTask');
-        return this.$sequance('SuperTasks.task1', this.task2, 'SuperTasks.lineTask');
+        return this.$sequance('SuperTasks.task1', this.task2.bind(this), 'SuperTasks.lineTask');
     }
 
     palTask() {
         this.logger.log('SuperTasks palTask');
-        return this.$parallel('SuperTasks.task1', this.task2);
+        return this.$parallel('SuperTasks.task1', this.task2.bind(this));
     }
 
     lineTask() {
@@ -101,26 +97,35 @@ class SuperTasks extends Beelzebub.Tasks {
     }
 
     comboTask() {
-        //this.logger.log('SuperTasks comboTask');
-        return this.$sequance('SuperTasks.task1', 'SuperTasks.lineTask', this.palTask, 'SuperTasks.lineTask', 'SuperTasks.task2');
+        this.logger.log('SuperTasks comboTask');
+        return this.$sequance(
+            'SuperTasks.task1',
+            'SuperTasks.lineTask',
+            this.palTask.bind(this),
+            'SuperTasks.lineTask',
+            'SuperTasks.task2'
+        );
     }
 
 }
 
-Beelzebub.add( SuperTasks );
+bz.add( MyBaseTasks );
+bz.add( MyTasks );
+bz.add( SuperTasks );
 
-console.log('-------------------------');
-Beelzebub.run('MyBaseTasks.task1');
-//Beelzebub.run('MyBaseTasks.task2');
-Beelzebub.run('MyTasks.task1');
-//Beelzebub.run('MyTasks.task3');
-//Beelzebub.run('MyTasks.task2');
+bz.run(
+    'MyBaseTasks.task1'
+    ,'MyTasks.task1'
+    ,'SuperTasks.lineTask'
+    ,'SuperTasks.comboTask'
+);
 
-//Beelzebub.run('SuperTasks.task1');
-//Beelzebub.run('SuperTasks.seqTask');
-//Beelzebub.run('SuperTasks.palTask');
-Beelzebub.run('SuperTasks.comboTask');
+// =====================================================
 
-//Beelzebub.run('SuperTasks.MyTasks.task1'); // dulpicate?
-//Beelzebub.run('SuperTasks.MyTasks.task2');
-//Beelzebub.run('SuperTasks.MyTasks.task3');
+
+// !-- FOR TESTS
+return bz; };
+module.exports = wrapper;
+// if not running in test, then run wrapper
+if(typeof global.it !== 'function') wrapper();
+// --!

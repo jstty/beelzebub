@@ -3,31 +3,32 @@ One hell of a task master!
 ==========================
 
 ## Description
-Hightly modular promise/yield based build task pipeline, compatiable with gulp, fly, ES5/6/7.
+Hightly modular promise/genorator based build task pipeline, compatiable with gulp, fly, ES 5/6/7.
 Easy to create modular tasks and import tasks using npm.
 
 # TODO
-* [ ] fix root level example
-* [ ] fix kitcken sink example
-* [ ] add tests
-* [ ] add travis... badges to README
-* [ ] add logo/icon
-* [ ] propaganda page
-* [ ] support decorators (need to wait for offical spec)
-* [ ] support async/await (need to wait for offical spec)
-
-# Add/change ???
-* [ ] gulp.util type utils? like logging
-* [ ] pre/post task functions
-* [ ] how to handle configs/options pass to sub groups
-* [ ] change task functions to special names
+* [ ] add travis
+* [ ] badges to README (this)
+* [ ] gulp.util type utils? like logging, transfuser
 * [ ] add hotfoot
   * Add string libs
     ```javascript
     bz.add('bz-webpack', 'bz-native-electron', 'bz-native-cordova')
     ```
+* [ ] add logo/icon
+* [ ] propaganda page
+* [ ] support decorators (need to wait for offical spec)
+* [ ] support async/await (need to wait for offical spec)
+
+# Maybe Add/change???
+* [ ] pre/post task functions
+* [ ] handle configs/options pass to sub groups
+* [ ] change task functions to special names
 
 # DONE!
+* [x] add tests
+* [x] moved almost all functions to base class for simplicity
+* [x] more examples
 * [x] add $init (return promise) auto run for async adding tasks
 * [x] add CLI app
   * [x] load 'beelzebub.js' and/or 'beelzebub.json' file like gulpfile.js

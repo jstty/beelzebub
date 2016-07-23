@@ -1,7 +1,12 @@
-var Beelzebub = require('../');
-Beelzebub({
-    verbose: true
-});
+'use strict';
+// !-- FOR TESTS
+let wrapper = function(options) {
+// --!
+
+
+// =====================================================
+let Beelzebub = require('../../');
+let bz = Beelzebub(options || { verbose: true });
 
 class MyBaseTasks extends Beelzebub.Tasks {
     constructor(config) {
@@ -37,11 +42,20 @@ class MyTasks extends MyBaseTasks {
         this.logger.log('MyTasks task3');
     }
 }
-Beelzebub.add( MyTasks );
 
-console.log('-------------------------');
-Beelzebub.run(
+bz.add( MyTasks );
+
+    bz.run(
     'MyTasks.task1',
     'MyTasks.task3',
     'MyTasks.task2'
 );
+// =====================================================
+
+
+// !-- FOR TESTS
+return bz; };
+module.exports = wrapper;
+// if not running in test, then run wrapper
+if(typeof global.it !== 'function') wrapper();
+// --!

@@ -1,6 +1,6 @@
 {
   "name": "beelzebub",
-  "version": "0.0.4",
+  "version": "0.5.0",
   "description": "One hell of a task master!",
   "main": "index.js",
   "bin": {
@@ -50,6 +50,7 @@
     "commander": "^2.9.0",
     "lodash": "^4.13.1",
     "stream-to-promise": "^2.1.1",
+    "stumpy": "^0.6.10",
     "when": "^3.7.7"
   },
   "devDependencies": {
@@ -59,8 +60,7 @@
     "chai": "~3.2.0",
     "coveralls": "^2.11.4",
     "istanbul": "^0.3.19",
-    "mocha": "~2.3.0",
-    "supertest": "~1.1.0"
+    "mocha": "~2.3.0"
   },
   "engines": {
     "node": ">=0.10.0"
