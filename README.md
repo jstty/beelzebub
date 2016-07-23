@@ -16,6 +16,7 @@ Easy to create modular tasks and import tasks using npm.
 
 # TODO
 * [ ] CLI tests
+* [ ] support older node versions (add to tests)
 * [ ] gulp.util type utils? like logging, transfuser
 * [ ] add hotfoot
   * Add string libs
