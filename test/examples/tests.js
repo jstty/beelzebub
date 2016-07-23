@@ -1,6 +1,6 @@
 var _        = require('lodash');
 var path     = require('path');
-var Stumpy   = require('Stumpy');
+var Stumpy   = require('stumpy');
 
 var bz      = require('../../index.js');
 var common  = require('../util/common.js');
@@ -21,7 +21,7 @@ _.forEach(list, function(testList, item){
     describe(item, function() {
         this.timeout(timeoutSec * 1000);
 
-        // iterate over all tests in group
+       å // iterate over all tests in group
         _.forEach(testList, function(appName, name) {
 
             describe(name, function() {
