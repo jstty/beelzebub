@@ -13,7 +13,7 @@ class MyTasks extends Beelzebub.Tasks {
         super(config);
         this.$setName("MyTasks");
 
-        this._delayTime = 00;
+        this._delayTime = 500;
     }
 
     _delay(message, delay) {
@@ -40,7 +40,7 @@ class MyTasks extends Beelzebub.Tasks {
      * generator based tasks
      */
     * task2() {
-        let delay = this._delayTime + 100;
+        let delay = this._delayTime + 200;
         this.logger.log('MyTasks task2: before');
         yield this._delay('MyTasks task2: yield delay '+delay, delay);
         this.logger.log('MyTasks task2: after');
