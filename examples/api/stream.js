@@ -18,15 +18,20 @@ class MyTasks extends Beelzebub.Tasks {
     task1(){
         var data = '';
 
-        return fs.createReadStream('./basic.js')
-            .setEncoding('utf8')
-            .on('data', (chunk) => {
-                data += chunk;
-            })
-            .on('end', () => {
-                this.logger.log('MyTasks task1 data size:', data.length);
-                //this.logger.log('MyTasks task1 data:', data);
-            });
+        var stream = fs.createReadStream('./basic.js');
+
+        stream.setEncoding('utf8');
+
+        stream.on('data', (chunk) => {
+            data += chunk;
+        });
+
+        stream.on('end', () => {
+            this.logger.log('MyTasks task1 data size:', data.length);
+            //this.logger.log('MyTasks task1 data:', data);
+        });
+
+        return stream;
     }
 
     task2(){

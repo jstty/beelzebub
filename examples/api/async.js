@@ -13,7 +13,7 @@ class MyTasks extends Beelzebub.Tasks {
         super(config);
         this.$setName("MyTasks");
 
-        this._delayTime = 200;
+        this._delayTime = 00;
     }
 
     _delay(message) {

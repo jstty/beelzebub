@@ -16,15 +16,14 @@ Hightly modular promise/genorator based build task pipeline, compatiable with gu
 Easy to create modular tasks and import tasks using npm.
 
 # TODO
-* [ ] CLI tests
 * [ ] support older node versions (add to tests)
+* [ ] CLI tests
 * [ ] gulp.util type utils? like logging, transfuser
 * [ ] add hotfoot
   * Add string libs
     ```javascript
     bz.add('bz-webpack', 'bz-native-electron', 'bz-native-cordova')
     ```
-* [ ] add logo/icon
 * [ ] propaganda page
 * [ ] support decorators (need to wait for offical spec)
 * [ ] support async/await (need to wait for offical spec)
@@ -35,6 +34,7 @@ Easy to create modular tasks and import tasks using npm.
 * [ ] change task functions to special names
 
 # DONE!
+* [x] add logo/icon
 * [x] add travis
 * [x] badges to README (this)
 * [x] add tests
