@@ -1,10 +1,26 @@
 'use strict';
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _toConsumableArray2 = require('babel-runtime/helpers/toConsumableArray');
 
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+var _toConsumableArray3 = _interopRequireDefault(_toConsumableArray2);
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+var _getOwnPropertyNames = require('babel-runtime/core-js/object/get-own-property-names');
+
+var _getOwnPropertyNames2 = _interopRequireDefault(_getOwnPropertyNames);
+
+var _getPrototypeOf = require('babel-runtime/core-js/object/get-prototype-of');
+
+var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
+
+var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = require('babel-runtime/helpers/createClass');
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var _ = require('lodash');
 var co = require('co');
@@ -78,13 +94,13 @@ function isStream(s) {
 
 var Beelzebub = function () {
     function Beelzebub(config) {
-        _classCallCheck(this, Beelzebub);
+        (0, _classCallCheck3.default)(this, Beelzebub);
 
         this.reset();
         this.init(config);
     }
 
-    _createClass(Beelzebub, [{
+    (0, _createClass3.default)(Beelzebub, [{
         key: 'init',
         value: function init(config) {
             this._processConfig(config);
@@ -246,7 +262,6 @@ var Beelzebub = function () {
             return this._rootTasks._parallel.apply(this._rootTasks, args);
         }
     }]);
-
     return Beelzebub;
 }();
 
@@ -255,7 +270,7 @@ var Beelzebub = function () {
 
 var BaseTasks = function () {
     function BaseTasks(config) {
-        _classCallCheck(this, BaseTasks);
+        (0, _classCallCheck3.default)(this, BaseTasks);
 
         this._processConfig(config);
         this.beelzebub = config.beelzebub || beelzebubInst;
@@ -277,7 +292,7 @@ var BaseTasks = function () {
     // TODO: use transfuser to merge configs/load files
 
 
-    _createClass(BaseTasks, [{
+    (0, _createClass3.default)(BaseTasks, [{
         key: '_processConfig',
         value: function _processConfig(config) {
             if (config.logger) {
@@ -490,7 +505,7 @@ var BaseTasks = function () {
     }, {
         key: '_bfsTaskBuilder',
         value: function _bfsTaskBuilder(outList, task, name) {
-            var proto = Object.getPrototypeOf(task);
+            var proto = (0, _getPrototypeOf2.default)(task);
             //this.vLogger.log('task:', task, ', proto:', proto, ', name:', name);
 
             if (proto && _.isObject(proto)) {
@@ -498,10 +513,10 @@ var BaseTasks = function () {
                 //this.vLogger.log('name:', name, ', task.name:', task.name);
                 name = name || task.name;
                 var oproto = this._bfsTaskBuilder(outList, proto, name);
-                if (Object.getPrototypeOf(oproto) && !(oproto === BaseTasks.prototype)) {
+                if ((0, _getPrototypeOf2.default)(oproto) && !(oproto === BaseTasks.prototype)) {
                     //this.vLogger.log('name:', name, 'oproto:', oproto, ', oproto instanceof BaseTasks:', (oproto === BaseTasks.prototype));
 
-                    var tList = Object.getOwnPropertyNames(oproto);
+                    var tList = (0, _getOwnPropertyNames2.default)(oproto);
                     tList = tList.filter(function (p) {
                         return _.isFunction(task[p]) && p !== 'constructor' /* NOT constructor */ && p[0] !== '_' /* doesn't start with underscore */ && p[0] !== '$' /* doesn't start with $ */
                         ;
@@ -738,7 +753,7 @@ var BaseTasks = function () {
 
             // if task is array, then run in parallel
             if (_.isArray(task)) {
-                return this._parallel.apply(this, [parent].concat(_toConsumableArray(task)));
+                return this._parallel.apply(this, [parent].concat((0, _toConsumableArray3.default)(task)));
             }
 
             // if task is string, then find function and parent in list
@@ -801,7 +816,6 @@ var BaseTasks = function () {
             return p;
         }
     }]);
-
     return BaseTasks;
 }();
 

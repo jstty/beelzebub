@@ -1,4 +1,8 @@
 
-// TODO: logic to detect if ES6 and switch if older
-
-module.exports = require('./lib');
+// if node 6, use native otherwise switch user legacy
+var nodeVersionParts = process.versions.node.split('.');
+if(nodeVersionParts[0] === '6') {
+    module.exports = require('./lib');
+} else {
+    module.exports = require('./legacy');
+}

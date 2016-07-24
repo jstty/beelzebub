@@ -13,15 +13,15 @@ class MyTasks extends Beelzebub.Tasks {
         super(config);
         this.$setName("MyTasks");
 
-        this._delayTime = 200;
+        this._delayTime = 00;
     }
 
-    _delay(message) {
+    _delay(message, delay) {
         return new Promise((resolve, reject) => {
             setTimeout(() => {
                 this.logger.log(message);
                 resolve();
-            }, this._delayTime);
+            }, delay);
         });
     }
 
@@ -30,8 +30,7 @@ class MyTasks extends Beelzebub.Tasks {
      */
     task1() {
         this.logger.log('MyTasks task1: before');
-
-        return this._delay('MyTasks task1: promise delay '+this._delayTime)
+        return this._delay('MyTasks task1: promise delay '+this._delayTime, this._delayTime)
         .then(() => {
             this.logger.log('MyTasks task1: after');
         });
@@ -41,8 +40,9 @@ class MyTasks extends Beelzebub.Tasks {
      * generator based tasks
      */
     * task2() {
+        let delay = this._delayTime + 100;
         this.logger.log('MyTasks task2: before');
-        yield this._delay('MyTasks task2: yield delay '+this._delayTime);
+        yield this._delay('MyTasks task2: yield delay '+delay, delay);
         this.logger.log('MyTasks task2: after');
     }
 
