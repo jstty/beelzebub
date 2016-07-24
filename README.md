@@ -16,7 +16,6 @@ Hightly modular promise/genorator based build task pipeline, compatiable with gu
 Easy to create modular tasks and import tasks using npm.
 
 # TODO
-* [ ] support older node versions (add to tests)
 * [ ] CLI tests
 * [ ] gulp.util type utils? like logging, transfuser
 * [ ] add hotfoot
@@ -34,6 +33,7 @@ Easy to create modular tasks and import tasks using npm.
 * [ ] change task functions to special names
 
 # DONE!
+* [x] support older node versions (add to tests)
 * [x] add logo/icon
 * [x] add travis
 * [x] badges to README (this)
