@@ -6,11 +6,14 @@ module.exports = [
         expect(app).to.not.be.null;
 
         var dump = app.tasks.logger.getBuffer();
-        // console.info('basic logger dump:', dump);
+        // console.info('gulp logger dump:', dump);
 
         var expectList = [
-            'MyTasks task1',
-            'MyTasks task2'
+            'MyTasks - Number of Dest Files: 1',
+            'MyTasks - Coping Files',
+            'MyTasks - Number of Dest Files: 3',
+            'MyTasks - Delete Files',
+            'MyTasks - Number of Dest Files: 1'
         ];
 
         for(var i = 0; i < dump.length; i++){

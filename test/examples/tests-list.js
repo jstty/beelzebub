@@ -4,6 +4,7 @@ module.exports = {
     "async": {},
     "extend": {},
     "stream": {},
+    "gulp": {},
     "default_rootlevel": {},
     "dynamic_simple": {},
     "dynamic_extended": {},

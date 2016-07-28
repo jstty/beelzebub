@@ -1,5 +1,5 @@
 <!-- # Beelzebub - One hell of a task master! -->
-![logo](./logo.png)
+<center>![logo](./logo.png)</center>
 
 [![Build Status](https://secure.travis-ci.org/jstty/beelzebub.png?branch=master)](http://travis-ci.org/jstty/beelzebub)
 [![bitHound Score](https://www.bithound.io/github/jstty/beelzebub/badges/score.svg?branch=master)](https://www.bithound.io/github/jstty/beelzebub)
@@ -29,10 +29,12 @@ Easy to create modular tasks and import tasks using npm.
 
 # Maybe Add/change???
 * [ ] pre/post task functions
+* [ ] browser support
 * [ ] handle configs/options pass to sub groups
 * [ ] change task functions to special names
 
 # DONE!
+* [x] gulp examples
 * [x] support older node versions (add to tests)
 * [x] add logo/icon
 * [x] add travis

@@ -1,37 +1,36 @@
 #!/bin/bash
 
-cd ..
-
+ALL_VERSIONS="0.10 0.11 0.12 4.4 5.12 6.3"
 TEST='mocha --check-leaks -t 5000 -b -R spec test/tests.js'
 
-npm run-script compile
-echo "-----------------------------"
+# run function
+run() {
+	$1
+	if [ $? -eq 0 ]; then
+		echo "All OK!"
+	else
+		echo "================================================="
+		break
+	fi
+}
 
-echo "Testing Node v0.10 ..."
-sudo n 0.10
-$TEST
-echo "-----------------------------"
+echo "================================================="
+echo "-- Building Code..."
+cd ..
+run "npm run-script compile"
 
-echo "Testing Node v0.11 ..."
-sudo n 0.11
-$TEST
-echo "-----------------------------"
-
-echo "Testing Node v0.12 ..."
-sudo n 0.12
-$TEST
-echo "-----------------------------"
-
-echo "Testing Node v4.4 ..."
-sudo n 4.4
-$TEST
-echo "-----------------------------"
-
-echo "Testing Node v5.12 ..."
-sudo n 5.12
-$TEST
-echo "-----------------------------"
-
-echo "Testing Node v6.3 ..."
-sudo n 6.3
-$TEST
+for V in $ALL_VERSIONS; do
+	echo "================================================="
+	echo "-- Testing Node v${V} ..."
+	
+	echo "-------------------------------------------------"
+	echo "- Swiching Node versions..."
+	echo "-------------------------------------------------"
+	run "sudo n $V"
+	
+	echo "-------------------------------------------------"
+	echo "- Running Tests..."
+	echo "-------------------------------------------------"
+	run "$TEST"
+	
+done

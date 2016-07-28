@@ -1,6 +1,6 @@
 {
   "name": "beelzebub",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "description": "One hell of a task master!",
   "main": "index.js",
   "bin": {
@@ -41,6 +41,7 @@
     "compile": "./node_modules/.bin/babel lib --out-dir legacy",
     "prepublish": "npm run-script compile",
     "pretest": "npm run-script compile",
+    "test-all": "cd test && ./test-all-nodes.sh",
     "test": "istanbul --config=test/.istanbul.yml cover _mocha -- --check-leaks -t 5000 -b -R spec test/tests.js",
     "coveralls": "cat ./test/.coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
     "clean": "rm -rf node_modules"
