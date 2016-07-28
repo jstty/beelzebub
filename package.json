@@ -1,6 +1,6 @@
 {
   "name": "beelzebub",
-  "version": "0.6.3",
+  "version": "0.6.5",
   "description": "One hell of a task master!",
   "main": "index.js",
   "bin": {
@@ -38,13 +38,15 @@
     "url": "git+https://github.com/jstty/beelzebub.git"
   },
   "scripts": {
+    "lint": "npm run clean && ./node_modules/.bin/eslint lib examples test",
+    "lint:fix": "npm run clean && ./node_modules/.bin/eslint lib examples test --fix",
     "compile": "./node_modules/.bin/babel lib --out-dir legacy",
+    "clean": "find examples -name 'node_modules' -print0 | xargs -0 rm -rf",
     "prepublish": "npm run-script compile",
     "pretest": "npm run-script compile",
-    "test-all": "cd test && ./test-all-nodes.sh",
+    "test:all": "cd test && ./test-all-nodes.sh",
     "test": "istanbul --config=test/.istanbul.yml cover _mocha -- --check-leaks -t 5000 -b -R spec test/tests.js",
-    "coveralls": "cat ./test/.coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
-    "clean": "rm -rf node_modules"
+    "coveralls": "cat ./test/.coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
   },
   "dependencies": {
     "co": "^4.6.0",
@@ -52,7 +54,8 @@
     "lodash": "^4.13.1",
     "stream-to-promise": "^2.1.1",
     "stumpy": "^0.6.10",
-    "when": "^3.7.7"
+    "when": "^3.7.7",
+    "transfuser": "~0.2.x"
   },
   "devDependencies": {
     "babel-cli": "^6.10.1",
@@ -64,17 +67,23 @@
     "babel-runtime": "^6.9.2",
     "chai": "~3.5.0",
     "coveralls": "^2.11.4",
+    "eslint": "^3.3.1",
+    "eslint-plugin-promise": "^2.0.1",
+    "eslint-plugin-standard": "^2.0.0",
     "istanbul": "^0.4.4",
-    "mocha": "~2.5.3"
+    "mocha": "~2.5.3",
+    "shelljs": "^0.7.3"
   },
   "engines": {
-    "node": ">=0.10.0"
+    "node": ">=0.12.0"
   },
   "babel": {
     "presets": [
       "es2015",
       "stage-3"
     ],
-    "plugins": ["transform-runtime"]
+    "plugins": [
+      "transform-runtime"
+    ]
   }
 }

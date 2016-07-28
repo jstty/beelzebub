@@ -4,7 +4,7 @@
 const _          = require('lodash');
 const path       = require('path');
 const cli        = require('commander');
-const beelzebub  = require('../index.js');
+const Beelzebub  = require('../index.js');
 const manifest   = require('../package.json');
 const currentDir = process.cwd();
 
@@ -12,9 +12,12 @@ cli.version(manifest.version)
    .option('-f, --file <file>', 'Load file')
    .parse(process.argv);
 
-// '../examples/basic_helloworld.js'
-
+const bz = Beelzebub({ verbose: true });
+const runTasks  = cli.args; // tasks to run
 let allTasks = [];
+
+
+// TODO: use transfuser
 function loadFile(tasks, file, displayError){
   try {
     // need to join the current dir,
@@ -40,12 +43,23 @@ if(cli.file) {
 // check if beelzebub.js/json file
 allTasks = loadFile(allTasks, './beelzebub.js');
 allTasks = loadFile(allTasks, './beelzebub.json');
+allTasks = loadFile(allTasks, './bz.js');
+allTasks = loadFile(allTasks, './bz.json');
 
-// console.log('tasks:', tasks);
-if(!allTasks.length) {
-  console.error('No Tasks to run');
+if(!allTasks || !_.isArray(allTasks) || !allTasks.length) {
+  console.error('No Tasks Loaded');
   process.exit();
   return;
 }
 
-beelzebub.runCLI(allTasks);
+if(!runTasks || !_.isArray(runTasks) || !runTasks.length) {
+  console.error('No Tasks to Run');
+  process.exit();
+  return;
+}
+
+allTasks.map( (task) => {
+  bz.add(task);
+});
+
+bz.run(...runTasks);

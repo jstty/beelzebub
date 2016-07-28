@@ -1,48 +1,47 @@
 'use strict';
 // !-- FOR TESTS
-let wrapper = function(options) {
+let wrapper = function (options) {
 // --!
 
-
 // =====================================================
-let Beelzebub = require('../../');
-let bz = Beelzebub(options || { verbose: true });
+  let Beelzebub = require('../../');
+  let bz = Beelzebub(options || { verbose: true });
 
-class MyRootLevel extends Beelzebub.Tasks {
-    constructor(config) {
-        super(config);
-        this.$useAsRoot();
+  class MyRootLevel extends Beelzebub.Tasks {
+    constructor (config) {
+      super(config);
+      this.$useAsRoot();
     }
 
-    default() {
-        this.logger.log('MyRootLevel myDefault');
+    default () {
+      this.logger.log('MyRootLevel myDefault');
     }
 
-    task1() {
-        this.logger.log('MyRootLevel task1');
+    task1 () {
+      this.logger.log('MyRootLevel task1');
     }
 
-    task2() {
-        this.logger.log('MyRootLevel task2');
-    }
-}
-
-class MyTasks extends Beelzebub.Tasks {
-    constructor(config) {
-        super(config);
-        this.$setName("MyTasks");
-        this.$setDefault('myDefault');
-    }
-
-    myDefault() {
-        this.logger.log('MyTasks myDefault');
+    task2 () {
+      this.logger.log('MyRootLevel task2');
     }
 }
 
-bz.add( MyRootLevel );
-bz.add( MyTasks );
+  class MyTasks extends Beelzebub.Tasks {
+    constructor (config) {
+      super(config);
+      this.$setName('MyTasks');
+      this.$setDefault('myDefault');
+    }
 
-bz.run(
+    myDefault () {
+      this.logger.log('MyTasks myDefault');
+    }
+}
+
+  bz.add(MyRootLevel);
+  bz.add(MyTasks);
+
+  bz.run(
     'default',
     'task1',
     'task2',
@@ -50,10 +49,9 @@ bz.run(
 );
 // =====================================================
 
-
 // !-- FOR TESTS
-return bz; };
+  return bz; };
 module.exports = wrapper;
 // if not running in test, then run wrapper
-if(typeof global.it !== 'function') wrapper();
+if (typeof global.it !== 'function') wrapper();
 // --!

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ALL_VERSIONS="0.10 0.11 0.12 4.4 5.12 6.3"
+ALL_VERSIONS="0.12 4.5 5.12 6.5"
 TEST='mocha --check-leaks -t 5000 -b -R spec test/tests.js'
 
 # run function

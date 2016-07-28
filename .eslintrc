@@ -1,0 +1,36 @@
+{
+    "extends": "standard",
+    "rules": {
+        "no-multi-spaces": [ 
+            "error", { 
+                "exceptions": {
+                    "Property": true, 
+                    "VariableDeclarator": true,
+                    "ImportDeclaration":  true
+                } 
+            }
+        ],
+        "key-spacing": [ 
+            "error", { 
+                "align": {
+                    "beforeColon": false,
+                    "afterColon":  true,
+                    "on": "value"
+                },
+                "mode": "minimum"
+            }
+        ],
+        "brace-style": 0,
+        "no-eval": [ 
+            "error", {
+                "allowIndirect": true
+            }
+        ],
+        "semi": ["error", "always"]
+    },
+    "env": {
+        "node": true,
+        "es6": true,
+        "mocha": true
+    }
+}

@@ -1,13 +1,5 @@
 'use strict';
-
-var Beelzebub = require('../../');
-Beelzebub({
-  verbose: true
-});
-
-// function defaultTask (target) {
-//   target.isTestable = true;
-// }
+const Beelzebub = require('../../');
 
 class MyTasks extends Beelzebub.Tasks {
   constructor (config) {
@@ -15,7 +7,6 @@ class MyTasks extends Beelzebub.Tasks {
     this.$setName('MyTasks');
   }
 
-    // TODO: @defaultTask
   task1 () {
     this.logger.log('MyTasks task1');
   }
@@ -28,7 +19,6 @@ class MyTasks extends Beelzebub.Tasks {
     this.logger.error('this should be ignored');
   }
 }
-Beelzebub.add(MyTasks);
 
-console.log('-------------------------');
-Beelzebub.run('MyTasks.task1', 'MyTasks.task2');
+// bz MyTasks.task1 MyTasks.task2
+module.exports = MyTasks;

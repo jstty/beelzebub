@@ -1,62 +1,61 @@
 'use strict';
 // !-- FOR TESTS
-let wrapper = function(options) {
+let wrapper = function (options) {
 // --!
 
-
 // =====================================================
-let Beelzebub = require('../../');
-let bz = Beelzebub(options || { verbose: true });
+  let Beelzebub = require('../../');
+  let bz = Beelzebub(options || { verbose: true });
 
-const gulp  = require('gulp');
-const del   = require('del');
-const shell = require('shelljs');
+  const gulp  = require('gulp');
+  const del   = require('del');
+  const shell = require('shelljs');
 
-class MyTasks extends Beelzebub.Tasks {
-    constructor(config) {
-        super(config);
-        this.$setName("MyTasks");
+  class MyTasks extends Beelzebub.Tasks {
+    constructor (config) {
+      super(config);
+      this.$setName('MyTasks');
 
-        this._src  = './static-files/src';
-        this._dest = './static-files/dest';
+      this._src = './static-files/src';
+      this._dest = './static-files/dest';
     }
 
-    CopyFile() {
-        this.logger.log('MyTasks - Coping Files');
-        return gulp.src(this._src + '/*', {base: this._src})
-                   .pipe(gulp.dest(this._dest));
+    CopyFile () {
+      this.logger.log('MyTasks - Coping Files');
+      return gulp.src(this._src + '/*', {base: this._src})
+                .pipe(gulp.dest(this._dest));
     }
 
-    NumberOfDestFiles() {
-        return new Promise((resolve, reject) => {
-                shell.exec(
+    NumberOfDestFiles () {
+      return new Promise((resolve, reject) => {
+        shell.exec(
                     `cd ${this._dest}; ls -d -- * | wc -l`,
-                    {
-                        silent: true,
-                        async: true
-                    },
+          {
+            silent: true,
+            async:  true
+          },
                     (code, stdout, stderr) => {
-                        if(stderr) {
-                            return reject(stderr);
-                        }
+                      if (stderr) {
+                        return reject(stderr);
+                      }
 
-                        let count = parseInt(stdout);
-                        this.logger.log(`MyTasks - Number of Dest Files: ${count}`);
-                        resolve();
+                      let count = parseInt(stdout);
+                      this.logger.log(`MyTasks - Number of Dest Files: ${count}`);
+                      resolve();
                     }
                 );
-        });
+      });
     }
 
-    DeleteFiles() {
-        this.logger.log('MyTasks - Delete Files');
-        return del(this._dest+'/*.txt');
+    DeleteFiles () {
+      this.logger.log('MyTasks - Delete Files');
+      return del(this._dest + '/*.txt');
     }
 
 }
-bz.add( MyTasks );
+  bz.add(MyTasks);
 
-bz.run(
+  bz.run(
     'MyTasks.NumberOfDestFiles',
     'MyTasks.CopyFile',
     'MyTasks.NumberOfDestFiles',
@@ -65,10 +64,9 @@ bz.run(
 );
 // =====================================================
 
-
 // !-- FOR TESTS
-return bz; };
+  return bz; };
 module.exports = wrapper;
 // if not running in test, then run wrapper
-if(typeof global.it !== 'function') wrapper();
+if (typeof global.it !== 'function') wrapper();
 // --!
