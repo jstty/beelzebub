@@ -29,7 +29,7 @@ _.forEach(list, function (testList, item) {
     this.timeout(timeoutSec * 1000);
 
         // iterate over all tests in group
-    _.forEach(testList, function (appName, name) {
+    _.forEach(testList, function (config, name) {
       describe(name, function () {
                 // create sub-group for each test
         var app = {};
@@ -56,26 +56,33 @@ _.forEach(list, function (testList, item) {
 
                     // try to load app.js file
           try {
-            var appFile = path.resolve('.' + path.sep + name + '.js');
+            app.file = path.resolve('.' + path.sep + name + '.js');
                         // console.log("name:", name, ", appFile:", appFile, "\n");
                         // console.log("cwd:", process.cwd(), "\n");
                         // console.log(name, "config:", app.config);
-            app.tasks = require(appFile)(app.config);
+            if (config.type !== 'cli') {
+              app.tasks = require(app.file)(app.config);
+            }
           } catch (err) {
             expect(err).not.to.be.null;
             console.error(err);
           }
 
-                    // console.log("app:", !!app, "\n");
+          // console.log("app:", !!app, "\n");
           expect(app).not.to.be.null;
-          expect(app.tasks).not.to.be.null;
 
-          var running = app.tasks.getRunning();
-          expect(running).not.to.be.null;
-          running.then(function () {
-                        // console.log(name, ", buffer:", app.config.logger.getBuffer());
+          if (config.type !== 'cli') {
+            expect(app.tasks).not.to.be.null;
+
+            var running = app.tasks.getRunning();
+            expect(running).not.to.be.null;
+            running.then(function () {
+              // console.log(name, ", buffer:", app.config.logger.getBuffer());
+              done();
+            });
+          } else {
             done();
-          });
+          }
         });
 
         after(function () {
@@ -85,9 +92,26 @@ _.forEach(list, function (testList, item) {
                 // iterated over all sub-tests for a single group test
         tests.forEach(function (test, idx) {
           it('Test ' + (idx + 1), function (done) {
-                        // console.log(name, ", buffer:", app.config.logger.getBuffer());
-            test(app);
-            done();
+            if (config.type === 'cli') {
+              config.args.push('-f ' + app.file);
+              var cmd = config.args.join(' ');
+              shell.exec('../../bin/beelzebub ' + cmd,
+              { silent: true },
+              function (code, stdout, stderr) {
+                expect(app).to.not.be.null;
+                expect(stdout).to.not.be.null;
+                expect(stderr).to.equal('');
+
+                test(app, stdout);
+                done();
+              });
+            } else {
+              // console.log(name, ", buffer:", app.config.logger.getBuffer());
+              expect(app).to.not.be.null;
+
+              test(app);
+              done();
+            }
           });
         });
       });

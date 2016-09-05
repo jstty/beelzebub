@@ -22,7 +22,11 @@ function loadFile(tasks, file, displayError){
   try {
     // need to join the current dir,
     // because require is relative to THIS file not the running process
-    let fTasks = require( path.join(currentDir, file) );
+    if(!path.isAbsolute(file)) {
+      file = path.join(currentDir, file);
+    }
+    
+    let fTasks = require( file );
     if(fTasks) {
       tasks = _.merge(tasks, fTasks);
     }

@@ -54,8 +54,8 @@
     "lodash": "^4.13.1",
     "stream-to-promise": "^2.1.1",
     "stumpy": "^0.6.10",
-    "when": "^3.7.7",
-    "transfuser": "~0.2.x"
+    "transfuser": "~0.2.x",
+    "when": "^3.7.7"
   },
   "devDependencies": {
     "babel-cli": "^6.10.1",

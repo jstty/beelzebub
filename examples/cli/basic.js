@@ -1,5 +1,6 @@
 'use strict';
-const Beelzebub = require('../../');
+// simulate loading from a different BZ (for Global vs Local), but still functioanlly the same
+const Beelzebub = require('../../legacy');
 
 class MyTasks extends Beelzebub.Tasks {
   constructor (config) {
