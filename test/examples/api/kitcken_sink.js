@@ -6,7 +6,7 @@ module.exports = [
     expect(app).to.not.be.null;
 
     var dump = app.tasks.logger.getBuffer();
-        // console.info('kitcken_sink logger dump:', dump);
+    // console.info('kitcken_sink logger dump:', dump);
 
     var expectList = [
       'MyBaseTasks task1',

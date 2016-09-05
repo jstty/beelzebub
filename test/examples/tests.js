@@ -1,13 +1,13 @@
 'use strict';
 
-var _        = require('lodash');
-var path     = require('path');
-var Stumpy   = require('stumpy');
-var shell    = require('shelljs');
+var _          = require('lodash');
+var path       = require('path');
+var Stumpy     = require('stumpy');
+var shell      = require('shelljs');
 
-var bz      = require('../../index.js');
-var common  = require('../util/common.js');
-var expect  = common.expect;
+var Beelzebub = require('../../index.js');
+var common    = require('../util/common.js');
+var expect    = common.expect;
 
 var rootPath = __dirname;
 var examplePath = path.join(rootPath, '..' + path.sep + '..' + path.sep + 'examples' + path.sep);
@@ -24,26 +24,26 @@ process.setMaxListeners(0);
 
 // iterate over all test groups
 _.forEach(list, function (testList, item) {
-    // create group for each test
+  // create group for each test
   describe(item, function () {
     this.timeout(timeoutSec * 1000);
 
-        // iterate over all tests in group
+    // iterate over all tests in group
     _.forEach(testList, function (config, name) {
       describe(name, function () {
-                // create sub-group for each test
+        // create sub-group for each test
         var app = {};
         var dt = path.join(rootPath, '.' + path.sep + item + path.sep + name + '.js');
-                // console.log("example test dir:", dt, "\n");
+        // console.log("example test dir:", dt, "\n");
         var tests = require(dt);
 
-                // initialize server for test
+        // initialize server for test
         before(function (done) {
           var d = path.join(examplePath, item);
-                    // console.log("example dir:", d, "\n");
+          // console.log("example dir:", d, "\n");
           process.chdir(d);
-                    // exec('npm install', { silent: true });
-                    // console.log("cwd:", process.cwd(), "\n");
+          // exec('npm install', { silent: true });
+          // console.log("cwd:", process.cwd(), "\n");
 
           var stumpy = new Stumpy({
                         // display: false,
@@ -54,12 +54,12 @@ _.forEach(list, function (testList, item) {
             logger:  stumpy
           };
 
-                    // try to load app.js file
+          // try to load app.js file
           try {
             app.file = path.resolve('.' + path.sep + name + '.js');
-                        // console.log("name:", name, ", appFile:", appFile, "\n");
-                        // console.log("cwd:", process.cwd(), "\n");
-                        // console.log(name, "config:", app.config);
+            // console.log("name:", name, ", appFile:", appFile, "\n");
+            // console.log("cwd:", process.cwd(), "\n");
+            // console.log(name, "config:", app.config);
             if (config.type !== 'cli') {
               app.tasks = require(app.file)(app.config);
             }
@@ -86,26 +86,25 @@ _.forEach(list, function (testList, item) {
         });
 
         after(function () {
-          bz.delete();
+          Beelzebub.delete();
         });
 
-                // iterated over all sub-tests for a single group test
+        // iterated over all sub-tests for a single group test
         tests.forEach(function (test, idx) {
           it('Test ' + (idx + 1), function (done) {
             if (config.type === 'cli') {
-              config.args.push('-f ' + app.file);
-              var cmd = config.args.join(' ');
-              shell.exec('../../bin/beelzebub ' + cmd,
-              { silent: true },
-              function (code, stdout, stderr) {
-                expect(app).to.not.be.null;
-                expect(stdout).to.not.be.null;
-                expect(stderr).to.equal('');
-
-                test(app, stdout);
-                done();
+              process.argv = [];
+              process.argv.push('../../bin/beelzebub');
+              process.argv.push('-f ' + app.file);
+              _.forEach(config.args, (item) => {
+                process.argv.push(item);
               });
-            } else {
+
+              app.tasks = Beelzebub.cli(app.config);
+              test(app);
+              done();
+            }
+            else {
               // console.log(name, ", buffer:", app.config.logger.getBuffer());
               expect(app).to.not.be.null;
 

@@ -6,7 +6,7 @@ module.exports = [
     expect(app).to.not.be.null;
 
     var dump = app.tasks.logger.getBuffer();
-        // console.info('async logger dump:', dump);
+    // console.info('async logger dump:', dump);
 
     var expectList = [
       'MyTasks task1: before',

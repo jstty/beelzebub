@@ -2,7 +2,17 @@ var common  = require('../../util/common.js');
 var expect  = common.expect;
 
 module.exports = [
-  function (app, out) {
-    expect(out).is.equal("MyTasks task1\nMyTasks task2\n");
+  function (app) {
+    var dump = app.tasks.logger.getBuffer();
+    // console.info('basic logger dump:', dump);
+
+    var expectList = [
+      'MyTasks task1',
+      'MyTasks task2'
+    ];
+
+    for (var i = 0; i < dump.length; i++) {
+      expect(dump[i]).is.equal(expectList[i]);
+    }
   }
 ];

@@ -22,9 +22,13 @@ var _createClass3 = _interopRequireDefault(_createClass2);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+var path = require('path');
 var _ = require('lodash');
 var co = require('co');
+var cli = require('commander');
 var streamToPromise = require('stream-to-promise');
+
+var manifest = require('../package.json');
 
 // TODO: replace ???
 var when = require('when');
@@ -88,6 +92,20 @@ function isStream(s) {
   return s && _.isObject(s) && _.isFunction(s.pipe);
 }
 
+// can't use instanceof as the source might be a different modules but exactly the same
+function isBaseTask(a) {
+  var checkList = ['$sequance', '$parallel', '$run', '$setDefault', '$isRoot', '$useAsRoot', '$setName', '$getName', '$getTask', '$setSubTask', '$getSubTask'];
+  return _.reduce(checkList, function (result, key) {
+    if (!result) return result;
+    if (!a[key] || !_.isFunction(a[key])) {
+      result = false;
+    }
+    return result;
+  });
+  // return b.prototype.isPrototypeOf(a);
+  // return a instanceof b;
+}
+
 /** ******************************************************
  * Beelzebub Class
  ****************************************************** */
@@ -96,6 +114,7 @@ var Beelzebub = function () {
   function Beelzebub(config) {
     (0, _classCallCheck3.default)(this, Beelzebub);
 
+    this.version = manifest.version;
     this.reset();
     this.init(config);
   }
@@ -177,11 +196,11 @@ var Beelzebub = function () {
 
         tasks = new Tasks(config || this._config);
 
-        if (!(tasks instanceof BaseTasks)) {
+        if (!isBaseTask(tasks)) {
           this.logger.error('Add Task Error: Invalid Class/prototype needs to be of type "Beelzebub.BaseTasks" -', tasks);
           return;
         }
-      } else if (_.isObject(Tasks) && Tasks instanceof BaseTasks) {
+      } else if (_.isObject(Tasks) && isBaseTask(Tasks)) {
         tasks = Tasks;
       } else {
         this.logger.error('Add Task Error: Unknown Task type -', tasks);
@@ -257,6 +276,7 @@ var BaseTasks = function () {
     this._processConfig(config);
     this.beelzebub = config.beelzebub || beelzebubInst;
     this.name = config.name || 'BaseTasks';
+    this.version = manifest.version;
 
     // TODO: use config function/util to process this
 
@@ -866,6 +886,67 @@ BeelzebubMod.run = function () {
   }
 
   return beelzebubInst.run.apply(beelzebubInst, args);
+};
+
+BeelzebubMod.cli = function (config) {
+  cli.version(manifest.version).option('-f, --file <file>', 'Load file').parse(process.argv);
+
+  var currentDir = process.cwd();
+  var bz = new Beelzebub(config || { verbose: true });
+  var runTasks = cli.args; // tasks to run
+  var allTasks = [];
+
+  // TODO: use transfuser
+  function loadFile(tasks, file, displayError) {
+    try {
+      // need to join the current dir,
+      // because require is relative to THIS file not the running process
+      if (!path.isAbsolute(file)) {
+        file = path.join(currentDir, file);
+      }
+
+      var fTasks = require(file);
+      if (fTasks) {
+        tasks = _.merge(tasks, fTasks);
+      }
+    } catch (err) {
+      if (displayError) {
+        console.error('File (' + file + ') Load Error:', err);
+      }
+    }
+
+    return tasks;
+  }
+
+  // console.info('BZ CLI file:', cli.file);
+  if (cli.file) {
+    allTasks = loadFile(allTasks, cli.file, true);
+  }
+
+  // check if beelzebub.js/json file
+  allTasks = loadFile(allTasks, './beelzebub.js');
+  allTasks = loadFile(allTasks, './beelzebub.json');
+  allTasks = loadFile(allTasks, './bz.js');
+  allTasks = loadFile(allTasks, './bz.json');
+
+  if (!allTasks || !_.isArray(allTasks) || !allTasks.length) {
+    console.error('No Tasks Loaded');
+    process.exit();
+    return;
+  }
+
+  if (!runTasks || !_.isArray(runTasks) || !runTasks.length) {
+    console.error('No Tasks to Run');
+    process.exit();
+    return;
+  }
+
+  allTasks.map(function (task) {
+    bz.add(task);
+  });
+
+  bz.run.apply(bz, (0, _toConsumableArray3.default)(runTasks));
+  return bz;
 };
 
 // classes

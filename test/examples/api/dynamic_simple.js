@@ -6,7 +6,7 @@ module.exports = [
     expect(app).to.not.be.null;
 
     var dump = app.tasks.logger.getBuffer();
-        // console.info('dynamic_simple logger dump:', dump);
+    // console.info('dynamic_simple logger dump:', dump);
 
     var expectList = [
       'MyTasks task1',

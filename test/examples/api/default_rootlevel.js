@@ -6,7 +6,7 @@ module.exports = [
     expect(app).to.not.be.null;
 
     var dump = app.tasks.logger.getBuffer();
-        // console.info('default_rootlevel logger dump:', dump);
+    // console.info('default_rootlevel logger dump:', dump);
 
     var expectList = [
       'MyRootLevel myDefault',
