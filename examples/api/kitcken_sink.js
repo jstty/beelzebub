@@ -83,7 +83,7 @@ let wrapper = function (options) {
 
     seqTask () {
       // this.logger.log('SuperTasks seqTask');
-      return this.$sequance('SuperTasks.task1', this.task2.bind(this), 'SuperTasks.lineTask');
+      return this.$sequence('SuperTasks.task1', this.task2.bind(this), 'SuperTasks.lineTask');
     }
 
     palTask () {
@@ -97,7 +97,7 @@ let wrapper = function (options) {
 
     comboTask () {
       this.logger.log('SuperTasks comboTask');
-      return this.$sequance(
+      return this.$sequence(
             'SuperTasks.task1',
             'SuperTasks.lineTask',
             this.palTask.bind(this),
