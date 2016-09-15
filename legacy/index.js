@@ -697,7 +697,9 @@ var BaseTasks = function () {
         return result;
       });
 
-      return this._running;
+      return this._running.catch(function (e) {
+        _this5.logger.error(e);
+      });
     }
 
     /**
