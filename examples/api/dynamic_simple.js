@@ -56,7 +56,7 @@ let wrapper = function (options) {
     task1 () {
       this.logger.log('MyTasks task1');
 
-      return this.$sequance('MyTasks.MyBaseTasks1.task1', 'MyTasks.MyBaseTasks2.task1');
+      return this.$sequence('MyTasks.MyBaseTasks1.task1', 'MyTasks.MyBaseTasks2.task1');
     }
 }
 

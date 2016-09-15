@@ -94,7 +94,7 @@ function isStream(s) {
 
 // can't use instanceof as the source might be a different modules but exactly the same
 function isBaseTask(a) {
-  var checkList = ['$sequance', '$parallel', '$run', '$setDefault', '$isRoot', '$useAsRoot', '$setName', '$getName', '$getTask', '$setSubTask', '$getSubTask'];
+  var checkList = ['$sequence', '$parallel', '$run', '$setDefault', '$isRoot', '$useAsRoot', '$setName', '$getName', '$getTask', '$setSubTask', '$getSubTask'];
   return _.reduce(checkList, function (result, key) {
     if (!result) return result;
     if (!a[key] || !_.isFunction(a[key])) {
@@ -222,7 +222,7 @@ var Beelzebub = function () {
     }
 
     /**
-     * Runs task(s) - multi args run in sequance, arrays are run in parallel
+     * Runs task(s) - multi args run in sequence, arrays are run in parallel
      * @param task(s) (function or string)
      * @returns {Promise}
      */
@@ -241,15 +241,15 @@ var Beelzebub = function () {
       return this._rootTasks._run.apply(this._rootTasks, args);
     }
   }, {
-    key: 'sequance',
-    value: function sequance(parent) {
+    key: 'sequence',
+    value: function sequence(parent) {
       for (var _len2 = arguments.length, args = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
         args[_key2 - 1] = arguments[_key2];
       }
 
       args.unshift(parent);
-      // use internal function, because $sequance bounces back to root level
-      return this._rootTasks._sequance.apply(this._rootTasks, args);
+      // use internal function, because $sequence bounces back to root level
+      return this._rootTasks._sequence.apply(this._rootTasks, args);
     }
   }, {
     key: 'parallel',
@@ -543,18 +543,18 @@ var BaseTasks = function () {
     }
 
     /**
-     * Runs task(s) in sequance
+     * Runs task(s) in sequence
      * @param task(s) (function or string)
      * @returns {Promise}
      */
 
   }, {
-    key: '$sequance',
-    value: function $sequance() {
+    key: '$sequence',
+    value: function $sequence() {
       var _beelzebub;
 
       // TODO: prevent infinite loop
-      return (_beelzebub = this.beelzebub).sequance.apply(_beelzebub, arguments);
+      return (_beelzebub = this.beelzebub).sequence.apply(_beelzebub, arguments);
     }
 
     /**
@@ -573,7 +573,7 @@ var BaseTasks = function () {
     }
 
     /**
-     * Runs task(s) - multi args run in sequance, arrays are run in parallel
+     * Runs task(s) - multi args run in sequence, arrays are run in parallel
      * @param task(s) (function or string)
      * @returns {Promise}
      */
@@ -588,26 +588,26 @@ var BaseTasks = function () {
     }
 
     /**
-     * Internal Run task(s) in sequance
+     * Internal Run task(s) in sequence
      * @param task(s) (function or string)
      * @returns {Promise}
      */
 
   }, {
-    key: '_sequance',
-    value: function _sequance(parent) {
+    key: '_sequence',
+    value: function _sequence(parent) {
       var _this3 = this;
 
       for (var _len4 = arguments.length, args = Array(_len4 > 1 ? _len4 - 1 : 0), _key4 = 1; _key4 < _len4; _key4++) {
         args[_key4 - 1] = arguments[_key4];
       }
 
-      // this.vLogger.log('sequance args:', args);
+      // this.vLogger.log('sequence args:', args);
 
       if (_.isFunction(parent) || !_.isObject(parent)) {
         args.unshift(parent);
         parent = undefined;
-        // this.vLogger.log('sequance args:', args);
+        // this.vLogger.log('sequence args:', args);
       }
 
       var aTasks = [];
@@ -617,7 +617,7 @@ var BaseTasks = function () {
         });
       });
 
-      // this.vLogger.log('sequance args:', aTasks);
+      // this.vLogger.log('sequence args:', aTasks);
       return whenSequence(aTasks);
     }
 
@@ -656,7 +656,7 @@ var BaseTasks = function () {
     }
 
     /**
-     * Runs task(s) - multi args run in sequance, arrays are run in parallel
+     * Runs task(s) - multi args run in sequence, arrays are run in parallel
      * @param task(s) (function or string)
      * @returns {Promise}
      */
@@ -688,8 +688,8 @@ var BaseTasks = function () {
         taskName = args[0];
         promise = this._runPromiseTask(parent, taskName);
       } else {
-        // multi args mean, run in sequance
-        promise = this._sequance.apply(this, args);
+        // multi args mean, run in sequence
+        promise = this._sequence.apply(this, args);
       }
 
       this._running = promise.then(function (result) {
@@ -854,7 +854,7 @@ BeelzebubMod.add = function (task, config) {
   }
   return beelzebubInst.add(task, config);
 };
-BeelzebubMod.sequance = function () {
+BeelzebubMod.sequence = function () {
   if (!beelzebubInst) {
     beelzebubInst = new Beelzebub();
   }
@@ -863,7 +863,7 @@ BeelzebubMod.sequance = function () {
     args[_key7] = arguments[_key7];
   }
 
-  return beelzebubInst.sequance.apply(beelzebubInst, args);
+  return beelzebubInst.sequence.apply(beelzebubInst, args);
 };
 BeelzebubMod.parallel = function () {
   if (!beelzebubInst) {
