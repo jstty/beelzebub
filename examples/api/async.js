@@ -56,7 +56,7 @@ let wrapper = function (options) {
 }
   bz.add(MyTasks);
 
-  bz.run( // all args run in sequance
+  bz.run( // all args run in sequence
     'MyTasks.task1',
     'MyTasks.task2',
     // 'MyTasks.task3',

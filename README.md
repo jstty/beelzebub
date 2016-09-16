@@ -12,7 +12,7 @@
 
 
 ## Description
-Hightly modular promise/genorator based build task pipeline, compatiable with gulp, fly, ES 5/6/7.
+Hightly modular promise/generator based build task pipeline, compatiable with gulp, fly, ES 5/6/7.
 Easy to create modular tasks and import tasks using npm.
 
 # TODO
