@@ -275,7 +275,7 @@ var BaseTasks = function () {
 
     this._processConfig(config);
     this.beelzebub = config.beelzebub || beelzebubInst;
-    this.name = config.name || 'BaseTasks';
+    this.name = config.name || this.constructor.name || 'BaseTasks';
     this.version = manifest.version;
 
     // TODO: use config function/util to process this
@@ -697,7 +697,9 @@ var BaseTasks = function () {
         return result;
       });
 
-      return this._running;
+      return this._running.catch(function (e) {
+        _this5.logger.error(e);
+      });
     }
 
     /**
