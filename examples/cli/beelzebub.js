@@ -1,4 +1,4 @@
 
 module.exports = [
-  require('./basic.js')
+  require('./helloworld.js')
 ];

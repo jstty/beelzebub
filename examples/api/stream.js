@@ -17,7 +17,7 @@ let wrapper = function (options) {
     task1 () {
       var data = '';
 
-      var stream = fs.createReadStream('./basic.js');
+      var stream = fs.createReadStream('./helloworld.js');
 
       stream.setEncoding('utf8');
 

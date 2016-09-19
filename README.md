@@ -16,24 +16,16 @@ Hightly modular promise/generator based build task pipeline, compatiable with gu
 Easy to create modular tasks and import tasks using npm.
 
 # TODO
-* [ ] CLI tests
-* [ ] gulp.util type utils? like logging, transfuser
-* [ ] add hotfoot
-  * Add string libs
-    ```javascript
-    bz.add('bz-webpack', 'bz-native-electron', 'bz-native-cordova')
-    ```
+* [ ] handle configs/options pass to tasks
+* [ ] add dependancy loading on task execution (hotfoot it!)
 * [ ] propaganda page
-* [ ] support decorators (need to wait for offical spec)
-* [ ] support async/await (need to wait for offical spec)
-
-# Maybe Add/change???
-* [ ] pre/post task functions
-* [ ] browser support
-* [ ] handle configs/options pass to sub groups
-* [ ] change task functions to special names
+* [ ] test decorators
+* [ ] test async/await
+* [ ] use transfuser
 
 # DONE!
+* [x] referance tasks relative current task group
+* [x] CLI tests
 * [x] gulp examples
 * [x] support older node versions (add to tests)
 * [x] add logo/icon
@@ -92,9 +84,9 @@ $ bz MyTasks.task1
 ### 'beelzebub.js' file
 ```javascript
 module.exports = [
-  'bz-frontend-react',
-  'bz-frontend-babel',
-  require('mytask.js')
+  require('bz-frontend-react'),
+  require('bz-frontend-babel'),
+  require('./mytask.js')
 ];
 ```
 ### OR
@@ -103,5 +95,6 @@ module.exports = [
 [
   'bz-frontend-react',
   'bz-frontend-babel',
+  './mytasks.js',
 ]
 ```

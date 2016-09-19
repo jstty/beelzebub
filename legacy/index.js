@@ -12,6 +12,10 @@ var _getPrototypeOf = require('babel-runtime/core-js/object/get-prototype-of');
 
 var _getPrototypeOf2 = _interopRequireDefault(_getPrototypeOf);
 
+var _regenerator = require('babel-runtime/regenerator');
+
+var _regenerator2 = _interopRequireDefault(_regenerator);
+
 var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
 
 var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
@@ -106,6 +110,49 @@ function isBaseTask(a) {
   // return a instanceof b;
 }
 
+function processConfig(config, parentConfig, contex) {
+  if (config.logger) {
+    contex.logger = config.logger;
+  } else {
+    contex.logger = parentConfig.logger || DefaultConfig.logger;
+  }
+
+  // this._config = _.merge(DefaultConfig, config || {});
+  contex._config = _.merge(_.cloneDeep(DefaultConfig), _.cloneDeep(parentConfig), config || {});
+
+  if (contex._config.silent) {
+    contex.logger = nullLogger;
+  }
+  contex._config.logger = contex.logger;
+
+  contex.vLogger = {
+    log: function log() {},
+    info: function info() {}
+  };
+  if (contex._config.verbose) {
+    contex.vLogger = {
+      log: function log() {
+        var _contex$logger;
+
+        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+          args[_key] = arguments[_key];
+        }
+
+        args.unshift('[' + contex.name + '] -');(_contex$logger = contex.logger).log.apply(_contex$logger, args);
+      },
+      info: function info() {
+        var _contex$logger2;
+
+        for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+          args[_key2] = arguments[_key2];
+        }
+
+        args.unshift('[' + contex.name + '] -');(_contex$logger2 = contex.logger).info.apply(_contex$logger2, args);
+      }
+    };
+  }
+}
+
 /** ******************************************************
  * Beelzebub Class
  ****************************************************** */
@@ -124,8 +171,11 @@ var Beelzebub = function () {
     value: function init() {
       var config = arguments.length <= 0 || arguments[0] === undefined ? DefaultConfig : arguments[0];
 
-      this._processConfig(config);
+      processConfig(config, DefaultConfig, this);
+
+      this._config.beelzebub = this; // don't like this, but needed for BaseTasks
       this._rootTasks = new BaseTasks(this._config);
+      this._rootTasks.$useAsRoot();
     }
   }, {
     key: 'reset',
@@ -142,33 +192,72 @@ var Beelzebub = function () {
 
       this._config = _.cloneDeep(DefaultConfig);
       this._rootTasks = null;
+
+      this._initFunctionList = [];
+      this._initDone = false;
     }
-
-    // TODO: unify the config loading from bz and the BaseTasks
-    // TODO: use transfuser to merge configs/load files
-
   }, {
-    key: '_processConfig',
-    value: function _processConfig(config) {
-      if (config.logger) {
-        this.logger = config.logger;
-      } else {
-        this.logger = DefaultConfig.logger;
-      }
+    key: 'getConfig',
+    value: function getConfig() {
+      return this._config;
+    }
+  }, {
+    key: 'isLoading',
+    value: function isLoading() {
+      return !this._initDone;
+    }
+  }, {
+    key: 'addInitFunction',
+    value: function addInitFunction(func) {
+      this._initFunctionList.push(func);
+    }
+  }, {
+    key: 'getInitPromise',
+    value: function getInitPromise() {
+      var func = co.wrap(_regenerator2.default.mark(function _callee() {
+        var results, i, result;
+        return _regenerator2.default.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                results = [];
+                i = 0;
 
-      this._config = _.merge(DefaultConfig, config || {});
+              case 2:
+                if (!(i < this._initFunctionList.length)) {
+                  _context.next = 10;
+                  break;
+                }
 
-      if (this._config.silent) {
-        this.logger = nullLogger;
-      }
-      this._config.logger = this.logger;
+                _context.next = 5;
+                return this._initFunctionList[i]();
 
-      if (this._config.verbose) {
-        this.vLogger = {
-          log: this.logger.log,
-          info: this.logger.info
-        };
-      }
+              case 5:
+                result = _context.sent;
+
+                results.push(result);
+
+              case 7:
+                i++;
+                _context.next = 2;
+                break;
+
+              case 10:
+
+                // this.vLogger.log('runTask initFunctionList done results:', results);
+                this._initDone = true;
+
+                return _context.abrupt('return', results);
+
+              case 12:
+              case 'end':
+                return _context.stop();
+            }
+          }
+        }, _callee, this);
+      }).bind(this));
+
+      return func();
     }
   }, {
     key: 'getRunning',
@@ -209,12 +298,15 @@ var Beelzebub = function () {
 
       if (tasks.$isRoot()) {
         // transfer all the current subTasks from old _rootTasks to current
-        tasks.$setSubTask(this._rootTasks.$getSubTask());
-        tasks.$register();
 
+        tasks.$setSubTask(this._rootTasks.$getSubTask());
         this._rootTasks = tasks;
+
+        return tasks.$register().then(function (results) {
+          // this.vLogger.log('task register done:', results);
+        });
       } else {
-        tasks.$register();
+        // this.vLogger.log('rootTask addSubTasks');
         this._rootTasks.$addSubTasks(tasks, config);
       }
 
@@ -230,8 +322,8 @@ var Beelzebub = function () {
   }, {
     key: 'run',
     value: function run(parent) {
-      for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-        args[_key - 1] = arguments[_key];
+      for (var _len3 = arguments.length, args = Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
+        args[_key3 - 1] = arguments[_key3];
       }
 
       args.unshift(parent);
@@ -243,8 +335,8 @@ var Beelzebub = function () {
   }, {
     key: 'sequence',
     value: function sequence(parent) {
-      for (var _len2 = arguments.length, args = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-        args[_key2 - 1] = arguments[_key2];
+      for (var _len4 = arguments.length, args = Array(_len4 > 1 ? _len4 - 1 : 0), _key4 = 1; _key4 < _len4; _key4++) {
+        args[_key4 - 1] = arguments[_key4];
       }
 
       args.unshift(parent);
@@ -254,8 +346,8 @@ var Beelzebub = function () {
   }, {
     key: 'parallel',
     value: function parallel(parent) {
-      for (var _len3 = arguments.length, args = Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
-        args[_key3 - 1] = arguments[_key3];
+      for (var _len5 = arguments.length, args = Array(_len5 > 1 ? _len5 - 1 : 0), _key5 = 1; _key5 < _len5; _key5++) {
+        args[_key5 - 1] = arguments[_key5];
       }
 
       args.unshift(parent);
@@ -273,10 +365,14 @@ var BaseTasks = function () {
   function BaseTasks(config) {
     (0, _classCallCheck3.default)(this, BaseTasks);
 
-    this._processConfig(config);
     this.beelzebub = config.beelzebub || beelzebubInst;
+
+    processConfig(config, this.beelzebub.getConfig(), this);
+
     this.name = config.name || this.constructor.name || 'BaseTasks';
     this.version = manifest.version;
+    this.namePath = this._buildNamePath(config);
+    // this.vLogger.log('constructor namePath:', this.namePath, ', name:', this.name);
 
     // TODO: use config function/util to process this
 
@@ -285,41 +381,20 @@ var BaseTasks = function () {
     this._tasks = {};
     this._subTasks = {};
 
-    this._loadPromise = when.resolve();
-    this._loading = false;
     this._running = null;
+
+    // TODO: add cli options/commands
+    // this.cli = cli.parse(process.argv);
   }
 
-  // TODO: unify the config loading from bz and the BaseTasks
-  // TODO: use transfuser to merge configs/load files
-
-
   (0, _createClass3.default)(BaseTasks, [{
-    key: '_processConfig',
-    value: function _processConfig(config) {
-      if (config.logger) {
-        this.logger = config.logger;
-      } else {
-        this.logger = DefaultConfig.logger;
+    key: '_buildNamePath',
+    value: function _buildNamePath(config) {
+      var namePath = this.name;
+      if (config.parentPath) {
+        namePath = config.parentPath + '.' + config.name;
       }
-
-      this._config = _.merge(DefaultConfig, config || {});
-
-      if (this._config.silent) {
-        this.logger = nullLogger;
-      }
-      this._config.logger = this.logger;
-
-      this.vLogger = {
-        log: function log() {},
-        info: function info() {}
-      };
-      if (this._config.verbose) {
-        this.vLogger = {
-          log: this.logger.log,
-          info: this.logger.info
-        };
-      }
+      return namePath;
     }
   }, {
     key: '$useAsRoot',
@@ -373,65 +448,49 @@ var BaseTasks = function () {
       return this._running;
     }
   }, {
-    key: '$isLoading',
-    value: function $isLoading() {
-      return this._loading;
-    }
-  }, {
-    key: '$loading',
-    value: function $loading() {
-      return this._loadPromise;
-    }
-  }, {
     key: '$register',
     value: function $register() {
-      var _this = this;
-
+      // this.vLogger.log('$register start');
       var tList = [];
 
       this._bfsTaskBuilder(tList, this);
 
       // run init, running as optimal to shortcut $init's that don't return promises
-      var result = this._normalizeExecFuncToPromise(this.$init, this, true);
-      if (isPromise(result)) {
-        this._loading = true;
-        this._loadPromise = result.then(function (result) {
-          // this.vLogger.log('$register done loading init promise:', result);
-          _this._loading = false;
-          return result;
-        });
-      } else {
-        this._loading = false;
-        this._loadPromise = null;
-      }
+      var initPromise = this._normalizeExecFuncToPromise(this.$init, this);
 
       // this.vLogger.log('$register bfsTaskBuilder outList:', tList);
       this._addTasks(tList, this);
+
+      return initPromise
+      // .then((results) => {
+      //   this.vLogger.log('$register initFunctionList done:', results);
+      // })
+      .then(function (results) {
+        // this.vLogger.log('$register initFunctionList done:', results);
+        return results;
+      });
     }
   }, {
     key: '_addTasks',
     value: function _addTasks(tList, task) {
-      var _this2 = this;
+      var _this = this;
 
-      // this.vLogger.log('addTasksToGulp tList:', tList, ', name:', this.name, ', this != task:', this != task);
+      // this.vLogger.log('addTasksToGulp tList:', tList, ', name:', this.name, ', rootLevel:', this._rootLevel, ', this != task:', this != task);
 
       _.forEach(tList, function (funcName) {
         var taskId = '';
 
-        // if((this != task) && this.name) {
-        //    taskId = this.name+'.';
-        // }
-        if (_this2 !== task && !_this2._rootLevel) {
+        if (_this !== task && !_this._rootLevel) {
           taskId += task.name + '.';
         }
         taskId += funcName;
 
-        if (funcName === _this2._defaultTaskFuncName) {
+        if (funcName === _this._defaultTaskFuncName) {
           taskId = 'default'; // set taskId to 'default'
         }
 
         // this.vLogger.log('taskId:', taskId);
-        _this2._tasks[taskId] = {
+        _this._tasks[taskId] = {
           taskId: taskId,
           tasksObj: task,
           func: task[funcName]
@@ -445,26 +504,30 @@ var BaseTasks = function () {
   }, {
     key: '$addSubTasks',
     value: function $addSubTasks(Task, config) {
+      if (!this.beelzebub.isLoading()) {
+        // console.error('$addSubTasks can only be called during init');
+        return when.reject();
+      }
+
       var task = null;
       if (_.isFunction(Task) && _.isObject(Task)) {
+        config.parentPath = this.namePath;
         task = new Task(config);
-
-        task.$register();
       } else {
         task = Task;
       }
 
+      // this.vLogger.log('$addSubTasks addInitFunction', task.name);
+      this.beelzebub.addInitFunction(function () {
+        return task.$register();
+      });
+
       // this.vLogger.log('task:', task);
       this._subTasks[task.$getName()] = task;
-
-      // var tList = [];
-      // this._bfsTaskBuilder(tList, task);
-      // this.vLogger.log('subTasks bfsTaskBuilder outList:', tList);
-      // this._addTasks(tList, task);
     }
   }, {
     key: '_normalizeExecFuncToPromise',
-    value: function _normalizeExecFuncToPromise(func, parent, optimize) {
+    value: function _normalizeExecFuncToPromise(func, parent) {
       var p = null;
       // this.logger.log('normalizeExecFuncToPromise',
       // 'isPromise:', isPromise(func),
@@ -506,7 +569,7 @@ var BaseTasks = function () {
         p = streamToPromise(p);
       }
 
-      if (!optimize && !isPromise(p)) {
+      if (!isPromise(p)) {
         p = when.resolve(p);
       }
 
@@ -553,8 +616,12 @@ var BaseTasks = function () {
     value: function $sequence() {
       var _beelzebub;
 
+      for (var _len6 = arguments.length, args = Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
+        args[_key6] = arguments[_key6];
+      }
+
       // TODO: prevent infinite loop
-      return (_beelzebub = this.beelzebub).sequence.apply(_beelzebub, arguments);
+      return (_beelzebub = this.beelzebub).sequence.apply(_beelzebub, [this].concat(args));
     }
 
     /**
@@ -568,8 +635,12 @@ var BaseTasks = function () {
     value: function $parallel() {
       var _beelzebub2;
 
+      for (var _len7 = arguments.length, args = Array(_len7), _key7 = 0; _key7 < _len7; _key7++) {
+        args[_key7] = arguments[_key7];
+      }
+
       // TODO: prevent infinite loop
-      return (_beelzebub2 = this.beelzebub).parallel.apply(_beelzebub2, arguments);
+      return (_beelzebub2 = this.beelzebub).parallel.apply(_beelzebub2, [this].concat(args));
     }
 
     /**
@@ -583,8 +654,12 @@ var BaseTasks = function () {
     value: function $run() {
       var _beelzebub3;
 
+      for (var _len8 = arguments.length, args = Array(_len8), _key8 = 0; _key8 < _len8; _key8++) {
+        args[_key8] = arguments[_key8];
+      }
+
       // TODO: prevent infinite loop
-      return (_beelzebub3 = this.beelzebub).run.apply(_beelzebub3, arguments);
+      return (_beelzebub3 = this.beelzebub).run.apply(_beelzebub3, [this].concat(args));
     }
 
     /**
@@ -596,10 +671,10 @@ var BaseTasks = function () {
   }, {
     key: '_sequence',
     value: function _sequence(parent) {
-      var _this3 = this;
+      var _this2 = this;
 
-      for (var _len4 = arguments.length, args = Array(_len4 > 1 ? _len4 - 1 : 0), _key4 = 1; _key4 < _len4; _key4++) {
-        args[_key4 - 1] = arguments[_key4];
+      for (var _len9 = arguments.length, args = Array(_len9 > 1 ? _len9 - 1 : 0), _key9 = 1; _key9 < _len9; _key9++) {
+        args[_key9 - 1] = arguments[_key9];
       }
 
       // this.vLogger.log('sequence args:', args);
@@ -613,7 +688,7 @@ var BaseTasks = function () {
       var aTasks = [];
       _.forEach(args, function (task) {
         aTasks.push(function () {
-          return _this3._runPromiseTask(parent, task);
+          return _this2._runPromiseTask(parent, task);
         });
       });
 
@@ -630,10 +705,10 @@ var BaseTasks = function () {
   }, {
     key: '_parallel',
     value: function _parallel(parent) {
-      var _this4 = this;
+      var _this3 = this;
 
-      for (var _len5 = arguments.length, args = Array(_len5 > 1 ? _len5 - 1 : 0), _key5 = 1; _key5 < _len5; _key5++) {
-        args[_key5 - 1] = arguments[_key5];
+      for (var _len10 = arguments.length, args = Array(_len10 > 1 ? _len10 - 1 : 0), _key10 = 1; _key10 < _len10; _key10++) {
+        args[_key10 - 1] = arguments[_key10];
       }
 
       // this.vLogger.log('parallel args:', args);
@@ -645,14 +720,11 @@ var BaseTasks = function () {
       }
 
       var pList = _.map(args, function (task) {
-        return _this4._runPromiseTask(parent, task);
+        return _this3._runPromiseTask(parent, task);
       });
 
       // this.vLogger.log('parallel pList:', pList);
       return when.all(pList);
-
-      // args.unshift(this);
-      // return this.beelzebub.parallel.apply(this.beelzebub, args);
     }
 
     /**
@@ -664,18 +736,13 @@ var BaseTasks = function () {
   }, {
     key: '_run',
     value: function _run(parent) {
-      var _this5 = this;
+      var _this4 = this;
 
       var taskName = 'default';
       var promise = null;
 
-      // if(this._running) {
-      //     this.logger.error('Already running a task:', this._running);
-      //     return when.reject();
-      // }
-
-      for (var _len6 = arguments.length, args = Array(_len6 > 1 ? _len6 - 1 : 0), _key6 = 1; _key6 < _len6; _key6++) {
-        args[_key6 - 1] = arguments[_key6];
+      for (var _len11 = arguments.length, args = Array(_len11 > 1 ? _len11 - 1 : 0), _key11 = 1; _key11 < _len11; _key11++) {
+        args[_key11 - 1] = arguments[_key11];
       }
 
       if (!_.isObject(parent)) {
@@ -693,12 +760,12 @@ var BaseTasks = function () {
       }
 
       this._running = promise.then(function (result) {
-        _this5._running = null;
+        _this4._running = null;
         return result;
       });
 
       return this._running.catch(function (e) {
-        _this5.logger.error(e);
+        _this4.logger.error(e);
       });
     }
 
@@ -712,19 +779,22 @@ var BaseTasks = function () {
   }, {
     key: '_runTask',
     value: function _runTask(task) {
-      var _this6 = this;
+      var _this5 = this;
 
       var p = null;
 
       // wait for self to complete
-      if (this.$isLoading() && isPromise(this.$loading())) {
-        p = this.$loading();
+      if (this.beelzebub.isLoading()) {
+        p = this.beelzebub.getInitPromise();
       } else {
         p = when.resolve();
       }
 
       return p.then(function () {
-        // this.vLogger.log( 'task class:', this.name, ', running task:', task, ', all tasks:', _.keys(this._tasks), ', all subTasks:', _.keys(this._subTasks) );
+        // this.vLogger.log('task class:', this.name
+        //   , ', running task:', task
+        //   , ', all tasks:', _.keys(this._tasks)
+        //   , ', all subTasks:', _.keys(this._subTasks));
 
         // if no task specified, then use default
         if (!task || !task.length) {
@@ -733,13 +803,17 @@ var BaseTasks = function () {
 
         if (_.isString(task)) {
           var taskParts = task.split('.');
+          var taskUnderscored = task.split(':').join('_');
           var taskName = taskParts.shift();
 
-          if (_this6._subTasks[taskName]) {
-            return _this6._subTasks[taskName]._runTask(taskParts.join('.'));
-          } else if (_this6.$getTask(taskName)) {
-            var taskObj = _this6.$getTask(taskName);
-            return _this6._normalizeExecFuncToPromise(taskObj.func, taskObj.tasksObj);
+          if (_this5._subTasks[taskName]) {
+            return _this5._subTasks[taskName]._runTask(taskParts.join('.'));
+          } else if (_this5.$getTask(taskUnderscored)) {
+            var taskObj = _this5.$getTask(taskUnderscored);
+            return _this5._normalizeExecFuncToPromise(taskObj.func, taskObj.tasksObj);
+          } else if (_this5.$getTask(taskName)) {
+            var _taskObj = _this5.$getTask(taskName);
+            return _this5._normalizeExecFuncToPromise(_taskObj.func, _taskObj.tasksObj);
           }
           // Error ???
         }
@@ -769,6 +843,11 @@ var BaseTasks = function () {
 
       // if task is string, then find function and parent in list
       if (_.isString(task)) {
+        // if first char "." then relative to parent path
+        if (task.charAt(0) === '.') {
+          task = parent.namePath + task;
+        }
+
         var taskParts = task.split('.');
         var taskName = taskParts.shift();
 
@@ -776,8 +855,6 @@ var BaseTasks = function () {
           // now check if in sub level
           if (this._subTasks.hasOwnProperty(taskName)) {
             p = this._subTasks[taskName]._runTask(taskParts.join('.'));
-            // this._subTasks[taskName].$getTask('default')
-            // p = this._subTasks[taskName]._runTask('default');
           } else {
             var error = 'task name not found: "' + task + '"';
             this.logger.error(error);
@@ -802,26 +879,12 @@ var BaseTasks = function () {
           }
         }
       } else if (_.isFunction(task)) {
-        // if(!parent) {
-        //     parent = task;
-        // }
         p = this._normalizeExecFuncToPromise(task, parent);
       } else {
         var _error2 = 'task type not supported: "' + task + '"';
         this.logger.trace(_error2);
         p = when.reject(_error2);
       }
-
-      // TODO: not sure if this need, want to remove, infavor of _runTask in class
-      // if(parent.$isLoading && parent.$isLoading()) {
-      //    p = parent.$loading()
-      //        .then( (result) => {
-      //            //this.vLogger.log( 'runPromiseTask all tasks:', _.keys(this._tasks), ', result:', result );
-      //            return this._normalizeExecFuncToPromise(task, parent);
-      //        });
-      // } else {
-      //    p = this.normalizeExecFuncToPromise(task, parent);
-      // }
 
       // TODO: what happens to the data at the end? TBD
       return p;
@@ -861,8 +924,8 @@ BeelzebubMod.sequence = function () {
     beelzebubInst = new Beelzebub();
   }
 
-  for (var _len7 = arguments.length, args = Array(_len7), _key7 = 0; _key7 < _len7; _key7++) {
-    args[_key7] = arguments[_key7];
+  for (var _len12 = arguments.length, args = Array(_len12), _key12 = 0; _key12 < _len12; _key12++) {
+    args[_key12] = arguments[_key12];
   }
 
   return beelzebubInst.sequence.apply(beelzebubInst, args);
@@ -872,8 +935,8 @@ BeelzebubMod.parallel = function () {
     beelzebubInst = new Beelzebub();
   }
 
-  for (var _len8 = arguments.length, args = Array(_len8), _key8 = 0; _key8 < _len8; _key8++) {
-    args[_key8] = arguments[_key8];
+  for (var _len13 = arguments.length, args = Array(_len13), _key13 = 0; _key13 < _len13; _key13++) {
+    args[_key13] = arguments[_key13];
   }
 
   return beelzebubInst.parallel.apply(beelzebubInst, args);
@@ -883,8 +946,8 @@ BeelzebubMod.run = function () {
     beelzebubInst = new Beelzebub();
   }
 
-  for (var _len9 = arguments.length, args = Array(_len9), _key9 = 0; _key9 < _len9; _key9++) {
-    args[_key9] = arguments[_key9];
+  for (var _len14 = arguments.length, args = Array(_len14), _key14 = 0; _key14 < _len14; _key14++) {
+    args[_key14] = arguments[_key14];
   }
 
   return beelzebubInst.run.apply(beelzebubInst, args);
@@ -912,7 +975,10 @@ BeelzebubMod.cli = function (config) {
         tasks = _.merge(tasks, fTasks);
       }
     } catch (err) {
-      if (displayError) {
+      // show non load errors
+      if (err.code !== 'MODULE_NOT_FOUND') {
+        console.error(err);
+      } else if (displayError) {
         console.error('File (' + file + ') Load Error:', err);
       }
     }

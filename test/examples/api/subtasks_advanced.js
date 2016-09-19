@@ -16,7 +16,13 @@ module.exports = [
       'MySubSubBaseTasks2 init',
       'MySubSubBaseTasks1 init',
       'MySubSubBaseTasks2 init',
-      'MySubSubBaseTasks task1 - 789'
+      'MyTasks task1',
+      'MySubBaseTasks1 default',
+      'MySubSubBaseTasks1 task1 - 123',
+      'MySubSubBaseTasks2 task1 - 456',
+      'MySubBaseTasks2 default',
+      'MySubSubBaseTasks1 task1 - 246',
+      'MySubSubBaseTasks2 task1 - 912'
     ];
 
     for (var i = 0; i < dump.length; i++) {

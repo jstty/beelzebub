@@ -1,6 +1,6 @@
 {
   "name": "beelzebub",
-  "version": "0.6.6",
+  "version": "0.7.0",
   "description": "One hell of a task master!",
   "main": "index.js",
   "bin": {
@@ -54,7 +54,6 @@
     "lodash": "^4.13.1",
     "stream-to-promise": "^2.1.1",
     "stumpy": "^0.6.10",
-    "transfuser": "~0.2.x",
     "when": "^3.7.7"
   },
   "devDependencies": {
@@ -66,12 +65,12 @@
     "babel-register": "^6.11.5",
     "babel-runtime": "^6.9.2",
     "chai": "~3.5.0",
-    "coveralls": "^2.11.4",
+    "coveralls": "^2.11.13",
     "eslint": "^3.3.1",
     "eslint-plugin-promise": "^2.0.1",
     "eslint-plugin-standard": "^2.0.0",
     "istanbul": "^0.4.4",
-    "mocha": "~2.5.3",
+    "mocha": "~3.0.2",
     "shelljs": "^0.7.3"
   },
   "engines": {

@@ -9,9 +9,10 @@ module.exports = [
     // console.info('dynamic_simple logger dump:', dump);
 
     var expectList = [
+      'MyTasks init',
+      'MyBaseTasks init',
+      'MyBaseTasks init',
       'MyTasks task1',
-      'MyBaseTasks init',
-      'MyBaseTasks init',
       'MyBaseTasks task1 - 123',
       'MyBaseTasks task1 - 456'
     ];

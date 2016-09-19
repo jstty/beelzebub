@@ -11,7 +11,8 @@ module.exports = [
     var expectList = [
       'MyTasks task1',
       'MyTasks task3',
-      'MyBaseTasks task2'
+      'MyBaseTasks task2',
+      'MyBaseTasks task2 option'
     ];
 
     for (var i = 0; i < dump.length; i++) {

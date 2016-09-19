@@ -42,6 +42,46 @@
             "outDir": null
         },
         {
+            "name": "api - default_rootlevel",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceRoot}/examples/api/default_rootlevel.js",
+            "stopOnEntry": false,
+            "args": [],
+            "cwd": "${workspaceRoot}/examples/api",
+            "preLaunchTask": null,
+            "runtimeExecutable": null,
+            "runtimeArgs": [
+                "--nolazy"
+            ],
+            "env": {
+                "NODE_ENV": "development"
+            },
+            "externalConsole": false,
+            "sourceMaps": false,
+            "outDir": null
+        },
+        {
+            "name": "api - subtasks_advanced",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceRoot}/examples/api/subtasks_advanced.js",
+            "stopOnEntry": false,
+            "args": [],
+            "cwd": "${workspaceRoot}/examples/api",
+            "preLaunchTask": null,
+            "runtimeExecutable": null,
+            "runtimeArgs": [
+                "--nolazy"
+            ],
+            "env": {
+                "NODE_ENV": "development"
+            },
+            "externalConsole": false,
+            "sourceMaps": false,
+            "outDir": null
+        },
+        {
             "name": "cli - basic",
             "type": "node",
             "request": "launch",

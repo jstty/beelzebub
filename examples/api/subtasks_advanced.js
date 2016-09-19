@@ -17,7 +17,7 @@ let wrapper = function (options) {
     }
 
     $init () {
-      return this._delay(this.name + ' init', 200);
+      this.logger.log(`${this.name} init`);
     }
 
     _delay (message, delay) {
@@ -30,9 +30,18 @@ let wrapper = function (options) {
     }
 
     task1 () {
-      return this._delay('MySubSubBaseTasks task1 - ' + this.value);
+      // return this.$parallel(this.task2, this.task3);
+      return this._delay(`${this.name} task1 - ${this.value}`);
     }
-}
+
+    task2 () {
+      return this._delay(`${this.name} task2 - ${this.value}`);
+    }
+
+    task3 () {
+      return this._delay(`${this.name} task3 - ${this.value}`);
+    }
+  }
 
   class MySubBaseTasks extends Beelzebub.Tasks {
     constructor (config) {
@@ -40,63 +49,50 @@ let wrapper = function (options) {
       this.$setName(config.name || 'MySubBaseTasks');
 
       this.value = config.value;
-      this._delayTime = config.delayTime || 500;
     }
 
     $init () {
-      this.logger.log(this.name + ' init');
+      this.logger.log(`${this.name} init`);
       // simlate tasks dynamiclly added after some async event
       return new Promise((resolve, reject) => {
         setTimeout(() => {
-          this.$addSubTasks(MySubSubBaseTasks, { name: 'MySubSubBaseTasks1', value: 789 });
-          this.$addSubTasks(MySubSubBaseTasks, { name: 'MySubSubBaseTasks2', value: 321, delayTime: 100000 });
+          this.$addSubTasks(MySubSubBaseTasks, { name: 'MySubSubBaseTasks1', value: this.value * 123 });
+          this.$addSubTasks(MySubSubBaseTasks, { name: 'MySubSubBaseTasks2', value: this.value * 456, delayTime: 200 });
           // done
-          resolve(1234);
+          resolve();
         }, 200);
       });
     }
 
-    _delay (message, delay) {
-      return new Promise((resolve, reject) => {
-        setTimeout(() => {
-          this.logger.log(message);
-          resolve();
-        }, delay || this._delayTime);
-      });
+    default () {
+      this.logger.log(this.name + ' default');
+      return this.$sequence('.MySubSubBaseTasks1.task1', '.MySubSubBaseTasks2.task1');
     }
-
-    task1 () {
-      return this._delay('MySubBaseTasks task1 - ' + this.value);
-    }
-}
+  }
 
   class MyTasks extends Beelzebub.Tasks {
-    constructor (config) {
-      super(config);
-      this.$setName('MyTasks');
-    }
-
     $init () {
-      this.logger.log('MyTasks init');
+      this.logger.log(`${this.name} init`);
       // simlate tasks dynamiclly added after some async event
       return new Promise((resolve, reject) => {
         setTimeout(() => {
-          this.$addSubTasks(MySubBaseTasks, { name: 'MySubBaseTasks1', value: 123 });
-          this.$addSubTasks(MySubBaseTasks, { name: 'MySubBaseTasks2', value: 456, delayTime: 100000 });
+          this.$addSubTasks(MySubBaseTasks, { name: 'MySubBaseTasks1', value: 1 });
+          this.$addSubTasks(MySubBaseTasks, { name: 'MySubBaseTasks2', value: 2 });
           // done
-          resolve(1234);
+          resolve();
         }, 200);
       });
     }
 
-    task1 () {
-      this.logger.log('MyTasks task1');
-      return this.$sequence('MyTasks.MySubBaseTasks1.task1', 'MyTasks.MySubBaseTasks2.task1');
+    default () {
+      this.logger.log(`${this.name} task1`);
+      // relative path using '.'
+      return this.$sequence('.MySubBaseTasks1', '.MySubBaseTasks2');
     }
-}
+  }
 
   bz.add(MyTasks);
-  bz.run('MyTasks.MySubBaseTasks1.MySubSubBaseTasks1.task1');
+  bz.run('MyTasks');
 // =====================================================
 
 // !-- FOR TESTS

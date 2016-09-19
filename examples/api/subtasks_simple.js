@@ -42,6 +42,7 @@ let wrapper = function (options) {
     }
 
     $init () {
+      this.logger.log('MyTasks init');
       // simlate tasks dynamiclly added after some async event
       return new Promise((resolve, reject) => {
         setTimeout(() => {
@@ -55,7 +56,6 @@ let wrapper = function (options) {
 
     task1 () {
       this.logger.log('MyTasks task1');
-
       return this.$sequence('MyTasks.MyBaseTasks1.task1', 'MyTasks.MyBaseTasks2.task1');
     }
 }

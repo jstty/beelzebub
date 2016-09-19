@@ -21,6 +21,10 @@ let wrapper = function (options) {
       this.logger.log('MyBaseTasks task2');
     }
 
+    task2_option () {
+      this.logger.log('MyBaseTasks task2 option');
+    }
+
     _internalFunction () {
       this.logger.error('this should be ignored');
     }
@@ -47,7 +51,8 @@ let wrapper = function (options) {
   bz.run(
     'MyTasks.task1',
     'MyTasks.task3',
-    'MyTasks.task2'
+    'MyTasks.task2',
+    'MyTasks.task2:option'
 );
 // =====================================================
 

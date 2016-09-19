@@ -1,16 +1,16 @@
 module.exports = {
   'api': {
-    'basic':             {},
+    'helloworld':        {},
     'async':             {},
     'extend':            {},
     'stream':            {},
     'gulp':              {},
     'default_rootlevel': {},
-    'dynamic_simple':    {},
-    'dynamic_extended':  {},
+    'subtasks_simple':   {},
+    'subtasks_advanced': {},
     'kitcken_sink':      {}
   },
   'cli': {
-    'basic': { 'type': 'cli', 'args': ['MyTasks.task1', 'MyTasks.task2'] }
+    'helloworld': { 'type': 'cli', 'args': ['MyTasks.task1', 'MyTasks.task2'] }
   }
 };
