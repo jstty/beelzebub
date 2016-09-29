@@ -3,7 +3,6 @@ node_js:
   - "6.5"
   - "5.12"
   - "4.5"
-  - "0.12"
 
 after_script:
   - npm run-script coveralls
