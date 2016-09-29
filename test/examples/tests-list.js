@@ -8,7 +8,8 @@ module.exports = {
     'default_rootlevel': {},
     'subtasks_simple':   {},
     'subtasks_advanced': {},
-    'kitcken_sink':      {}
+    'kitcken_sink':      {},
+    'decorator':         {}
   },
   'cli': {
     'helloworld': { 'type': 'cli', 'args': ['MyTasks.task1', 'MyTasks.task2'] }

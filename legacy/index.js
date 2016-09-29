@@ -29,7 +29,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var path = require('path');
 var _ = require('lodash');
 var co = require('co');
-var cli = require('commander');
+var cli = require('commander'); // TODO: replace this with yargs
+var chalk = require('chalk');
 var streamToPromise = require('stream-to-promise');
 
 var manifest = require('../package.json');
@@ -354,6 +355,40 @@ var Beelzebub = function () {
       // use internal function, because $parallel bounces back to root level
       return this._rootTasks._parallel.apply(this._rootTasks, args);
     }
+  }, {
+    key: 'printHelp',
+    value: function printHelp() {
+      this.drawBox('Help Docs', 80);
+      this._rootTasks.$printHelp();
+    }
+  }, {
+    key: 'drawBox',
+    value: function drawBox(title) {
+      var width = arguments.length <= 1 || arguments[1] === undefined ? 60 : arguments[1];
+
+      var sides = {
+        'top': '─',
+        'top-mid': '┬',
+        'top-left': '┌',
+        'top-right': '┐',
+        'bottom': '─',
+        'bottom-mid': '┴',
+        'bottom-left': '└',
+        'bottom-right': '┘',
+        'left': '│',
+        'left-mid': '├',
+        'mid': '─',
+        'mid-mid': '┼',
+        'right': '│',
+        'right-mid': '┤',
+        'middle': '│'
+      };
+
+      var spaceLen = width - title.length - 5;
+      this.logger.log(sides['top-left'] + sides['top'].repeat(width - 2) + sides['top-right']);
+      this.logger.log(sides['left'], title, ' '.repeat(spaceLen), sides['right']);
+      this.logger.log(sides['bottom-left'] + sides['bottom'].repeat(width - 2) + sides['bottom-right']);
+    }
   }]);
   return Beelzebub;
 }();
@@ -365,6 +400,7 @@ var BaseTasks = function () {
   function BaseTasks(config) {
     (0, _classCallCheck3.default)(this, BaseTasks);
 
+    // console.log('cons $helpDocs:', this.$helpDocs);
     this.beelzebub = config.beelzebub || beelzebubInst;
 
     processConfig(config, this.beelzebub.getConfig(), this);
@@ -377,7 +413,7 @@ var BaseTasks = function () {
     // TODO: use config function/util to process this
 
     this._rootLevel = false;
-    this._defaultTaskFuncName = null;
+    this._defaultTaskFuncName = this.$defaultTask || null;
     this._tasks = {};
     this._subTasks = {};
 
@@ -395,6 +431,23 @@ var BaseTasks = function () {
         namePath = config.parentPath + '.' + config.name;
       }
       return namePath;
+    }
+  }, {
+    key: '$printHelp',
+    value: function $printHelp() {
+      var _this = this;
+
+      _.forEach(this.$getSubTask(), function (task) {
+        task.$printHelp();
+      });
+
+      if (this.$helpDocs) {
+        this.beelzebub.drawBox(this.name);
+        _.forEach(this.$helpDocs, function (doc, taskName) {
+          _this.logger.log(chalk.bold.underline(taskName));
+          _this.logger.log('\t', doc, '\n');
+        });
+      }
     }
   }, {
     key: '$useAsRoot',
@@ -473,24 +526,24 @@ var BaseTasks = function () {
   }, {
     key: '_addTasks',
     value: function _addTasks(tList, task) {
-      var _this = this;
+      var _this2 = this;
 
       // this.vLogger.log('addTasksToGulp tList:', tList, ', name:', this.name, ', rootLevel:', this._rootLevel, ', this != task:', this != task);
 
       _.forEach(tList, function (funcName) {
         var taskId = '';
 
-        if (_this !== task && !_this._rootLevel) {
+        if (_this2 !== task && !_this2._rootLevel) {
           taskId += task.name + '.';
         }
         taskId += funcName;
 
-        if (funcName === _this._defaultTaskFuncName) {
+        if (funcName === _this2._defaultTaskFuncName) {
           taskId = 'default'; // set taskId to 'default'
         }
 
         // this.vLogger.log('taskId:', taskId);
-        _this._tasks[taskId] = {
+        _this2._tasks[taskId] = {
           taskId: taskId,
           tasksObj: task,
           func: task[funcName]
@@ -671,7 +724,7 @@ var BaseTasks = function () {
   }, {
     key: '_sequence',
     value: function _sequence(parent) {
-      var _this2 = this;
+      var _this3 = this;
 
       for (var _len9 = arguments.length, args = Array(_len9 > 1 ? _len9 - 1 : 0), _key9 = 1; _key9 < _len9; _key9++) {
         args[_key9 - 1] = arguments[_key9];
@@ -688,7 +741,7 @@ var BaseTasks = function () {
       var aTasks = [];
       _.forEach(args, function (task) {
         aTasks.push(function () {
-          return _this2._runPromiseTask(parent, task);
+          return _this3._runPromiseTask(parent, task);
         });
       });
 
@@ -705,7 +758,7 @@ var BaseTasks = function () {
   }, {
     key: '_parallel',
     value: function _parallel(parent) {
-      var _this3 = this;
+      var _this4 = this;
 
       for (var _len10 = arguments.length, args = Array(_len10 > 1 ? _len10 - 1 : 0), _key10 = 1; _key10 < _len10; _key10++) {
         args[_key10 - 1] = arguments[_key10];
@@ -720,7 +773,7 @@ var BaseTasks = function () {
       }
 
       var pList = _.map(args, function (task) {
-        return _this3._runPromiseTask(parent, task);
+        return _this4._runPromiseTask(parent, task);
       });
 
       // this.vLogger.log('parallel pList:', pList);
@@ -736,7 +789,7 @@ var BaseTasks = function () {
   }, {
     key: '_run',
     value: function _run(parent) {
-      var _this4 = this;
+      var _this5 = this;
 
       var taskName = 'default';
       var promise = null;
@@ -760,12 +813,12 @@ var BaseTasks = function () {
       }
 
       this._running = promise.then(function (result) {
-        _this4._running = null;
+        _this5._running = null;
         return result;
       });
 
       return this._running.catch(function (e) {
-        _this4.logger.error(e);
+        _this5.logger.error(e);
       });
     }
 
@@ -779,7 +832,7 @@ var BaseTasks = function () {
   }, {
     key: '_runTask',
     value: function _runTask(task) {
-      var _this5 = this;
+      var _this6 = this;
 
       var p = null;
 
@@ -806,14 +859,14 @@ var BaseTasks = function () {
           var taskUnderscored = task.split(':').join('_');
           var taskName = taskParts.shift();
 
-          if (_this5._subTasks[taskName]) {
-            return _this5._subTasks[taskName]._runTask(taskParts.join('.'));
-          } else if (_this5.$getTask(taskUnderscored)) {
-            var taskObj = _this5.$getTask(taskUnderscored);
-            return _this5._normalizeExecFuncToPromise(taskObj.func, taskObj.tasksObj);
-          } else if (_this5.$getTask(taskName)) {
-            var _taskObj = _this5.$getTask(taskName);
-            return _this5._normalizeExecFuncToPromise(_taskObj.func, _taskObj.tasksObj);
+          if (_this6._subTasks[taskName]) {
+            return _this6._subTasks[taskName]._runTask(taskParts.join('.'));
+          } else if (_this6.$getTask(taskUnderscored)) {
+            var taskObj = _this6.$getTask(taskUnderscored);
+            return _this6._normalizeExecFuncToPromise(taskObj.func, taskObj.tasksObj);
+          } else if (_this6.$getTask(taskName)) {
+            var _taskObj = _this6.$getTask(taskName);
+            return _this6._normalizeExecFuncToPromise(_taskObj.func, _taskObj.tasksObj);
           }
           // Error ???
         }
@@ -952,6 +1005,17 @@ BeelzebubMod.run = function () {
 
   return beelzebubInst.run.apply(beelzebubInst, args);
 };
+BeelzebubMod.printHelp = function () {
+  if (!beelzebubInst) {
+    beelzebubInst = new Beelzebub();
+  }
+
+  for (var _len15 = arguments.length, args = Array(_len15), _key15 = 0; _key15 < _len15; _key15++) {
+    args[_key15] = arguments[_key15];
+  }
+
+  return beelzebubInst.printHelp.apply(beelzebubInst, args);
+};
 
 BeelzebubMod.cli = function (config) {
   cli.version(manifest.version).option('-f, --file <file>', 'Load file').parse(process.argv);
@@ -1019,4 +1083,22 @@ BeelzebubMod.cli = function (config) {
 
 // classes
 BeelzebubMod.Tasks = BaseTasks;
+
+// Decorators
+BeelzebubMod.task = {
+  default: function _default(target, prop, descriptor) {
+    target.$defaultTask = prop;
+  },
+
+  help: function help(desc) {
+    return function (target, prop, descriptor) {
+      if (!_.isObject(target.$helpDocs)) {
+        target.$helpDocs = {};
+      }
+      target.$helpDocs[prop] = desc;
+      // console.log('target:', target);
+    };
+  }
+};
+
 module.exports = BeelzebubMod;
