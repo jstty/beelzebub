@@ -46,7 +46,13 @@ let wrapper = function (options) {
     'task1',
     'task2',
     'MyTasks'
-);
+  );
+/* Output:
+MyRootLevel myDefault
+MyRootLevel task1
+MyRootLevel task2
+MyTasks myDefault
+*/
 // =====================================================
 
 // !-- FOR TESTS

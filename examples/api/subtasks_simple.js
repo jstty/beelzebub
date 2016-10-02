@@ -58,10 +58,18 @@ let wrapper = function (options) {
       this.logger.log('MyTasks task1');
       return this.$sequence('MyTasks.MyBaseTasks1.task1', 'MyTasks.MyBaseTasks2.task1');
     }
-}
+  }
 
   bz.add(MyTasks);
   bz.run('MyTasks.task1');
+/* Output:
+MyTasks init
+MyBaseTasks init
+MyBaseTasks init
+MyTasks task1
+MyBaseTasks task1 - 123
+MyBaseTasks task1 - 456
+*/
 // =====================================================
 
 // !-- FOR TESTS

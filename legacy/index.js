@@ -29,7 +29,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var path = require('path');
 var _ = require('lodash');
 var co = require('co');
-var cli = require('commander'); // TODO: replace this with yargs
+var cli = require('yargs');
 var chalk = require('chalk');
 var streamToPromise = require('stream-to-promise');
 
@@ -70,6 +70,11 @@ var nullLogger = {
   timeStamp: function timeStamp() {}
 };
 
+/**
+ * ========================================================
+ * Util Functions
+ * ========================================================
+ */
 /**
  * check if function is generator
  * @param function
@@ -154,9 +159,51 @@ function processConfig(config, parentConfig, contex) {
   }
 }
 
-/** ******************************************************
+/**
+ * ========================================================
+ * Decorators
+ * ========================================================
+ */
+
+var Decorators = function () {
+  function Decorators() {
+    (0, _classCallCheck3.default)(this, Decorators);
+  }
+
+  (0, _createClass3.default)(Decorators, null, [{
+    key: 'defaultTask',
+    value: function defaultTask(target, prop, descriptor) {
+      if (!target || !prop || !descriptor) {
+        console.error('default function is a decorator it should not be called directly');
+      }
+
+      target.$defaultTask = prop;
+    }
+  }, {
+    key: 'help',
+    value: function help(desc) {
+      return function (target, prop, descriptor) {
+        if (!target || !prop || !descriptor) {
+          console.error('default function is a decorator it should not be called directly');
+        }
+
+        if (!_.isObject(target.$helpDocs)) {
+          target.$helpDocs = {};
+        }
+        target.$helpDocs[prop] = desc;
+        // console.log('target:', target);
+      };
+    }
+  }]);
+  return Decorators;
+}();
+
+/**
+ * ========================================================
  * Beelzebub Class
- ****************************************************** */
+ * ========================================================
+ */
+
 
 var Beelzebub = function () {
   function Beelzebub(config) {
@@ -165,6 +212,9 @@ var Beelzebub = function () {
     this.version = manifest.version;
     this.reset();
     this.init(config);
+
+    // add Tasks to Beelzebub
+    this.Tasks = BzTasks;
   }
 
   (0, _createClass3.default)(Beelzebub, [{
@@ -174,8 +224,8 @@ var Beelzebub = function () {
 
       processConfig(config, DefaultConfig, this);
 
-      this._config.beelzebub = this; // don't like this, but needed for BaseTasks
-      this._rootTasks = new BaseTasks(this._config);
+      this._config.beelzebub = this; // don't like this, but needed for BzTasks
+      this._rootTasks = new BzTasks(this._config);
       this._rootTasks.$useAsRoot();
     }
   }, {
@@ -287,7 +337,7 @@ var Beelzebub = function () {
         tasks = new Tasks(config || this._config);
 
         if (!isBaseTask(tasks)) {
-          this.logger.error('Add Task Error: Invalid Class/prototype needs to be of type "Beelzebub.BaseTasks" -', tasks);
+          this.logger.error('Add Task Error: Invalid Class/prototype needs to be of type "Beelzebub.BzTasks" -', tasks);
           return;
         }
       } else if (_.isObject(Tasks) && isBaseTask(Tasks)) {
@@ -393,19 +443,23 @@ var Beelzebub = function () {
   return Beelzebub;
 }();
 
-// TODO: ??? rename this to BzTasks
+/**
+ * ========================================================
+ * Beelzebub Task Class, should be extended
+ * ========================================================
+ */
 
 
-var BaseTasks = function () {
-  function BaseTasks(config) {
-    (0, _classCallCheck3.default)(this, BaseTasks);
+var BzTasks = function () {
+  function BzTasks(config) {
+    (0, _classCallCheck3.default)(this, BzTasks);
 
     // console.log('cons $helpDocs:', this.$helpDocs);
     this.beelzebub = config.beelzebub || beelzebubInst;
 
     processConfig(config, this.beelzebub.getConfig(), this);
 
-    this.name = config.name || this.constructor.name || 'BaseTasks';
+    this.name = config.name || this.constructor.name || 'BzTasks';
     this.version = manifest.version;
     this.namePath = this._buildNamePath(config);
     // this.vLogger.log('constructor namePath:', this.namePath, ', name:', this.name);
@@ -420,10 +474,9 @@ var BaseTasks = function () {
     this._running = null;
 
     // TODO: add cli options/commands
-    // this.cli = cli.parse(process.argv);
   }
 
-  (0, _createClass3.default)(BaseTasks, [{
+  (0, _createClass3.default)(BzTasks, [{
     key: '_buildNamePath',
     value: function _buildNamePath(config) {
       var namePath = this.name;
@@ -638,8 +691,8 @@ var BaseTasks = function () {
         // this.vLogger.log('name:', name, ', task.name:', task.name);
         name = name || task.name;
         var oproto = this._bfsTaskBuilder(outList, proto, name);
-        if ((0, _getPrototypeOf2.default)(oproto) && !(oproto === BaseTasks.prototype)) {
-          // this.vLogger.log('name:', name, 'oproto:', oproto, ', oproto instanceof BaseTasks:', (oproto === BaseTasks.prototype));
+        if ((0, _getPrototypeOf2.default)(oproto) && !(oproto === BzTasks.prototype)) {
+          // this.vLogger.log('name:', name, 'oproto:', oproto, ', oproto instanceof BzTasks:', (oproto === BzTasks.prototype));
 
           var tList = (0, _getOwnPropertyNames2.default)(oproto);
           tList = tList.filter(function (p) {
@@ -798,7 +851,7 @@ var BaseTasks = function () {
         args[_key11 - 1] = arguments[_key11];
       }
 
-      if (!_.isObject(parent)) {
+      if (!_.isObject(parent) || _.isArray(parent)) {
         args.unshift(parent);
         parent = undefined;
         // this.vLogger.log('run args:', args);
@@ -943,8 +996,15 @@ var BaseTasks = function () {
       return p;
     }
   }]);
-  return BaseTasks;
+  return BzTasks;
 }();
+
+/**
+ * ========================================================
+ * Module for export
+ * ========================================================
+ */
+
 
 var BeelzebubMod = function BeelzebubMod(config) {
   if (!beelzebubInst) {
@@ -1017,17 +1077,51 @@ BeelzebubMod.printHelp = function () {
   return beelzebubInst.printHelp.apply(beelzebubInst, args);
 };
 
-BeelzebubMod.cli = function (config) {
-  cli.version(manifest.version).option('-f, --file <file>', 'Load file').parse(process.argv);
-
-  var currentDir = process.cwd();
-  var bz = new Beelzebub(config || { verbose: true });
-  var runTasks = cli.args; // tasks to run
+/**
+ * CLI function
+ * @param config [object (optional)]
+ * @param args [object (optional)]
+ * @returns promise
+ */
+BeelzebubMod.cli = function (config, args) {
   var allTasks = [];
+  var promise = when.resolve();
+  var currentDir = process.cwd();
+  // console.log('config:', config);
+  var bz = new Beelzebub(config || { verbose: true });
 
-  // TODO: use transfuser
+  if (!args) {
+    // remove the first two array items
+    args = process.argv.slice(2);
+  }
+
+  cli.version(function () {
+    return manifest.version;
+  }).usage('Usage: bz -f [file] ').alias('version', 'V').option('file', {
+    alias: 'f',
+    describe: 'Load a file'
+  }).option('verbose', {
+    alias: 'v',
+    describe: 'Enable verbose logging',
+    boolean: true
+  }).option('help', {
+    alias: 'h',
+    describe: 'print task help',
+    boolean: true
+  }).showHelpOnFail().parse(args);
+
+  // set tasks to run
+  var runTasks = cli.argv._;
+
+  if (cli.argv.help) {
+    cli.showHelp();
+  }
+
   function loadFile(tasks, file, displayError) {
     try {
+      // remove all extra whitespace at start and end of files
+      file = _.trim(file);
+
       // need to join the current dir,
       // because require is relative to THIS file not the running process
       if (!path.isAbsolute(file)) {
@@ -1035,8 +1129,18 @@ BeelzebubMod.cli = function (config) {
       }
 
       var fTasks = require(file);
+      // console.info('fTasks:', fTasks);
+
       if (fTasks) {
-        tasks = _.merge(tasks, fTasks);
+        // normalize fTasks to an array
+        if (!_.isArray(fTasks)) {
+          fTasks = [fTasks];
+        }
+
+        tasks = tasks.concat(fTasks);
+        // tasks = _.merge(tasks, fTasks);
+      } else {
+        console.warn('"' + file + '" needs to export a module');
       }
     } catch (err) {
       // show non load errors
@@ -1050,55 +1154,62 @@ BeelzebubMod.cli = function (config) {
     return tasks;
   }
 
-  // console.info('BZ CLI file:', cli.file);
-  if (cli.file) {
-    allTasks = loadFile(allTasks, cli.file, true);
+  // if file sepecified then don't try to loading default files
+  if (cli.argv.file) {
+    allTasks = loadFile(allTasks, cli.argv.file, true);
+  } else {
+    // check if beelzebub.js/json file
+    // TODO: only load the first one that exists, don't load all
+    allTasks = loadFile(allTasks, './beelzebub.js');
+    allTasks = loadFile(allTasks, './beelzebub.json');
+    allTasks = loadFile(allTasks, './bz.js');
+    allTasks = loadFile(allTasks, './bz.json');
   }
 
-  // check if beelzebub.js/json file
-  allTasks = loadFile(allTasks, './beelzebub.js');
-  allTasks = loadFile(allTasks, './beelzebub.json');
-  allTasks = loadFile(allTasks, './bz.js');
-  allTasks = loadFile(allTasks, './bz.json');
+  // console.info('allTasks:', allTasks);
 
-  if (!allTasks || !_.isArray(allTasks) || !allTasks.length) {
-    console.error('No Tasks Loaded');
-    process.exit();
-    return;
+  // only if no help flag
+  if (!cli.argv.help) {
+    // check if there are any tasks at all
+    if (!allTasks || !_.isArray(allTasks) || !allTasks.length) {
+      console.error('No Tasks Loaded');
+      process.exit();
+      return;
+    }
   }
 
-  if (!runTasks || !_.isArray(runTasks) || !runTasks.length) {
-    console.error('No Tasks to Run');
-    process.exit();
-    return;
-  }
-
+  // add tasks to bz
   allTasks.map(function (task) {
     bz.add(task);
   });
 
-  bz.run.apply(bz, (0, _toConsumableArray3.default)(runTasks));
-  return bz;
-};
-
-// classes
-BeelzebubMod.Tasks = BaseTasks;
-
-// Decorators
-BeelzebubMod.task = {
-  default: function _default(target, prop, descriptor) {
-    target.$defaultTask = prop;
-  },
-
-  help: function help(desc) {
-    return function (target, prop, descriptor) {
-      if (!_.isObject(target.$helpDocs)) {
-        target.$helpDocs = {};
-      }
-      target.$helpDocs[prop] = desc;
-      // console.log('target:', target);
-    };
+  // if help then print task help
+  if (cli.argv.help) {
+    bz.printHelp();
   }
+
+  // only if no help flag
+  if (!cli.argv.help) {
+    // checked if there are tasks to run
+    if (!runTasks || !_.isArray(runTasks) || !runTasks.length) {
+      console.error('No Tasks to Run');
+    } else {
+      // run tasks
+      promise = bz.run.apply(bz, (0, _toConsumableArray3.default)(runTasks));
+    }
+  }
+
+  // wait until run complete
+  return promise.then(function () {
+    return bz;
+  });
 };
+// ---------------------------------------------------------------
+
+// add Tasks Class to export module
+BeelzebubMod.Tasks = BzTasks;
+
+// add task class decorators to export module
+BeelzebubMod.decorators = Decorators;
 
 module.exports = BeelzebubMod;

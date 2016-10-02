@@ -28,6 +28,10 @@ let wrapper = function (options) {
   bz.add(MyTasks);
 
   bz.run('MyTasks.task1', 'MyTasks.task2');
+/* Output:
+MyTasks task1
+MyTasks task2
+*/
 // =====================================================
 
 // !-- FOR TESTS

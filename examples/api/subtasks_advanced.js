@@ -93,6 +93,22 @@ let wrapper = function (options) {
 
   bz.add(MyTasks);
   bz.run('MyTasks');
+/* Output:
+MyTasks init
+MySubBaseTasks1 init
+MySubBaseTasks2 init
+MySubSubBaseTasks1 init
+MySubSubBaseTasks2 init
+MySubSubBaseTasks1 init
+MySubSubBaseTasks2 init
+MyTasks task1
+MySubBaseTasks1 default
+MySubSubBaseTasks1 task1 - 123
+MySubSubBaseTasks2 task1 - 456
+MySubBaseTasks2 default
+MySubSubBaseTasks1 task1 - 246
+MySubSubBaseTasks2 task1 - 912
+*/
 // =====================================================
 
 // !-- FOR TESTS

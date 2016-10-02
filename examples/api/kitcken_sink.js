@@ -105,8 +105,7 @@ let wrapper = function (options) {
             'SuperTasks.task2'
         );
     }
-
-}
+  }
 
   bz.add(MyBaseTasks);
   bz.add(MyTasks);
@@ -117,8 +116,24 @@ let wrapper = function (options) {
     'MyTasks.task1',
     'SuperTasks.lineTask',
     'SuperTasks.comboTask'
-);
-
+  );
+/* Output:
+MyBaseTasks task1
+MyTasks task1
+------------------------------
+SuperTasks comboTask
+SuperTasks task1: 1
+SuperTasks task1: 2
+------------------------------
+SuperTasks palTask
+SuperTasks task1: 1
+SuperTasks task2: 1
+SuperTasks task1: 2
+SuperTasks task2: 2
+------------------------------
+SuperTasks task2: 1
+SuperTasks task2: 2
+*/
 // =====================================================
 
 // !-- FOR TESTS

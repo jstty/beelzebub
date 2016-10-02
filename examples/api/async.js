@@ -65,7 +65,21 @@ let wrapper = function (options) {
       'MyTasks.task2'
         //, 'MyTasks.task3'
     ]
-);
+  );
+/* Output:
+MyTasks task1: before
+MyTasks task1: promise delay 500
+MyTasks task1: after
+MyTasks task2: before
+MyTasks task2: yield delay 700
+MyTasks task2: after
+MyTasks task1: before
+MyTasks task2: before
+MyTasks task1: promise delay 500
+MyTasks task1: after
+MyTasks task2: yield delay 700
+MyTasks task2: after
+*/
 // =====================================================
 
 // !-- FOR TESTS

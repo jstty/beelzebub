@@ -9,10 +9,11 @@ module.exports = [
     // console.info('stream logger dump:', dump);
 
     var expectList = [
-      'MyTasks task1 data size: 840',
+      'MyTasks task1 data size: 882',
       'MyTasks task2'
     ];
 
+    expect(dump.length).is.equal(expectList.length);
     for (var i = 0; i < dump.length; i++) {
       expect(dump[i]).is.equal(expectList[i]);
     }

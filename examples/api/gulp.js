@@ -51,8 +51,8 @@ let wrapper = function (options) {
       this.logger.log('MyTasks - Delete Files');
       return del(this._dest + '/*.txt');
     }
+  }
 
-}
   bz.add(MyTasks);
 
   bz.run(
@@ -61,7 +61,14 @@ let wrapper = function (options) {
     'MyTasks.NumberOfDestFiles',
     'MyTasks.DeleteFiles',
     'MyTasks.NumberOfDestFiles'
-);
+  );
+/* Output:
+MyTasks - Number of Dest Files: 1
+MyTasks - Coping Files
+MyTasks - Number of Dest Files: 3
+MyTasks - Delete Files
+MyTasks - Number of Dest Files: 1
+*/
 // =====================================================
 
 // !-- FOR TESTS

@@ -93,16 +93,19 @@ _.forEach(list, function (testList, item) {
         tests.forEach(function (test, idx) {
           it('Test ' + (idx + 1), function (done) {
             if (config.type === 'cli') {
-              process.argv = [];
-              process.argv.push('../../bin/beelzebub');
-              process.argv.push('-f ' + app.file);
+              var argv = [];
               _.forEach(config.args, (item) => {
-                process.argv.push(item);
+                argv.push(item);
               });
+              argv.push('-f ' + app.file);
 
-              app.tasks = Beelzebub.cli(app.config);
-              test(app);
-              done();
+              Beelzebub
+                .cli(app.config, argv)
+                .then((bz) => {
+                  app.tasks = bz;
+                  test(app);
+                  done();
+                });
             }
             else {
               // console.log(name, ", buffer:", app.config.logger.getBuffer());

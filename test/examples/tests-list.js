@@ -2,16 +2,19 @@ module.exports = {
   'api': {
     'helloworld':        {},
     'async':             {},
+    'parallel':          {},
+    // 'sequance':          {},
     'extend':            {},
     'stream':            {},
     'gulp':              {},
     'default_rootlevel': {},
     'subtasks_simple':   {},
     'subtasks_advanced': {},
-    'kitcken_sink':      {},
-    'decorator':         {}
+    'decorator':         {},
+    'kitcken_sink':      {}
   },
   'cli': {
-    'helloworld': { 'type': 'cli', 'args': ['MyTasks.task1', 'MyTasks.task2'] }
+    'helloworld': { 'type': 'cli', 'args': ['MyTasks.task1', 'MyTasks.task2'] },
+    'decorator':  { 'type': 'cli', 'args': ['--help'] }
   }
 };

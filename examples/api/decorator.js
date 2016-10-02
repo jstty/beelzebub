@@ -3,44 +3,42 @@
 let wrapper = function (options) {
 // --!
 
+/**
+ * -- Note --
+ * Node does not support decorators so you will need to run this with bable-cli
+ * $ ../../node_modules/.bin/babel-node decorator.js
+ *
+ * To use in your own projects you will need to add babel with the
+ * 'babel-plugin-transform-decorators-legacy' plugin
+ */
+
 // =====================================================
   let Beelzebub = require('../../');
+  let {defaultTask, help} = require('../../').decorators;
   let bz = Beelzebub(options || { verbose: true });
 
   class MyTasks extends Beelzebub.Tasks {
-    constructor (config) {
-      super(config);
-    }
-
-    @Beelzebub.task.default
-    @Beelzebub.task.help('ES7 Decorator Example MyTasks - Task 1')
+    @defaultTask
+    @help('ES7 Decorator Example MyTasks - Task 1')
     task1 () {
       this.logger.log('MyTasks task1');
     }
 
-    @Beelzebub.task.help('ES7 Decorator Example MyTasks - Task 2')
+    @help('ES7 Decorator Example MyTasks - Task 2')
     task2 () {
       this.logger.log('MyTasks task2');
-    }
-
-    _internalFunction () {
-      this.logger.error('this should be ignored');
     }
   }
   bz.add(MyTasks);
 
-  class MyTasks2 extends Beelzebub.Tasks {
-    constructor (config) {
-      super(config);  
-    }
-
-    @Beelzebub.task.default
-    @Beelzebub.task.help('ES7 Decorator Example MyTasks2 - Task 1')
+  class MyTasks2 extends bz.Tasks {
+    @defaultTask
+    @help('ES7 Decorator Example MyTasks2 - Task 1')
     task1 () {
       this.logger.log('MyTasks2 task1');
     }
 
-    @Beelzebub.task.help('ES7 Decorator Example MyTasks2 - Task 2')
+    @help('ES7 Decorator Example MyTasks2 - Task 2')
     task2 () {
       this.logger.log('MyTasks2 task2');
     }
@@ -48,7 +46,14 @@ let wrapper = function (options) {
   bz.add(MyTasks2);
 
   bz.run('MyTasks', 'MyTasks.task2', 'MyTasks2', 'MyTasks2.task2');
+  // prints help results
   // bz.printHelp();
+/* Output:
+MyTasks task1
+MyTasks task2
+MyTasks2 task1
+MyTasks2 task2
+*/
 // =====================================================
 
 // !-- FOR TESTS

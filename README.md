@@ -19,11 +19,11 @@ Easy to create modular tasks and import tasks using npm.
 * [ ] handle configs/options pass to tasks
 * [ ] add dependancy loading on task execution (hotfoot it!)
 * [ ] propaganda page
-* [ ] test decorators
 * [ ] test async/await
 * [ ] use transfuser
 
 # DONE!
+* [x] test decorators
 * [x] referance tasks relative current task group
 * [x] CLI tests
 * [x] gulp examples

@@ -6,13 +6,15 @@ module.exports = [
     expect(app).to.not.be.null;
 
     var dump = app.tasks.logger.getBuffer();
-    // console.info('async logger dump:', dump);
+    // console.info('dynamic_simple logger dump:', dump);
 
     var expectList = [
       'MyTasks task1',
+      'MyTasks task3',
+      'MyTasks task5',
       'MyTasks task2',
-      'MyTasks2 task1',
-      'MyTasks2 task2'
+      'MyTasks task4',
+      'MyTasks task6'
     ];
 
     expect(dump.length).is.equal(expectList.length);

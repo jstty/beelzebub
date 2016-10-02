@@ -36,11 +36,15 @@ let wrapper = function (options) {
     task2 () {
       this.logger.log('MyTasks task2');
     }
-}
+  }
 
   bz.add(MyTasks);
 
   bz.run('MyTasks.task1', 'MyTasks.task2');
+/* Output:
+MyTasks task1 data size: 840
+MyTasks task2
+*/
 // =====================================================
 
 // !-- FOR TESTS
