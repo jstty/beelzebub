@@ -27,7 +27,7 @@ let wrapper = function (options) {
 }
   bz.add(MyTasks);
 
-  bz.run('MyTasks.task1', 'MyTasks.task2');
+  let p = bz.run('MyTasks.task1', 'MyTasks.task2');
 /* Output:
 MyTasks task1
 MyTasks task2
@@ -35,7 +35,8 @@ MyTasks task2
 // =====================================================
 
 // !-- FOR TESTS
-  return bz; };
+  return p.then(() => { return bz; });
+};
 module.exports = wrapper;
 // if not running in test, then run wrapper
 if (typeof global.it !== 'function') wrapper();

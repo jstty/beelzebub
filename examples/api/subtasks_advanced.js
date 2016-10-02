@@ -92,7 +92,7 @@ let wrapper = function (options) {
   }
 
   bz.add(MyTasks);
-  bz.run('MyTasks');
+  let p = bz.run('MyTasks');
 /* Output:
 MyTasks init
 MySubBaseTasks1 init
@@ -112,7 +112,8 @@ MySubSubBaseTasks2 task1 - 912
 // =====================================================
 
 // !-- FOR TESTS
-  return bz; };
+  return p.then(() => { return bz; });
+};
 module.exports = wrapper;
 // if not running in test, then run wrapper
 if (typeof global.it !== 'function') wrapper();

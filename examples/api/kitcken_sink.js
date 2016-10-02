@@ -111,7 +111,7 @@ let wrapper = function (options) {
   bz.add(MyTasks);
   bz.add(SuperTasks);
 
-  bz.run(
+  let p = bz.run(
     'MyBaseTasks.task1',
     'MyTasks.task1',
     'SuperTasks.lineTask',
@@ -137,7 +137,8 @@ SuperTasks task2: 2
 // =====================================================
 
 // !-- FOR TESTS
-  return bz; };
+  return p.then(() => { return bz; });
+};
 module.exports = wrapper;
 // if not running in test, then run wrapper
 if (typeof global.it !== 'function') wrapper();

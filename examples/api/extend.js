@@ -48,7 +48,7 @@ let wrapper = function (options) {
 
   bz.add(MyTasks);
 
-  bz.run(
+  let p = bz.run(
     'MyTasks.task1',
     'MyTasks.task3',
     'MyTasks.task2',
@@ -63,7 +63,8 @@ MyBaseTasks task2 option
 // =====================================================
 
 // !-- FOR TESTS
-  return bz; };
+  return p.then(() => { return bz; });
+};
 module.exports = wrapper;
 // if not running in test, then run wrapper
 if (typeof global.it !== 'function') wrapper();

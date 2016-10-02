@@ -55,7 +55,7 @@ let wrapper = function (options) {
 
   bz.add(MyTasks);
 
-  bz.run(
+  let p = bz.run(
     'MyTasks.NumberOfDestFiles',
     'MyTasks.CopyFile',
     'MyTasks.NumberOfDestFiles',
@@ -72,7 +72,8 @@ MyTasks - Number of Dest Files: 1
 // =====================================================
 
 // !-- FOR TESTS
-  return bz; };
+  return p.then(() => { return bz; });
+};
 module.exports = wrapper;
 // if not running in test, then run wrapper
 if (typeof global.it !== 'function') wrapper();

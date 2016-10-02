@@ -19,7 +19,7 @@ let wrapper = function (options) {
 
     task1 () {
       this.logger.log('MyTasks task1');
-      return this.$parallel('.task3', '.task4');
+      return this.$sequence('.task3', '.task4');
     }
 
     task2 () {
@@ -28,7 +28,7 @@ let wrapper = function (options) {
 
     task3 () {
       this.logger.log('MyTasks task3');
-      return this.$run(['.task5', '.task6']);
+      return this.$run('.task5', '.task6');
     }
 
     task4 () {
@@ -45,15 +45,15 @@ let wrapper = function (options) {
 }
 
   bz.add(MyTasks);
-  // arrays are run in parallel
-  let p = bz.run(['MyTasks.task1', 'MyTasks.task2']);
+  // params are run in sequence
+  let p = bz.run('MyTasks.task1', 'MyTasks.task2');
 /* Output:
 MyTasks task1
 MyTasks task3
 MyTasks task5
-MyTasks task2
-MyTasks task4
 MyTasks task6
+MyTasks task4
+MyTasks task2
 */
 // =====================================================
 

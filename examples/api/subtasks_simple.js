@@ -61,7 +61,7 @@ let wrapper = function (options) {
   }
 
   bz.add(MyTasks);
-  bz.run('MyTasks.task1');
+  let p = bz.run('MyTasks.task1');
 /* Output:
 MyTasks init
 MyBaseTasks init
@@ -73,7 +73,8 @@ MyBaseTasks task1 - 456
 // =====================================================
 
 // !-- FOR TESTS
-  return bz; };
+  return p.then(() => { return bz; });
+};
 module.exports = wrapper;
 // if not running in test, then run wrapper
 if (typeof global.it !== 'function') wrapper();

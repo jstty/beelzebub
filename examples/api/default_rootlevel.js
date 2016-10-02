@@ -41,7 +41,7 @@ let wrapper = function (options) {
   bz.add(MyRootLevel);
   bz.add(MyTasks);
 
-  bz.run(
+  let p = bz.run(
     'default',
     'task1',
     'task2',
@@ -56,7 +56,8 @@ MyTasks myDefault
 // =====================================================
 
 // !-- FOR TESTS
-  return bz; };
+  return p.then(() => { return bz; });
+};
 module.exports = wrapper;
 // if not running in test, then run wrapper
 if (typeof global.it !== 'function') wrapper();

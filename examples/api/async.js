@@ -56,7 +56,7 @@ let wrapper = function (options) {
 }
   bz.add(MyTasks);
 
-  bz.run( // all args run in sequence
+  let p = bz.run( // all args run in sequence
     'MyTasks.task1',
     'MyTasks.task2',
     // 'MyTasks.task3',
@@ -83,7 +83,8 @@ MyTasks task2: after
 // =====================================================
 
 // !-- FOR TESTS
-  return bz; };
+  return p.then(() => { return bz; });
+};
 module.exports = wrapper;
 // if not running in test, then run wrapper
 if (typeof global.it !== 'function') wrapper();

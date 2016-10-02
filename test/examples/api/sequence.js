@@ -6,10 +6,14 @@ module.exports = [
     expect(app).to.not.be.null;
 
     var dump = app.tasks.logger.getBuffer();
-    // console.info('stream logger dump:', dump);
+    // console.info('dynamic_simple logger dump:', dump);
 
     var expectList = [
-      'MyTasks task1 data size: 10',
+      'MyTasks task1',
+      'MyTasks task3',
+      'MyTasks task5',
+      'MyTasks task6',
+      'MyTasks task4',
       'MyTasks task2'
     ];
 

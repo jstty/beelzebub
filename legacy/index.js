@@ -191,7 +191,6 @@ var Decorators = function () {
           target.$helpDocs = {};
         }
         target.$helpDocs[prop] = desc;
-        // console.log('target:', target);
       };
     }
   }]);
@@ -378,8 +377,6 @@ var Beelzebub = function () {
       }
 
       args.unshift(parent);
-      // this.logger.log('args:', args);
-
       // use internal function, because $run bounces back to root level
       return this._rootTasks._run.apply(this._rootTasks, args);
     }
@@ -454,7 +451,6 @@ var BzTasks = function () {
   function BzTasks(config) {
     (0, _classCallCheck3.default)(this, BzTasks);
 
-    // console.log('cons $helpDocs:', this.$helpDocs);
     this.beelzebub = config.beelzebub || beelzebubInst;
 
     processConfig(config, this.beelzebub.getConfig(), this);
@@ -611,7 +607,7 @@ var BzTasks = function () {
     key: '$addSubTasks',
     value: function $addSubTasks(Task, config) {
       if (!this.beelzebub.isLoading()) {
-        // console.error('$addSubTasks can only be called during init');
+        // this.logger.error('$addSubTasks can only be called during init');
         return when.reject();
       }
 
@@ -784,8 +780,9 @@ var BzTasks = function () {
       }
 
       // this.vLogger.log('sequence args:', args);
+      // this.vLogger.log('sequence parent:', parent);
 
-      if (_.isFunction(parent) || !_.isObject(parent)) {
+      if (parent && (_.isString(parent) || _.isArray(parent))) {
         args.unshift(parent);
         parent = undefined;
         // this.vLogger.log('sequence args:', args);
@@ -819,7 +816,7 @@ var BzTasks = function () {
 
       // this.vLogger.log('parallel args:', args);
 
-      if (parent && !_.isObject(parent)) {
+      if (parent && (_.isString(parent) || _.isArray(parent))) {
         args.unshift(parent);
         parent = undefined;
         // this.vLogger.log('parallel args:', args);
@@ -851,7 +848,7 @@ var BzTasks = function () {
         args[_key11 - 1] = arguments[_key11];
       }
 
-      if (!_.isObject(parent) || _.isArray(parent)) {
+      if (parent && (_.isString(parent) || _.isArray(parent))) {
         args.unshift(parent);
         parent = undefined;
         // this.vLogger.log('run args:', args);
@@ -862,7 +859,7 @@ var BzTasks = function () {
         promise = this._runPromiseTask(parent, taskName);
       } else {
         // multi args mean, run in sequence
-        promise = this._sequence.apply(this, args);
+        promise = this._sequence.apply(this, [parent].concat(args));
       }
 
       this._running = promise.then(function (result) {
@@ -951,7 +948,11 @@ var BzTasks = function () {
       if (_.isString(task)) {
         // if first char "." then relative to parent path
         if (task.charAt(0) === '.') {
-          task = parent.namePath + task;
+          if (!parent) {
+            this.logger.trace('parent missing but expected');
+          } else {
+            task = parent.namePath + task;
+          }
         }
 
         var taskParts = task.split('.');
@@ -1087,7 +1088,6 @@ BeelzebubMod.cli = function (config, args) {
   var allTasks = [];
   var promise = when.resolve();
   var currentDir = process.cwd();
-  // console.log('config:', config);
   var bz = new Beelzebub(config || { verbose: true });
 
   if (!args) {
@@ -1129,8 +1129,6 @@ BeelzebubMod.cli = function (config, args) {
       }
 
       var fTasks = require(file);
-      // console.info('fTasks:', fTasks);
-
       if (fTasks) {
         // normalize fTasks to an array
         if (!_.isArray(fTasks)) {
@@ -1165,8 +1163,6 @@ BeelzebubMod.cli = function (config, args) {
     allTasks = loadFile(allTasks, './bz.js');
     allTasks = loadFile(allTasks, './bz.json');
   }
-
-  // console.info('allTasks:', allTasks);
 
   // only if no help flag
   if (!cli.argv.help) {

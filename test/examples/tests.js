@@ -61,7 +61,12 @@ _.forEach(list, function (testList, item) {
             // console.log("cwd:", process.cwd(), "\n");
             // console.log(name, "config:", app.config);
             if (config.type !== 'cli') {
-              app.tasks = require(app.file)(app.config);
+              let wrapper = require(app.file);
+              wrapper(app.config).then((bz) => {
+                // console.log(name, ', buffer:', app.config.logger.getBuffer());
+                app.tasks = bz;
+                done();
+              });
             }
           } catch (err) {
             expect(err).not.to.be.null;
@@ -71,16 +76,7 @@ _.forEach(list, function (testList, item) {
           // console.log("app:", !!app, "\n");
           expect(app).not.to.be.null;
 
-          if (config.type !== 'cli') {
-            expect(app.tasks).not.to.be.null;
-
-            var running = app.tasks.getRunning();
-            expect(running).not.to.be.null;
-            running.then(function () {
-              // console.log(name, ", buffer:", app.config.logger.getBuffer());
-              done();
-            });
-          } else {
+          if (config.type === 'cli') {
             done();
           }
         });

@@ -3,7 +3,7 @@ module.exports = {
     'helloworld':        {},
     'async':             {},
     'parallel':          {},
-    // 'sequance':          {},
+    'sequence':          {},
     'extend':            {},
     'stream':            {},
     'gulp':              {},
