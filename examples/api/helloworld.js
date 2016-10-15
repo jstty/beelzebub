@@ -8,11 +8,6 @@ let wrapper = function (options) {
   let bz = Beelzebub(options || { verbose: true });
 
   class MyTasks extends Beelzebub.Tasks {
-    constructor (config) {
-      super(config);
-      this.$setName('MyTasks');
-    }
-
     task1 () {
       this.logger.log('MyTasks task1');
     }

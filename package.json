@@ -1,6 +1,6 @@
 {
   "name": "beelzebub",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "description": "One hell of a task master!",
   "main": "index.js",
   "bin": {
@@ -49,31 +49,31 @@
     "coveralls": "cat ./test/.coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
   },
   "dependencies": {
-    "chalk": "^1.1.3",
-    "co": "^4.6.0",
-    "lodash": "^4.13.1",
-    "stream-to-promise": "^2.1.1",
-    "stumpy": "^0.6.10",
-    "when": "^3.7.7",
-    "yargs": "^6.0.0"
+    "chalk": "~1.1.3",
+    "co": "~4.6.0",
+    "lodash": "~4.16.4",
+    "stream-to-promise": "~2.2.0",
+    "stumpy": "~0.6.10",
+    "when": "~3.7.7",
+    "yargs": "~6.1.1"
   },
   "devDependencies": {
-    "babel-cli": "^6.10.1",
-    "babel-plugin-transform-decorators-legacy": "^1.3.4",
-    "babel-plugin-transform-runtime": "^6.9.0",
-    "babel-polyfill": "^6.9.1",
-    "babel-preset-es2015": "^6.9.0",
-    "babel-preset-stage-3": "^6.11.0",
-    "babel-register": "^6.11.5",
-    "babel-runtime": "^6.9.2",
+    "babel-cli": "~6.16.0",
+    "babel-plugin-transform-decorators-legacy": "~1.3.4",
+    "babel-plugin-transform-runtime": "~6.15.0",
+    "babel-polyfill": "~6.16.0",
+    "babel-preset-es2015": "~6.16.0",
+    "babel-preset-stage-3": "~6.17.0",
+    "babel-register": "~6.16.3",
+    "babel-runtime": "~6.11.6",
     "chai": "~3.5.0",
-    "coveralls": "^2.11.13",
-    "eslint": "^3.3.1",
-    "eslint-plugin-promise": "^2.0.1",
-    "eslint-plugin-standard": "^2.0.0",
-    "istanbul": "^0.4.4",
-    "mocha": "~3.0.2",
-    "shelljs": "^0.7.3"
+    "coveralls": "~2.11.14",
+    "eslint": "~3.8.0",
+    "eslint-plugin-promise": "~3.0.0",
+    "eslint-plugin-standard": "~2.0.1",
+    "istanbul": "~0.4.5",
+    "mocha": "~3.1.2",
+    "shelljs": "~0.7.4"
   },
   "engines": {
     "node": ">=0.12.0"

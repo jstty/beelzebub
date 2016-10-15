@@ -29,7 +29,6 @@ let wrapper = function (options) {
   class MyTasks extends Beelzebub.Tasks {
     constructor (config) {
       super(config);
-      this.$setName('MyTasks');
       this.$setDefault('myDefault');
     }
 

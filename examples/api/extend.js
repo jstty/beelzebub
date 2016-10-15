@@ -52,7 +52,7 @@ let wrapper = function (options) {
     'MyTasks.task1',
     'MyTasks.task3',
     'MyTasks.task2',
-    'MyTasks.task2:option'
+    'MyTasks.task2_option'
   );
 /* Output:
 MyTasks task1

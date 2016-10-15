@@ -1,17 +1,18 @@
 module.exports = {
   'api': {
-    'helloworld':        {},
-    'async':             {},
-    'parallel':          {},
-    'sequence':          {},
-    'extend':            {},
-    'stream':            {},
-    'gulp':              {},
-    'default_rootlevel': {},
-    'subtasks_simple':   {},
-    'subtasks_advanced': {},
-    'decorator':         {},
-    'kitcken_sink':      {}
+    'helloworld':       {},
+    'async':            {},
+    'parallel':         {},
+    'sequence':         {},
+    'extend':           {},
+    'stream':           {},
+    'gulp':             {},
+    'defaultRootlevel': {},
+    'subtasksSimple':   {},
+    'subtasksAdvanced': {},
+    'passingVars':      {},
+    'decorator':        {},
+    'kitchenSink':      {}
   },
   'cli': {
     'helloworld': { 'type': 'cli', 'args': ['MyTasks.task1', 'MyTasks.task2'] },
