@@ -77,7 +77,7 @@ var BzTasks = function () {
     value: function $printHelp() {
       var _this = this;
 
-      _.forEach(this.$getSubTask(), function (task) {
+      _.forEach(this.$getSubTasks(), function (task) {
         task.$printHelp();
       });
 
@@ -121,13 +121,33 @@ var BzTasks = function () {
       return this._tasks[name];
     }
   }, {
+    key: '$hasTask',
+    value: function $hasTask(name) {
+      return this._tasks.hasOwnProperty(name);
+    }
+  }, {
     key: '$getSubTask',
-    value: function $getSubTask() {
-      return this._subTasks;
+    value: function $getSubTask(name) {
+      return this._subTasks[name];
     }
   }, {
     key: '$setSubTask',
-    value: function $setSubTask(tasks) {
+    value: function $setSubTask(name, task) {
+      this._subTasks[name] = task;
+    }
+  }, {
+    key: '$hasSubTask',
+    value: function $hasSubTask(name) {
+      return this._subTasks.hasOwnProperty(name);
+    }
+  }, {
+    key: '$getSubTasks',
+    value: function $getSubTasks() {
+      return this._subTasks;
+    }
+  }, {
+    key: '$setSubTasks',
+    value: function $setSubTasks(tasks) {
       this._subTasks = tasks;
     }
   }, {
@@ -139,6 +159,46 @@ var BzTasks = function () {
     key: '$getGlobalVars',
     value: function $getGlobalVars() {
       return this.beelzebub.getGlobalVars();
+    }
+  }, {
+    key: '$defineTaskVars',
+    value: function $defineTaskVars(taskName, taskDef) {
+      if (!_.isObject(this.$varDefs)) {
+        this.$varDefs = {};
+      }
+
+      this.$varDefs[taskName] = taskDef;
+    }
+  }, {
+    key: '$setTaskHelpDocs',
+    value: function $setTaskHelpDocs(taskName, helpDocs) {
+      if (!_.isObject(this.$helpDocs)) {
+        this.$helpDocs = {};
+      }
+
+      this.$helpDocs[taskName] = helpDocs;
+    }
+  }, {
+    key: '$getVarDefsForTaskName',
+    value: function $getVarDefsForTaskName(taskStr) {
+      var taskParts = taskStr.split('.');
+      var taskName = taskParts.shift();
+      if (!taskName || !taskName.length) {
+        taskName = 'default';
+      }
+      // this.vLogger.log('taskName:', taskName);
+      // this.vLogger.log('taskParts:', taskParts);
+
+      if (this.$hasSubTask(taskName)) {
+        var newTaskName = taskParts.join('.');
+        // this.vLogger.log('newTaskName:', newTaskName);
+        return this.$getSubTask(taskName).$getVarDefsForTaskName(newTaskName);
+      } else if (this.$hasTask(taskName)) {
+        if (!this.$varDefs || _.keys(this.$varDefs).length === 0) {
+          return null;
+        }
+        return this.$varDefs[taskName];
+      }
     }
   }, {
     key: '$init',
@@ -226,7 +286,7 @@ var BzTasks = function () {
       });
 
       // this.vLogger.log('task:', task);
-      this._subTasks[task.$getName()] = task;
+      this.$setSubTask(task.$getName(), task);
     }
   }, {
     key: '_normalizeExecFuncToPromise',
@@ -364,6 +424,20 @@ var BzTasks = function () {
       // TODO: prevent infinite loop
       return (_beelzebub3 = this.beelzebub).run.apply(_beelzebub3, [this].concat(args));
     }
+  }, {
+    key: '_waitForInit',
+    value: function _waitForInit() {
+      var p = null;
+
+      // wait for self to complete
+      if (this.beelzebub.isLoading()) {
+        p = this.beelzebub.getInitPromise();
+      } else {
+        p = when.resolve();
+      }
+
+      return p;
+    }
 
     /**
      * Internal Run task(s) in sequence
@@ -383,24 +457,26 @@ var BzTasks = function () {
       // this.vLogger.log('sequence args:', args);
       // this.vLogger.log('sequence parent:', parent);
 
-      if (parent && (_.isString(parent) || _.isArray(parent))) {
+      if (parent && (_.isString(parent) || _.isArray(parent) || util.isTaskObject(parent))) {
         args.unshift(parent);
         parent = undefined;
         // this.vLogger.log('sequence args:', args);
       }
 
-      // normalize tasks (aka args)
-      args = this._normalizeTask(parent, args);
+      return this._waitForInit().then(function () {
+        // normalize tasks (aka args)
+        args = _this3._normalizeTask(parent, args);
 
-      var aTasks = [];
-      _.forEach(args, function (task) {
-        aTasks.push(function () {
-          return _this3._runPromiseTask(parent, task);
+        var aTasks = [];
+        _.forEach(args, function (task) {
+          aTasks.push(function () {
+            return _this3._runPromiseTask(parent, task);
+          });
         });
-      });
 
-      // this.vLogger.log('sequence args:', aTasks);
-      return whenSeq(aTasks);
+        // this.vLogger.log('sequence args:', aTasks);
+        return whenSeq(aTasks);
+      });
     }
 
     /**
@@ -420,21 +496,23 @@ var BzTasks = function () {
 
       // this.vLogger.log('parallel args:', args);
 
-      if (parent && (_.isString(parent) || _.isArray(parent))) {
+      if (parent && (_.isString(parent) || _.isArray(parent) || util.isTaskObject(parent))) {
         args.unshift(parent);
         parent = undefined;
         // this.vLogger.log('parallel args:', args);
       }
 
-      // normalize tasks (aka args)
-      args = this._normalizeTask(parent, args);
+      return this._waitForInit().then(function () {
+        // normalize tasks (aka args)
+        args = _this4._normalizeTask(parent, args);
 
-      var pList = _.map(args, function (task) {
-        return _this4._runPromiseTask(parent, task);
+        var pList = _.map(args, function (task) {
+          return _this4._runPromiseTask(parent, task);
+        });
+
+        // this.vLogger.log('parallel pList:', pList);
+        return when.all(pList);
       });
-
-      // this.vLogger.log('parallel pList:', pList);
-      return when.all(pList);
     }
 
     /**
@@ -452,31 +530,35 @@ var BzTasks = function () {
         args[_key6 - 1] = arguments[_key6];
       }
 
-      var promise = null;
+      // this.vLogger.log('run args:', args);
 
-      if (parent && (_.isString(parent) || _.isArray(parent))) {
+      if (parent && (_.isString(parent) || _.isArray(parent) || util.isTaskObject(parent))) {
         args.unshift(parent);
         parent = undefined;
         // this.vLogger.log('run args:', args);
       }
 
-      // normalize tasks (aka args)
-      args = this._normalizeTask(parent, args);
+      return this._waitForInit().then(function () {
+        var promise = null;
 
-      if (args.length === 1) {
-        promise = this._runPromiseTask(parent, args[0]);
-      } else {
-        // multi args mean, run in sequence
-        promise = this._sequence.apply(this, [parent].concat((0, _toConsumableArray3.default)(args)));
-      }
+        // normalize tasks (aka args)
+        args = _this5._normalizeTask(parent, args);
 
-      this._running = promise.then(function (result) {
-        _this5._running = null;
-        return result;
-      });
+        if (args.length === 1) {
+          promise = _this5._runPromiseTask(parent, args[0]);
+        } else {
+          // multi args mean, run in sequence
+          promise = _this5._sequence.apply(_this5, [parent].concat((0, _toConsumableArray3.default)(args)));
+        }
 
-      return this._running.catch(function (e) {
-        _this5.logger.error(e);
+        _this5._running = promise.then(function (result) {
+          _this5._running = null;
+          return result;
+        });
+
+        return _this5._running.catch(function (e) {
+          _this5.logger.error(e);
+        });
       });
     }
 
@@ -485,50 +567,47 @@ var BzTasks = function () {
      * @param task {String}
      * @returns {Promise}
      */
-    // TODO: should this be private?
 
   }, {
     key: '_runTask',
     value: function _runTask(task) {
-      var _this6 = this;
+      // let p = null;
 
-      var p = null;
+      // // wait for self to complete
+      // if (this.beelzebub.isLoading()) {
+      //   p = this.beelzebub.getInitPromise();
+      // } else {
+      //   p = when.resolve();
+      // }
 
-      // wait for self to complete
-      if (this.beelzebub.isLoading()) {
-        p = this.beelzebub.getInitPromise();
-      } else {
-        p = when.resolve();
+      // return p.then(() => {
+      // this.vLogger.log('task class:', this.name
+      //   , ', running task:', task
+      //   , ', all tasks:', _.keys(this._tasks)
+      //   , ', all subTasks:', _.keys(this.$getSubTasks()));
+
+      // if no task specified, then use default
+      if (!task) {
+        task = { task: 'default' };
+        // console.error('setting to default');
       }
 
-      return p.then(function () {
-        // this.vLogger.log('task class:', this.name
-        //   , ', running task:', task
-        //   , ', all tasks:', _.keys(this._tasks)
-        //   , ', all subTasks:', _.keys(this._subTasks));
+      var taskParts = task.task.split('.');
+      var taskName = taskParts.shift();
+      if (!taskName || !taskName.length) {
+        taskName = 'default';
+      }
 
-        // if no task specified, then use default
-        if (!task) {
-          task = { task: 'default' };
-          // console.error('setting to default');
-        }
-
-        var taskParts = task.task.split('.');
-        var taskName = taskParts.shift();
-        if (!taskName || !taskName.length) {
-          taskName = 'default';
-        }
-
-        if (_this6._subTasks[taskName]) {
-          task.task = taskParts.join('.');
-          return _this6._subTasks[taskName]._runTask(task);
-        } else if (_this6.$getTask(taskName)) {
-          var taskObj = _this6.$getTask(taskName);
-          return _this6._normalizeExecFuncToPromise(taskObj.func, taskObj.tasksObj, task.vars);
-        } else {
-          _this6.logger.error('Task "' + taskName + '" - not found');
-        }
-      });
+      if (this.$hasSubTask(taskName)) {
+        task.task = taskParts.join('.');
+        return this.$getSubTask(taskName)._runTask(task);
+      } else if (this.$hasTask(taskName)) {
+        var taskObj = this.$getTask(taskName);
+        return this._normalizeExecFuncToPromise(taskObj.func, taskObj.tasksObj, task.vars);
+      } else {
+        this.logger.error('Task "' + taskName + '" - not found');
+      }
+      // });
     }
 
     /**
@@ -564,12 +643,12 @@ var BzTasks = function () {
               taskParts = task.task.split('.');
               taskName = taskParts.shift();
 
-              if (!this._tasks.hasOwnProperty(taskName)) {
+              if (!this.$hasTask(taskName)) {
                 // now check if in sub level
-                if (this._subTasks.hasOwnProperty(taskName)) {
+                if (this.$hasSubTask(taskName)) {
                   task.task = taskParts.join('.');
                   // this.vLogger.info('runPromiseTask taskName:', taskName, ', runTask:', task.task);
-                  p = this._subTasks[taskName]._runTask(task);
+                  p = this.$getSubTask(taskName)._runTask(task);
                 } else {
                   var error = 'task name not found: "' + task.task + '"';
                   this.logger.error(error);
@@ -613,14 +692,16 @@ var BzTasks = function () {
   }, {
     key: '_normalizeTask',
     value: function _normalizeTask(parent, tasks) {
-      var _this7 = this;
+      var _this6 = this;
 
       var objTasks = _.map(tasks, function (task) {
+        var taskObj = void 0;
+
         if (_.isString(task)) {
           // if first char "." then relative to parent path
           if (task.charAt(0) === '.') {
             if (!parent) {
-              _this7.logger.trace('parent missing but expected');
+              _this6.logger.trace('parent missing but expected');
             } else {
               task = parent.namePath + task;
             }
@@ -631,49 +712,262 @@ var BzTasks = function () {
 
           var taskFullName = task;
           var taskVarParts = task.split(':');
-          var taskVars = void 0;
+          var taskVars = {};
 
           if (taskVarParts.length > 0) {
             taskFullName = taskVarParts.shift();
             taskVars = taskVarParts.join(':');
 
-            try {
-              taskVars = JSON.parse(taskVars);
-            } catch (err) {
-              // this is ok
+            // vars a string and empty, this can happen is no vars pass to task string
+            if (_.isString(taskVars) && taskVars.length === 0) {
+              taskVars = {};
+            } else {
+              try {
+                taskVars = JSON.parse(taskVars);
+              } catch (err) {
+                // this is ok
+                _this6.vLogger.warn('Parsing Task Error:', err);
+              }
             }
           }
 
-          if (!_this7._subTasks[taskName] && !_this7.$getTask(taskName)) {
-            _this7.logger.warn(taskFullName, 'task not added');
+          if (!_this6.$getSubTask(taskName) && !_this6.$getTask(taskName)) {
+            _this6.logger.warn(taskFullName, 'task not added');
             return false;
           }
 
-          return {
+          taskObj = {
             task: taskFullName,
             vars: taskVars
           };
         } else if (_.isArray(task)) {
-          return _this7._normalizeTask(parent, task);
+          taskObj = _this6._normalizeTask(parent, task);
         } else if (_.isFunction(task)) {
-          return {
+          taskObj = {
             task: task
           };
         } else if (_.isObject(task)) {
           if (!task.hasOwnProperty('task')) {
-            _this7.logger.warn('invalid object: task property required');
+            _this6.logger.warn('invalid object: task property required');
             return null;
           }
 
           return task;
         } else {
-          _this7.logger.warn('unknown task input type');
+          _this6.logger.warn('unknown task input type');
           return null;
         }
+
+        // make sure vars is object
+        if (taskObj.vars === null || taskObj.vars === undefined) {
+          taskObj.vars = {};
+        }
+
+        if (!_.isObject(taskObj.vars)) {
+          _this6.logger.warn('Vars should be an object');
+          taskObj.vars = {};
+        }
+
+        return taskObj;
       });
+
+      // apply var definitions if they exist
+      // definitions -> defaults, data types and requirements
+      objTasks = this._applyVarDefsToAllTasks(objTasks);
 
       // this.vLogger.log('objTasks:', objTasks);
       return objTasks;
+    }
+
+    /**
+     * @return {object} tasks object
+     * @param {object} var defs applied oject
+     */
+
+  }, {
+    key: '_applyVarDefsToAllTasks',
+    value: function _applyVarDefsToAllTasks(objTasks) {
+      var _this7 = this;
+
+      objTasks = _.map(objTasks, function (task) {
+        return _this7._applyVarDefToTask(task);
+      });
+
+      return objTasks;
+    }
+  }, {
+    key: '_applyVarDefToTask',
+    value: function _applyVarDefToTask(task) {
+      var _this8 = this;
+
+      if (_.isArray(task)) {
+        return _.map(task, function (t) {
+          return _this8._applyVarDefToTask(t);
+        });
+      }
+      // task object and task is string
+      else if (_.isObject(task) && _.isString(task.task)) {
+          var taskParts = task.task.split('.');
+          var taskName = taskParts.shift();
+          if (!taskName || !taskName.length) {
+            taskName = 'default';
+          }
+
+          if (this.$hasSubTask(taskName)) {
+            // use copy of tasks to pass to child, as we don't want to mutate the task name
+            var newTask = _.cloneDeep(task);
+            newTask.task = taskParts.join('.');
+            newTask = this.$getSubTask(taskName)._applyVarDefToTask(newTask);
+            // update task vars
+            task.vars = newTask.vars;
+          } else if (this.$hasTask(taskName)) {
+            // no vardefs or no keys in object
+            if (!this.$varDefs || _.keys(this.$varDefs).length === 0) {
+              return task;
+            }
+
+            // has vars definition
+            if (this.$varDefs[taskName]) {
+              // apply def to vars
+              task.vars = this._applyVarDefs(this.$varDefs[taskName], task.vars);
+            }
+          } else {
+            this.logger.error('Task "' + taskName + '" - not found');
+          }
+
+          return task;
+        }
+        // could be task is function or something else, but can't look up vardef to apply
+        else {
+            return task;
+          }
+    }
+
+    // TODO: need loads of tests to cover all the conditionals
+
+  }, {
+    key: '_applyVarDefs',
+    value: function _applyVarDefs(varDefs, vars) {
+      var _this9 = this;
+
+      // this.vLogger.info('varDefs:', varDefs);
+      // this.vLogger.info('vars:', vars);
+
+      _.forEach(varDefs, function (varDef, key) {
+        var type = varDef.type.toLowerCase();
+
+        // if as alias
+        if (varDef.alias) {
+          var tkey = varDef.alias;
+          // if alias var has value, then use this as the key
+          if (vars[tkey] !== null && vars[tkey] !== undefined) {
+            vars[key] = vars[tkey];
+          }
+        }
+
+        // var is set to something
+        if (vars[key] !== null && vars[key] !== undefined) {
+          if (type === 'string') {
+            // not string
+            if (!_.isString(vars[key])) {
+              _this9.logger.error(key + ' is not a string but defined as one, converting to string');
+              vars[key] = String(vars[key]);
+            }
+          } else if (type === 'number') {
+            // not number
+            if (!_.isNumber(vars[key])) {
+              _this9.logger.error(key + ' is not a number but defined as one, converting to number');
+              vars[key] = Number(vars[key]);
+            }
+          } else if (type === 'boolean') {
+            // not boolean
+            if (!_.isBoolean(vars[key])) {
+              _this9.logger.error(key + ' is not a boolean but defined as one, converting to boolean');
+              // is string, only compare if 'true', otherwise false
+              if (_.isString(vars[key])) {
+                vars[key] = vars[key].toLowerCase() === 'true';
+              }
+              // convert all else use Boolean
+              else {
+                  vars[key] = Boolean(vars[key]);
+                }
+            }
+          } else if (type === 'array') {
+            // not array
+            if (!_.isArray(vars[key])) {
+              _this9.logger.error(key + ' is not a array but defined as one, converting to array');
+
+              if (_.isString(vars[key])) {
+                try {
+                  vars[key] = JSON.parse(vars[key]);
+                } catch (err) {
+                  // if parsing fails then split the string by commas
+                  vars[key] = vars[key].split(',');
+                }
+              } else {
+                vars[key] = Array(vars[key]);
+              }
+            }
+          } else if (type === 'object') {
+            if (!_.isObject(vars[key])) {
+              _this9.logger.error(key + ' is not a object but defined as one, converting to object');
+
+              // convert vars[key] to object
+              if (_.isString(vars[key])) {
+                try {
+                  vars[key] = JSON.parse(vars[key]);
+                } catch (err) {
+                  // if parsing fails then just stick in data prop
+                  _this9.logger.error('object "' + key + '" json parsing error: ' + err);
+                  vars[key] = { data: vars[key] };
+                }
+              } else {
+                vars[key] = { data: vars[key] };
+              }
+            }
+
+            var varProps = varDef.properties;
+            if (!varProps || !_.isObject(varProps)) {
+              _this9.logger.error('object "' + key + '" properties is not defined as object, skipping all sub properties.');
+            } else {
+              // recursivly check children (properties)
+              vars[key] = _this9._applyVarDefs(varProps, vars[key]);
+            }
+          } else {
+            _this9.logger.warn('Unknown Variable Definition Type: ' + type);
+          }
+        }
+        // not set to anything
+        else {
+            if (varDef.required) {
+              _this9.logger.error('Var "' + key + '" is required but not set in vars.');
+            }
+
+            var defValue = null;
+            if (type === 'string') {
+              defValue = '';
+            } else if (type === 'number') {
+              defValue = 0;
+            } else if (type === 'boolean') {
+              defValue = false;
+            } else if (type === 'array') {
+              defValue = [];
+            } else if (type === 'object') {
+              defValue = {};
+            }
+
+            // has default
+            if (varDef.default) {
+              vars[key] = varDef.default;
+            }
+            // else default to empty string
+            else {
+                vars[key] = defValue;
+              }
+          }
+      });
+
+      return vars;
     }
   }]);
   return BzTasks;

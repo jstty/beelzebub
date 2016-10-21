@@ -16,13 +16,14 @@ Hightly modular promise/generator based build task pipeline, compatiable with gu
 Easy to create modular tasks and import tasks using npm.
 
 # TODO
-* [ ] handle configs/options pass to tasks
-* [ ] add dependancy loading on task execution (hotfoot it!)
 * [ ] propaganda page
-* [ ] test async/await
-* [ ] use transfuser
+* [ ] add dependancy loading on task execution (jack it!)
+* [ ] option - print tree style log output for sub tasks
+* [ ] async/await
+* [ ] transfuser?
 
 # DONE!
+* [x] handle configs/options pass to tasks
 * [x] test decorators
 * [x] referance tasks relative current task group
 * [x] CLI tests

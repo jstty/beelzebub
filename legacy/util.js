@@ -1,5 +1,15 @@
 'use strict';
 
+var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = require('babel-runtime/helpers/createClass');
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 var _ = require('lodash');
 
 // internal singleton instance of the class, only created when needed
@@ -38,102 +48,139 @@ var nullLogger = {
  * Util Functions
  * ========================================================
  */
-/**
- * check if function is generator
- * @param {function}
- * @returns {boolean}
- */
-function isGenerator(func) {
-  return func && func.constructor && func.constructor.name === 'GeneratorFunction';
-}
 
-/**
- * check if function is promise
- * @param {object} Promise
- * @returns {boolean}
- */
-function isPromise(p) {
-  return p && _.isObject(p) && _.isFunction(p.then);
-}
+var BzUtils = function () {
+  function BzUtils() {
+    (0, _classCallCheck3.default)(this, BzUtils);
+  }
 
-/**
- * check if function is stream
- * @param {object} Stream
- * @returns {boolean}
- */
-function isStream(s) {
-  return s && _.isObject(s) && _.isFunction(s.pipe);
-}
+  (0, _createClass3.default)(BzUtils, null, [{
+    key: 'isGenerator',
 
-/**
- * check if object is BzTask
- * @param {object}
- * @returns {boolean}
- * Note: can't use instanceof as the source might be a different modules but exactly the same
- */
-function isBaseTask(a) {
-  var checkList = ['$sequence', '$parallel', '$run', '$setDefault', '$isRoot', '$useAsRoot', '$setName', '$getName', '$getTask', '$setSubTask', '$getSubTask'];
-  return _.reduce(checkList, function (result, key) {
-    if (!result) return result;
-    if (!a[key] || !_.isFunction(a[key])) {
-      result = false;
+    /**
+     * check if function is generator
+     * @param {function}
+     * @returns {boolean}
+     */
+    value: function isGenerator(func) {
+      return func && func.constructor && func.constructor.name === 'GeneratorFunction';
     }
-    return result;
-  });
-  // return b.prototype.isPrototypeOf(a);
-  // return a instanceof b;
-}
 
-function processConfig(config, parentConfig, contex) {
-  if (config.logger) {
-    contex.logger = config.logger;
-  } else {
-    contex.logger = parentConfig.logger || DefaultConfig.logger;
-  }
+    /**
+     * check if function is promise
+     * @param {object} Promise
+     * @returns {boolean}
+     */
 
-  // this._config = _.merge(DefaultConfig, config || {});
-  contex._config = _.merge(_.cloneDeep(DefaultConfig), _.cloneDeep(parentConfig), config || {});
+  }, {
+    key: 'isPromise',
+    value: function isPromise(p) {
+      return p && _.isObject(p) && _.isFunction(p.then);
+    }
 
-  if (contex._config.silent) {
-    contex.logger = nullLogger;
-  }
-  contex._config.logger = contex.logger;
+    /**
+     * check if function is stream
+     * @param {object} Stream
+     * @returns {boolean}
+     */
 
-  contex.vLogger = {
-    log: function log() {},
-    info: function info() {}
-  };
-  if (contex._config.verbose) {
-    contex.vLogger = {
-      log: function log() {
-        var _contex$logger;
+  }, {
+    key: 'isStream',
+    value: function isStream(s) {
+      return s && _.isObject(s) && _.isFunction(s.pipe);
+    }
 
-        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-          args[_key] = arguments[_key];
+    /**
+     * check if object is BzTask
+     * @param {object}
+     * @returns {boolean}
+     * Note: can't use instanceof as the source might be a different modules but exactly the same
+     */
+
+  }, {
+    key: 'isBaseTask',
+    value: function isBaseTask(a) {
+      var checkList = ['$sequence', '$parallel', '$run', '$setDefault', '$isRoot', '$useAsRoot', '$setName', '$getName', '$getTask', '$setSubTask', '$getSubTask'];
+      return _.reduce(checkList, function (result, key) {
+        if (!result) return result;
+        if (!a[key] || !_.isFunction(a[key])) {
+          result = false;
         }
-
-        args.unshift('[' + contex.name + '] -');(_contex$logger = contex.logger).log.apply(_contex$logger, args);
-      },
-      info: function info() {
-        var _contex$logger2;
-
-        for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-          args[_key2] = arguments[_key2];
-        }
-
-        args.unshift('[' + contex.name + '] -');(_contex$logger2 = contex.logger).info.apply(_contex$logger2, args);
+        return result;
+      });
+      // return b.prototype.isPrototypeOf(a);
+      // return a instanceof b;
+    }
+  }, {
+    key: 'processConfig',
+    value: function processConfig(config, parentConfig, contex) {
+      if (config.logger) {
+        contex.logger = config.logger;
+      } else {
+        contex.logger = parentConfig.logger || DefaultConfig.logger;
       }
-    };
-  }
-}
+
+      // this._config = _.merge(DefaultConfig, config || {});
+      contex._config = _.merge(_.cloneDeep(DefaultConfig), _.cloneDeep(parentConfig), config || {});
+
+      if (contex._config.silent) {
+        contex.logger = nullLogger;
+      }
+      contex._config.logger = contex.logger;
+
+      contex.vLogger = {
+        log: function log() {},
+        info: function info() {}
+      };
+      if (contex._config.verbose) {
+        contex.vLogger = {
+          log: function log() {
+            var _contex$logger;
+
+            for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+              args[_key] = arguments[_key];
+            }
+
+            args.unshift('[' + contex.name + '] -');(_contex$logger = contex.logger).log.apply(_contex$logger, args);
+          },
+          info: function info() {
+            var _contex$logger2;
+
+            for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+              args[_key2] = arguments[_key2];
+            }
+
+            args.unshift('[' + contex.name + '] -');(_contex$logger2 = contex.logger).info.apply(_contex$logger2, args);
+          }
+        };
+      }
+    }
+
+    // task objects have a 'task' key and it's either a string or function
+
+  }, {
+    key: 'isTaskObject',
+    value: function isTaskObject(obj) {
+      if (obj.hasOwnProperty('task')) {
+        if (_.isString(obj.task) || _.isFunction(obj.task)) {
+          return true;
+        }
+      }
+
+      return false;
+    }
+  }]);
+  return BzUtils;
+}();
 
 module.exports = {
   beelzebubInst: beelzebubInst,
   DefaultConfig: DefaultConfig,
   nullLogger: nullLogger,
-  processConfig: processConfig,
-  isGenerator: isGenerator,
-  isPromise: isPromise,
-  isStream: isStream,
-  isBaseTask: isBaseTask
+  processConfig: BzUtils.processConfig,
+  isGenerator: BzUtils.isGenerator,
+  isPromise: BzUtils.isPromise,
+  isStream: BzUtils.isStream,
+  isBaseTask: BzUtils.isBaseTask,
+  isTaskObject: BzUtils.isTaskObject
 };

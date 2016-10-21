@@ -37,13 +37,23 @@ var Decorators = function () {
     value: function help(desc) {
       return function (target, prop, descriptor) {
         if (!target || !prop || !descriptor) {
-          console.error('default function is a decorator it should not be called directly');
+          console.error('help function is a decorator it should not be called directly');
         }
 
-        if (!_.isObject(target.$helpDocs)) {
-          target.$helpDocs = {};
+        target.$setTaskHelpDocs(prop, desc);
+        // console.info('$helpDocs', target.$helpDocs);
+      };
+    }
+  }, {
+    key: 'vars',
+    value: function vars(varDefs) {
+      return function (target, prop, descriptor) {
+        if (!target || !prop || !descriptor) {
+          console.error('vars function is a decorator it should not be called directly');
         }
-        target.$helpDocs[prop] = desc;
+
+        target.$defineTaskVars(prop, varDefs);
+        // console.info('$varDefs', target.$varDefs);
       };
     }
   }]);

@@ -1,2 +1,3 @@
 var Beelzebub  = require('../index.js');
-Beelzebub.cli();
+var cli = new Beelzebub.CLI();
+cli.run();

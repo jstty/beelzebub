@@ -90,10 +90,12 @@ _.forEach(list, function (testList, item) {
           it('Test ' + (idx + 1), function (done) {
             if (config.type === 'cli') {
               var argv = [];
+              // file needs to added first
+              argv.push('-f ' + app.file);
+              
               _.forEach(config.args, (item) => {
                 argv.push(item);
               });
-              argv.push('-f ' + app.file);
 
               Beelzebub
                 .cli(app.config, argv)
@@ -101,6 +103,9 @@ _.forEach(list, function (testList, item) {
                   app.tasks = bz;
                   test(app);
                   done();
+                })
+                .catch((err) => {
+                  console.error('CLI Run Error:', err);
                 });
             }
             else {

@@ -148,6 +148,11 @@ var Beelzebub = function () {
       return this._rootTasks.$getRunning();
     }
   }, {
+    key: 'getVarDefsForTaskName',
+    value: function getVarDefsForTaskName(taskName) {
+      return this._rootTasks.$getVarDefsForTaskName(taskName);
+    }
+  }, {
     key: 'add',
     value: function add(Tasks, config) {
       var tasks = null;
