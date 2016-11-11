@@ -1,6 +1,6 @@
 {
   "name": "beelzebub",
-  "version": "0.10.1",
+  "version": "0.10.2",
   "description": "One hell of a task master!",
   "main": "index.js",
   "bin": {
@@ -68,8 +68,8 @@
     "babel-runtime": "~6.18.0",
     "chai": "~3.5.0",
     "coveralls": "~2.11.14",
-    "eslint": "~3.9.0",
-    "eslint-plugin-promise": "~3.3.0",
+    "eslint": "~3.9.1",
+    "eslint-plugin-promise": "~3.3.1",
     "eslint-plugin-standard": "~2.0.1",
     "istanbul": "~0.4.5",
     "mocha": "~3.1.2",
