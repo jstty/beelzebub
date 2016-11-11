@@ -1,5 +1,6 @@
 <!-- # Beelzebub - One hell of a task master! -->
-<center>![logo](./logo.png)</center>
+<center id="top">![logo](./logo.png)</center>
+
 
 [![Build Status](https://secure.travis-ci.org/jstty/beelzebub.png?branch=master)](http://travis-ci.org/jstty/beelzebub)
 [![bitHound Score](https://www.bithound.io/github/jstty/beelzebub/badges/score.svg?branch=master)](https://www.bithound.io/github/jstty/beelzebub)
@@ -12,77 +13,143 @@
 
 
 ## Description
-Hightly modular promise/generator based build task pipeline, compatiable with gulp, fly, ES 5/6/7.
-Easy to create modular tasks and import tasks using npm.
+A modern task runner pipeline framwork.
+Allows your Tasks to be Module, Extendable, Flexiable, Managable, and Fire Resistent (up to 30m)!
 
-# TODO
-* [ ] propaganda page
-* [ ] add dependancy loading on task execution (jack it!)
-* [ ] option - print tree style log output for sub tasks
-* [ ] async/await
-* [ ] transfuser?
+## Features
+1. Tasks are based on Promises, support: 
+    * Generator ([co wrapping](https://github.com/tj/co))
+    * Async/Await
+    * Streams
+        * Compatiable with your existing `gulp` tasks
+2. ES6 Class base class
+    * Extending from other Tasks
+3. Sub Tasks
+    * Static - simply by adding another task class to a tasks sub class. ([See Example](./examples/api/subtasksSimple.js))
+    * Dynamic - create sub tasks based on configuration ([See Example](./examples/api/subtasksAdvanced.js))
+4. Run other tasks in an task
+    * Parallel (return promise)
+    * Sequance (return promise)
+5. Decorators
+    * Setting Default Task
+    * Help Docs
+    * Vars Definitions (for help and set defaults)
+6. Auto Help Docs
+7. Passing Options (Vars) to a task or globally.
+8. CLI and full Javascript API
+9. Totally bad *ss logo!
 
-# DONE!
-* [x] handle configs/options pass to tasks
-* [x] test decorators
-* [x] referance tasks relative current task group
-* [x] CLI tests
-* [x] gulp examples
-* [x] support older node versions (add to tests)
-* [x] add logo/icon
-* [x] add travis
-* [x] badges to README (this)
-* [x] add tests
-* [x] moved almost all functions to base class for simplicity
-* [x] more examples
-* [x] add $init (return promise) auto run for async adding tasks
-* [x] add CLI app
-  * [x] load 'beelzebub.js' and/or 'beelzebub.json' file like gulpfile.js
-  * [x] load file -f
-* [x] support root level tasks
-* [x] support default task for the given task group
-* [x] support generators
-* [x] support pipe/steams
-  * [x] add function
-  * [x] add example
-
+-------
 # Install
 ```shell
 $ npm install beelzebub
 ```
 
-# Usage
-### Also [See Examples](./examples)
+-------
+# API
+### [Examples](./examples/api)
+
+# Simple Example
 ```javascript
 var Beelzebub = require('beelzebub');
-Beelzebub({
-    verbose: true
-});
+Beelzebub();
 
 class MyTasks extends Beelzebub.Tasks {
-    constructor(config) {
-        super(config);
-        this.$setName("MyTasks");
-    }
-
-    task1(){
+    task1() {
         this.logger.log('MyTasks task1');
     }
 }
+
+// Add Task to BZ, it will now be registered
 Beelzebub.add( MyTasks );
 
 // ------------------------------------
+// Runs the task, returing a promise
 Beelzebub.run('MyTasks.task1');
 ```
 
---------
-## CLI Example
+-------
+# CLI
+### [Examples](./examples/cli)
+
+## Reserved Global Flags
+* `--help` or `-h`
+    * Prints Usage, List of Task Help Docs and Vars Definitions
+* `--version` or `-v`
+    * Prints Beelzebub version
+* `--file=<file path>` or `-f=<file path>`
+    * Uses this file instead of the `beelzebub.js` or `beelzebub.json` file
+
+<!--
+# File Loader
+TODO 
+-->
+
+## Passing Vars
+The CLI uses [yargs](https://github.com/yargs/yargs) and thus the vars parsing is handled by [yargs-parser](https://github.com/yargs/yargs-parser).
 
 ```shell
-$ bz MyTasks.task1
+$ bz <global vars> TaskPath <vars to pass to this Task> AnotherTaskPath <vars will only pass to the preceding Task> 
 ```
 
-### 'beelzebub.js' file
+--------
+## Simple Example
+### `beelzebub.js` file
+```javascript
+var Beelzebub = require('beelzebub');
+Beelzebub();
+
+class MyTasks extends Beelzebub.Tasks {
+    task() {
+        this.logger.log('MyTasks task');
+    }
+}
+Beelzebub.add( MyTasks );
+```
+
+```shell
+$ bz MyTasks.task
+```
+
+
+--------
+## Vars Example
+
+### `beelzebub.js` file
+```javascript
+var Beelzebub = require('beelzebub');
+Beelzebub();
+
+class MyTasks1 extends Beelzebub.Tasks {
+    default(aVars) {
+        const gVars = this.$getGlobalVars();
+        this.logger.log(`MyTasks1 default ${gVars.myGlobalVar} ${aVars.v1}`);
+    }
+}
+
+class MyTasks2 extends Beelzebub.Tasks {
+    task() {
+      const gVars = this.$getGlobalVars();
+        this.logger.log(`MyTasks1 task ${gVars.myGlobalVar} ${aVars.v1}`);
+    }
+}
+Beelzebub.add( [MyTasks1, MyTask2] );
+```
+
+```shell
+$ bz --myGlobalVar=hello TaskGroup1 --v1=1 TaskGroup2.task --v1=2
+```
+
+
+```shell
+$ bz --TaskGroup1.v1=hello TaskGroup1 TaskGroup2.task
+```
+
+
+--------
+## Load File Example
+
+### `appTasks.js` file
 ```javascript
 module.exports = [
   require('bz-frontend-react'),
@@ -90,12 +157,32 @@ module.exports = [
   require('./mytask.js')
 ];
 ```
-### OR
-### 'beelzebub.json' file
-```javascript
-[
-  'bz-frontend-react',
-  'bz-frontend-babel',
-  './mytasks.js',
-]
+
+```shell
+$ bz --file=./appTasks.js MyTasks.task1
 ```
+
+--------
+## License
+It should be an obvious choice or you totally missed the [badge at the top](#top).
+
+However for completeness;
+
+*"I Beelzebub, delare myself to be under the [MIT licence](LICENSE)"*
+
+
+
+-------
+## TODO
+* [ ] $before*
+    * $beforeEach
+    * $beforeAll
+* [ ] $after*
+    * $afterEach
+    * $afterAll
+* [ ] Full API Docs
+* [ ] Propaganda page - lots of awesome animation and stuff exploding!
+* [ ] add dependancy loading on task execution (jack it!)
+* [ ] option - print tree style log output for sub tasks
+* [ ] async/await
+* [ ] transfuser?

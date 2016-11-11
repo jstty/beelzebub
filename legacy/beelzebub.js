@@ -187,7 +187,7 @@ var Beelzebub = function () {
       if (tasks.$isRoot()) {
         // transfer all the current subTasks from old _rootTasks to current
 
-        tasks.$setSubTask(this._rootTasks.$getSubTask());
+        tasks.$setSubTasks(this._rootTasks.$getSubTasks());
         this._rootTasks = tasks;
 
         return tasks.$register().then(function (results) {

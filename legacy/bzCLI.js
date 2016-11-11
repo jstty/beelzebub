@@ -114,6 +114,8 @@ var BzCLI = function () {
                             return bz.run.apply(bz, (0, _toConsumableArray3.default)(runTasks));
                         }
                     }
+                }).catch(function (e) {
+                    console.error(e);
                 });
             }
             // check if there are any tasks at all

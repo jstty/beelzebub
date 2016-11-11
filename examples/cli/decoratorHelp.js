@@ -1,6 +1,31 @@
 'use strict';
 
 /**
+ * Running:
+ * $ bz --help
+ * 
+ * Output:
+ * ┌──────────────────────────────────────────────────────────────────────────────┐
+ * │ Help Docs                                                                    │
+ * └──────────────────────────────────────────────────────────────────────────────┘
+ * ┌──────────────────────────────────────────────────────────┐
+ * │ MyTasks                                                  │
+ * └──────────────────────────────────────────────────────────┘
+ * task1
+ *    ES7 Decorator Example MyTasks - Task 1
+ * task2
+ *    ES7 Decorator Example MyTasks - Task 2
+ * ┌──────────────────────────────────────────────────────────┐
+ * │ MyTasks2                                                 │
+ * └──────────────────────────────────────────────────────────┘
+ * task1
+ *    ES7 Decorator Example MyTasks2 - Task 1
+ * task2
+ *    ES7 Decorator Example MyTasks2 - Task 2
+ * 
+ */
+
+/**
  * -- Note --
  * Node does not support decorators so you will need to run this with bable-cli
  * $ ../../node_modules/.bin/babel-node decorator.js

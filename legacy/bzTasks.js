@@ -266,7 +266,9 @@ var BzTasks = function () {
 
   }, {
     key: '$addSubTasks',
-    value: function $addSubTasks(Task, config) {
+    value: function $addSubTasks(Task) {
+      var config = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
       if (!this.beelzebub.isLoading()) {
         // this.logger.error('$addSubTasks can only be called during init');
         return when.reject();
