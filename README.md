@@ -180,14 +180,3 @@ It should be an obvious choice or you totally missed the [badge at the top](#top
 However for completeness;
 
 *"I Beelzebub, delare myself to be under the [MIT licence](LICENSE)"*
-
-
-
--------
-## TODO
-* [ ] Full API Docs
-* [ ] Propaganda page - lots of awesome animation and stuff exploding!
-* [ ] add dependancy loading on task execution (jack it!)
-* [ ] option - print tree style log output for sub tasks
-* [ ] async/await
-* [ ] transfuser?
