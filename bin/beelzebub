@@ -1,2 +1,13 @@
 #!/usr/bin/env node
-require('./index.js');
+'use strict';
+var path = require('path');
+
+try {
+  // if ran globally, look for beelzebub installed in current dir
+  var bzBinPath = path.resolve([process.cwd(), 'node_modules/beelzebub/bin']);
+  require(bzBinPath);
+}
+catch (err) {
+  // could not find beelzebub, use the relative files
+  require('./index.js');
+}

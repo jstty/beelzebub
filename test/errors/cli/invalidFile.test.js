@@ -8,8 +8,8 @@ module.exports = [
     var dump = app.tasks.logger.getBuffer();
     console.info('logger dump:', dump);
 
-    var expectList = [
-    ];
+    // var expectList = [
+    // ];
 
     // expect(dump.length).is.equal(expectList.length);
     // for (var i = 0; i < dump.length; i++) {

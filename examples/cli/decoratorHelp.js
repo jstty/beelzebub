@@ -3,7 +3,7 @@
 /**
  * Running:
  * $ bz --help
- * 
+ *
  * Output:
  * ┌──────────────────────────────────────────────────────────────────────────────┐
  * │ Help Docs                                                                    │
@@ -22,7 +22,7 @@
  *    ES7 Decorator Example MyTasks2 - Task 1
  * task2
  *    ES7 Decorator Example MyTasks2 - Task 2
- * 
+ *
  */
 
 /**

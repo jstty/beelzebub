@@ -12,8 +12,8 @@ let wrapper = function (options) {
  * 'babel-plugin-transform-decorators-legacy' plugin
  */
   require('babel-register');
-  
-  return require('./decoratorVars.js'); 
+
+  return require('./decoratorVars.js');
 };
 module.exports = wrapper;
 // if not running in test, then run wrapper

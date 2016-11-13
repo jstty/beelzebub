@@ -3,7 +3,6 @@
 var _          = require('lodash');
 var path       = require('path');
 var Stumpy     = require('stumpy');
-var shell      = require('shelljs');
 
 var Beelzebub = require('../../index.js');
 var common    = require('../util/common.js');
@@ -84,7 +83,7 @@ _.forEach(list, function (testList, item) {
               var argv = [];
               // file needs to added first
               argv.push('-f ' + app.file);
-              
+
               _.forEach(config.args, (item) => {
                 argv.push(item);
               });

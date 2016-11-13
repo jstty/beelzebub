@@ -2,11 +2,11 @@
 /**
  * Running:
  * $ bz MyTasks.task1 MyTasks.task2
- * 
+ *
  * Output:
  * MyTasks task1
  * MyTasks task2
- * 
+ *
  */
 
 // simulate loading from a different BZ (for Global vs Local), but still functioanlly the same

@@ -43,7 +43,6 @@ var BzTasks = function () {
     (0, _classCallCheck3.default)(this, BzTasks);
 
     this.beelzebub = config.beelzebub || util.beelzebubInst;
-
     util.processConfig(config, this.beelzebub.getConfig(), this);
 
     this.name = config.name || this.constructor.name || 'BzTasks';
@@ -573,21 +572,10 @@ var BzTasks = function () {
   }, {
     key: '_runTask',
     value: function _runTask(task) {
-      // let p = null;
-
-      // // wait for self to complete
-      // if (this.beelzebub.isLoading()) {
-      //   p = this.beelzebub.getInitPromise();
-      // } else {
-      //   p = when.resolve();
-      // }
-
-      // return p.then(() => {
       // this.vLogger.log('task class:', this.name
       //   , ', running task:', task
       //   , ', all tasks:', _.keys(this._tasks)
       //   , ', all subTasks:', _.keys(this.$getSubTasks()));
-
       // if no task specified, then use default
       if (!task) {
         task = { task: 'default' };
@@ -609,7 +597,6 @@ var BzTasks = function () {
       } else {
         this.logger.error('Task "' + taskName + '" - not found');
       }
-      // });
     }
 
     /**

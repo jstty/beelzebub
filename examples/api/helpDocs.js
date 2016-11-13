@@ -14,11 +14,10 @@ let wrapper = function (options) {
 
 // =====================================================
   const Beelzebub = require('../../');
-  const {defaultTask, help} = require('../../').decorators;
   const bz = Beelzebub(options || { verbose: true });
 
   class MyTasks extends Beelzebub.Tasks {
-    constructor(config){
+    constructor (config) {
       super(config);
 
       this.$setDefault('task1');
@@ -38,7 +37,7 @@ let wrapper = function (options) {
   bz.add(MyTasks);
 
   class MyTasks2 extends bz.Tasks {
-    constructor(config){
+    constructor (config) {
       super(config);
 
       this.$setDefault('task1');

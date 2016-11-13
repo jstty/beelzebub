@@ -1,4 +1,5 @@
 'use strict';
+/*eslint-disable */
 // !-- FOR TESTS
 let wrapper = function (options) {
 // --!
@@ -15,11 +16,11 @@ let wrapper = function (options) {
 // =====================================================
   const Beelzebub = require('../../');
   const bz = Beelzebub(options || { verbose: true });
-  const {help, vars} = require('../../').decorators;
+  const {vars} = require('../../').decorators;
   const task = Beelzebub.TmplStrFunc.task;
 
   class MyTasks extends Beelzebub.Tasks {
-  
+
     @vars({
       name: { type: 'String', default: 'hello' },
       flag: { type: 'Boolean', default: true }
@@ -38,14 +39,14 @@ let wrapper = function (options) {
 
     @vars({
       fullname: {
-        type: 'Object', 
+        type: 'Object',
         properties: {
           first: { type: 'String' },
           last: { type: 'String' }
         }
       },
       list: {
-        type: 'Array', 
+        type: 'Array',
         items: { type: 'String' }
       }
     })
@@ -55,13 +56,13 @@ let wrapper = function (options) {
   }
 
   bz.add(MyTasks);
-  
+
   let p = bz.run(
     'MyTasks.task1',
     task`MyTasks.task2:${ {count: 100, verbose: true} }`,
     {
       task: 'MyTasks.task3',
-      vars: { 
+      vars: {
         fullname: { first: 'hello', last: 'world' },
         list: [ 'te', 'st' ]
       }
@@ -81,3 +82,4 @@ module.exports = wrapper;
 // if not running in test, then run wrapper
 if (typeof global.it !== 'function') wrapper();
 // --!
+/*eslint-enable */

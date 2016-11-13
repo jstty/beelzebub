@@ -9,7 +9,7 @@ let wrapper = function (options) {
   const task = Beelzebub.TmplStrFunc.task;
 
   class MyTasks extends Beelzebub.Tasks {
-    constructor(config) {
+    constructor (config) {
       super(config);
 
       this.$defineTaskVars('task1', {
@@ -22,19 +22,19 @@ let wrapper = function (options) {
       });
       this.$defineTaskVars('task3', {
         fullname: {
-          type: 'Object', 
+          type:       'Object',
           properties: {
             first: { type: 'String' },
-            last: { type: 'String' }
+            last:  { type: 'String' }
           }
         },
         list: {
-          type: 'Array', 
+          type:  'Array',
           items: { type: 'String' }
         }
       });
     }
-    
+
     task1 (customVars) {
       this.logger.log(`MyTasks task1 - ${customVars.name} ${customVars.flag}`);
     }
@@ -49,15 +49,15 @@ let wrapper = function (options) {
   }
 
   bz.add(MyTasks);
-  
+
   let p = bz.run(
     'MyTasks.task1',
-    task`MyTasks.task2:${ {count: 100, verbose: true} }`,
+    task`MyTasks.task2:${{count: 100, verbose: true}}`,
     {
       task: 'MyTasks.task3',
-      vars: { 
+      vars: {
         fullname: { first: 'hello', last: 'world' },
-        list: [ 'te', 'st' ]
+        list:     [ 'te', 'st' ]
       }
     }
   );

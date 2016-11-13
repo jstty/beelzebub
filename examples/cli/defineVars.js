@@ -2,19 +2,19 @@
 /**
  * Running:
  * $ bz MyTasks.task1 MyTasks.task2 --count=100 -v MyTasks.task3 --fullname.first=hello --fullname.last=world --list=te --list=st
- * 
+ *
  * Output:
  * MyTasks task1 - hello true
  * MyTasks task2 - 100 true
  * MyTasks task3 - "hello world" te,st
- * 
+ *
  */
 
 // simulate loading from a different BZ (for Global vs Local), but still functioanlly the same
 const Beelzebub = require('../../');
 
 class MyTasks extends Beelzebub.Tasks {
-  constructor(config) {
+  constructor (config) {
     super(config);
 
     this.$defineTaskVars('task1', {
@@ -27,19 +27,19 @@ class MyTasks extends Beelzebub.Tasks {
     });
     this.$defineTaskVars('task3', {
       fullname: {
-        type: 'Object', 
+        type:       'Object',
         properties: {
           first: { type: 'String' },
-          last: { type: 'String' }
+          last:  { type: 'String' }
         }
       },
       list: {
-        type: 'Array', 
+        type:  'Array',
         items: { type: 'String' }
       }
     });
   }
-  
+
   task1 (customVars) {
     this.logger.log(`MyTasks task1 - ${customVars.name} ${customVars.flag}`);
   }

@@ -92,7 +92,7 @@ _.forEach(list, function (testList, item) {
               var argv = [];
               // file needs to added first
               argv.push('-f ' + app.file);
-              
+
               _.forEach(config.args, (item) => {
                 argv.push(item);
               });

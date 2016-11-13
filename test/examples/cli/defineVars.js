@@ -11,7 +11,7 @@ module.exports = [
     var expectList = [
       'MyTasks task1 - hello true',
       'MyTasks task2 - 100 true',
-      'MyTasks task3 - "hello world" te,st',
+      'MyTasks task3 - "hello world" te,st'
     ];
 
     expect(dump.length).is.equal(expectList.length);

@@ -3,7 +3,7 @@
 /**
  * Running:
  * $ bz --help
- * 
+ *
  * Output:
  * ┌──────────────────────────────────────────────────────────────────────────────┐
  * │ Help Docs                                                                    │
@@ -22,7 +22,7 @@
  *    ES7 Decorator Example MyTasks2 - Task 1
  * task2
  *    ES7 Decorator Example MyTasks2 - Task 2
- * 
+ *
  */
 
 /**
@@ -36,10 +36,9 @@
 
 // simulate loading from a different BZ (for Global vs Local), but still functioanlly the same
 const Beelzebub = require('../../');
-const {defaultTask, help} = require('../../').decorators;
 
 class MyTasks extends Beelzebub.Tasks {
-  constructor(config){
+  constructor (config) {
     super(config);
 
     this.$setDefault('task1');
@@ -58,7 +57,7 @@ class MyTasks extends Beelzebub.Tasks {
 }
 
 class MyTasks2 extends Beelzebub.Tasks {
-  constructor(config){
+  constructor (config) {
     super(config);
 
     this.$setDefault('task1');

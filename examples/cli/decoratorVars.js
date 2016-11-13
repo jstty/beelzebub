@@ -1,13 +1,14 @@
 'use strict';
+/*eslint-disable */
 /**
  * Running:
  * $ bz MyTasks.task1 MyTasks.task2
- * 
+ *
  * Output:
  * MyTasks task1 - hello true
  * MyTasks task2 - 100 true
  * MyTasks task3 - "hello world" te,st
- * 
+ *
  */
 
 // simulate loading from a different BZ (for Global vs Local), but still functioanlly the same
@@ -15,7 +16,7 @@ const Beelzebub = require('../../');
 const {vars} = require('../../').decorators;
 
 class MyTasks extends Beelzebub.Tasks {
-  
+
   @vars({
     name: { type: 'String', default: 'hello' },
     flag: { type: 'Boolean', default: true }
@@ -34,14 +35,14 @@ class MyTasks extends Beelzebub.Tasks {
 
   @vars({
     fullname: {
-      type: 'Object', 
+      type: 'Object',
       properties: {
         first: { type: 'String' },
         last: { type: 'String' }
       }
     },
     list: {
-      type: 'Array', 
+      type: 'Array',
       items: { type: 'String' }
     }
   })
@@ -51,3 +52,4 @@ class MyTasks extends Beelzebub.Tasks {
 }
 
 module.exports = MyTasks;
+/*eslint-enable */

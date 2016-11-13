@@ -21,7 +21,7 @@ let wrapper = function (options) {
       this.logger.log('MyBaseTasks task2');
     }
 
-    task2_option () {
+    task2Option () {
       this.logger.log('MyBaseTasks task2 option');
     }
 
@@ -52,7 +52,7 @@ let wrapper = function (options) {
     'MyTasks.task1',
     'MyTasks.task3',
     'MyTasks.task2',
-    'MyTasks.task2_option'
+    'MyTasks.task2Option'
   );
 /* Output:
 MyTasks task1

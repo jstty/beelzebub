@@ -1,5 +1,6 @@
 {
     "extends": "standard",
+    "parser": "babel-eslint",
     "rules": {
         "no-multi-spaces": [ 
             "error", { 
@@ -10,14 +11,14 @@
                 } 
             }
         ],
-        "key-spacing": [ 
-            "error", { 
+        "key-spacing": [
+            "error", {
                 "align": {
                     "beforeColon": false,
                     "afterColon":  true,
-                    "on": "value"
-                },
-                "mode": "minimum"
+                    "on": "value",
+                    "mode": "minimum"
+                }
             }
         ],
         "brace-style": 0,
