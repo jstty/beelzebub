@@ -47,7 +47,7 @@ _.forEach(list, function (testList, item) {
 
           var stumpy = new Stumpy({
                         // display: false,
-            buffer: { size: 100 }
+            buffer: { size: 500 }
           });
           app.config = {
             verbose: true,

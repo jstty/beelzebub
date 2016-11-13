@@ -18,31 +18,42 @@ Allows your Tasks to be Module, Extendable, Flexiable, Managable, and Fire Resis
 
 ## Features
 1. Tasks are based on Promises, support: 
-    * Generator ([co wrapping](https://github.com/tj/co))
-    * Async/Await
-    * Streams
+    * Generator  ([Example](./examples/api/async.js))
+        * Using [co wrapping](https://github.com/tj/co)
+    * Async/Await ([Example](./examples/api/async.js))
+    * Streams ([Example](./examples/api/stream.js))
         * Compatiable with your existing `gulp` tasks
 2. ES6 Class base class
-    * Extending from other Tasks
+    * Extending from other Tasks ([Example](./examples/api/extend.js))
 3. Sub Tasks
-    * Static - simply by adding another task class to a tasks sub class. ([See Example](./examples/api/subtasksSimple.js))
-    * Dynamic - create sub tasks based on configuration ([See Example](./examples/api/subtasksAdvanced.js))
+    * Static - simply by adding another task class to a tasks sub class. ([Example](./examples/api/subtasksSimple.js))
+    * Dynamic - create sub tasks based on configuration ([Example](./examples/api/subtasksAdvanced.js))
 4. Run other tasks in an task
-    * Parallel (return promise)
-    * Sequance (return promise)
-5. Decorators
-    * Setting Default Task
-    * Help Docs
-    * Vars Definitions (for help and set defaults)
-6. Auto Help Docs
-7. Passing Options (Vars) to a task or globally.
-8. CLI and full Javascript API
-9. Totally bad *ss logo!
+    * Parallel ([Example](./examples/api/parallel.js))
+    * Sequance ([Example](./examples/api/sequence.js))
+5. Before and After ([Simple Example](./examples/api/beforeAfter.js), [Adv Example](./examples/api/beforeAfterAdvanced.js))
+    * each task
+    * all tasks
+6. Decorators
+    * Setting Default Task ([Example](./examples/api/decoratorHelp.js))
+    * Help Docs ([Example](./examples/api/decoratorHelp.js))
+    * Vars Definitions (for help and set defaults) ([Example](./examples/api/decoratorVars.js))
+7. Auto Help Docs ([ALI Example](./examples/api/helpDocs.js), [CLI Example](./examples/cli/helpDocs.js))
+8. Passing Options (Vars) to a task or globally ([ALI Example](./examples/api/passingVars.js), [CLI Example](./examples/cli/defineVars.js))
+9. CLI ([Examples](./examples/cli)) and full Javascript API ([Examples](./examples/api))
+10. **Totally bad *ss logo!**
 
 -------
 # Install
+
+## API
 ```shell
 $ npm install beelzebub
+```
+
+## CLI
+```shell
+$ npm install beelzebub -g
 ```
 
 -------
@@ -174,12 +185,6 @@ However for completeness;
 
 -------
 ## TODO
-* [ ] $before*
-    * $beforeEach
-    * $beforeAll
-* [ ] $after*
-    * $afterEach
-    * $afterAll
 * [ ] Full API Docs
 * [ ] Propaganda page - lots of awesome animation and stuff exploding!
 * [ ] add dependancy loading on task execution (jack it!)

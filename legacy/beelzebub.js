@@ -68,6 +68,7 @@ var Beelzebub = function () {
 
       this._initFunctionList = [];
       this._initDone = false;
+      this._tasksRunning = false;
     }
   }, {
     key: 'getConfig',
@@ -210,13 +211,26 @@ var Beelzebub = function () {
   }, {
     key: 'run',
     value: function run(parent) {
+      var _this = this;
+
+      // used to determine if this is the entry point to run the first task
+      var entryPoint = false;
+      if (!this._tasksRunning) {
+        entryPoint = true;
+      }
+
       for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
         args[_key - 1] = arguments[_key];
       }
 
       args.unshift(parent);
       // use internal function, because $run bounces back to root level
-      return this._rootTasks._run.apply(this._rootTasks, args);
+      return this._rootTasks._run.apply(this._rootTasks, args).then(function () {
+        // if it was the entry point then run afterAll
+        if (entryPoint) {
+          return _this._rootTasks._runAfterAll.apply(_this._rootTasks);
+        }
+      });
     }
   }, {
     key: 'sequence',

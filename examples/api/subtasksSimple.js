@@ -16,7 +16,6 @@ let wrapper = function (options) {
       this._delayTime = 300;
     }
 
-    // TODO: why is this being added to the tasks?
     $init () {
       return this._delay('MyBaseTasks init');
     }
@@ -33,7 +32,7 @@ let wrapper = function (options) {
     task1 () {
       return this._delay('MyBaseTasks task1 - ' + this.value);
     }
-}
+  }
 
   class MyTasks extends Beelzebub.Tasks {
     constructor (config) {
