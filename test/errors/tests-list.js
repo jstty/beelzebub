@@ -1,5 +1,7 @@
+
 module.exports = {
   'cli': {
-    'invalidFile': { 'type': 'cli', 'args': ['MyTasks.task1'] }
+    // TODO: finish these tests
+    // 'invalidFile': { 'type': 'cli', 'args': ['MyTasks.task1'] }
   }
 };

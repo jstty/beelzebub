@@ -16,6 +16,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var _ = require('lodash');
 var co = require('co');
+var Stumpy = require('stumpy');
+var strftime = require('strftime');
+
 var manifest = require('../package.json');
 
 var BzTasks = require('./bzTasks.js');
@@ -44,11 +47,58 @@ var Beelzebub = function () {
     value: function init() {
       var config = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : util.DefaultConfig;
 
+      // if logger not defined
+      if (!config.logger) {
+        var stumpy = new Stumpy({
+          dateStringFunc: function customDateStringFunc(date) {
+            // display time diff from start
+            var diffStats = this.$getCurrentDiffStats();
+            return strftime('%M:%S.%L', new Date(diffStats.time));
+          }.bind(this),
+          buffer: {
+            size: 500
+          },
+          group: {
+            autoIndent: true,
+            indent: {
+              // https://github.com/jamestalmage/cli-table2/blob/master/src/utils.js
+              start: '└─┐',
+              line: '  ├',
+              end: '┌─┘',
+              inner: '  ',
+              split: '  ',
+              join: '  '
+            }
+          }
+        });
+
+        config.logger = stumpy;
+      }
+
+      // if helpLogger not defined
+      if (!config.helpLogger) {
+        var helpStumpy = new Stumpy('Help', {
+          formatFunc: function customFormatFunc(log, options) {
+            return log.args;
+          },
+          buffer: {
+            size: 500
+          }
+        });
+        config.helpLogger = helpStumpy;
+      }
+
       util.processConfig(config, util.DefaultConfig, this);
 
       this._config.beelzebub = this; // don't like this, but needed for BzTasks
       this._rootTasks = new BzTasks(this._config);
       this._rootTasks.$useAsRoot();
+
+      this._stats = {
+        start: {},
+        end: {},
+        diff: {}
+      };
     }
   }, {
     key: 'reset',
@@ -56,12 +106,15 @@ var Beelzebub = function () {
       // logger util
       // TODO: move this to util
       this.logger = console;
+
       // verbose logger
       // TODO: move over to stumpy
       this.vLogger = {
         log: function log() {},
         info: function info() {}
       };
+
+      this.helpLogger = console;
 
       this._config = _.cloneDeep(util.DefaultConfig);
       this._rootTasks = null;
@@ -201,6 +254,18 @@ var Beelzebub = function () {
 
       // this.vLogger.log( 'all tasks:', _.keys(this._rootTasks) );
     }
+  }, {
+    key: '$getCurrentDiffStats',
+    value: function $getCurrentDiffStats() {
+      var endStats = util.getStats();
+      var startStats = this._stats.start;
+      // default to now if time doesn't exist
+      if (!startStats.time) {
+        startStats = util.getStats();
+      }
+
+      return util.calcStatsDiff(startStats, endStats);
+    }
 
     /**
      * Runs task(s) - multi args run in sequence, arrays are run in parallel
@@ -217,6 +282,7 @@ var Beelzebub = function () {
       var entryPoint = false;
       if (!this._tasksRunning) {
         entryPoint = true;
+        this._stats.start = util.getStats();
       }
 
       for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
@@ -284,9 +350,10 @@ var Beelzebub = function () {
       };
 
       var spaceLen = width - title.length - 5;
-      this.logger.log(sides['top-left'] + sides['top'].repeat(width - 2) + sides['top-right']);
-      this.logger.log(sides['left'], title, ' '.repeat(spaceLen), sides['right']);
-      this.logger.log(sides['bottom-left'] + sides['bottom'].repeat(width - 2) + sides['bottom-right']);
+      // use helpLogger, so time stamp and all that is not printed
+      this.helpLogger.log(sides['top-left'] + sides['top'].repeat(width - 2) + sides['top-right']);
+      this.helpLogger.log(sides['left'], title, ' '.repeat(spaceLen), sides['right']);
+      this.helpLogger.log(sides['bottom-left'] + sides['bottom'].repeat(width - 2) + sides['bottom-right']);
     }
   }]);
   return Beelzebub;

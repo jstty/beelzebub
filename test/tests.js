@@ -6,6 +6,6 @@ describe('Examples', function () {
   require('./examples/tests.js');
 });
 
-// describe('Errors', function () {
-//   require('./errors/tests.js');
-// });
+describe('Errors', function () {
+  require('./errors/tests.js');
+});

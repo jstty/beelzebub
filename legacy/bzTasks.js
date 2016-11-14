@@ -59,6 +59,7 @@ var BzTasks = function () {
 
     this._running = null;
     this._beforeAllRan = false;
+    this._tasksStats = {};
 
     // TODO: add cli options/commands
   }
@@ -84,8 +85,9 @@ var BzTasks = function () {
       if (this.$helpDocs) {
         this.beelzebub.drawBox(this.name);
         _.forEach(this.$helpDocs, function (doc, taskName) {
-          _this.logger.log(chalk.bold.underline(taskName));
-          _this.logger.log('\t', doc, '\n');
+          // use helpLogger so time stamp's are not printed
+          _this.helpLogger.log(chalk.bold.underline(taskName));
+          _this.helpLogger.log('\t', doc, '\n');
         });
       }
     }
@@ -257,6 +259,30 @@ var BzTasks = function () {
         // this.vLogger.log('$register initFunctionList done:', results);
         return results;
       });
+    }
+  }, {
+    key: '_taskStatsStart',
+    value: function _taskStatsStart(taskName) {
+      this.logger.group(taskName);
+
+      if (!this._tasksStats[taskName]) {
+        this._tasksStats[taskName] = {};
+      }
+      this._tasksStats[taskName].start = util.getStats();
+    }
+  }, {
+    key: '_taskStatsEnd',
+    value: function _taskStatsEnd(taskName) {
+      this._tasksStats[taskName].end = util.getStats();
+      this._tasksStats[taskName].diff = util.calcStatsDiff(this._tasksStats[taskName].start, this._tasksStats[taskName].end);
+
+      // TODO: add option to not display this
+      var stats = this._tasksStats[taskName];
+      var time = Number(stats.diff.time.toFixed(2));
+      // const memory = stats.diff.memory;
+      // mem[rss:${memory.rss} heapUsed:${memory.heapUsed} heapTotal:${memory.heapTotal}]
+
+      this.logger.groupEnd(taskName + ' (' + time + 'ms)');
     }
   }, {
     key: '_runBeforeAll',
@@ -679,9 +705,12 @@ var BzTasks = function () {
         // run beforeEach
         return _this8._normalizeExecFuncToPromise(parent.$beforeEach, parent, taskInfo);
       }).then(function () {
+        parent._taskStatsStart(taskName);
         // run task function
         return _this8._normalizeExecFuncToPromise(func, parent, vars);
       }).then(function () {
+        parent._taskStatsEnd(taskName);
+
         // run afterEach
         return _this8._normalizeExecFuncToPromise(parent.$afterEach, parent, taskInfo);
       });

@@ -18,7 +18,7 @@ var beelzebubInst = null;
 var DefaultConfig = {
   verbose: false,
   silent: false,
-  logger: console
+  logger: null
 };
 
 var nullLogger = {
@@ -117,7 +117,13 @@ var BzUtils = function () {
       if (config.logger) {
         contex.logger = config.logger;
       } else {
-        contex.logger = parentConfig.logger || DefaultConfig.logger;
+        contex.logger = parentConfig.logger;
+      }
+
+      if (config.helpLogger) {
+        contex.helpLogger = config.helpLogger;
+      } else {
+        contex.helpLogger = parentConfig.helpLogger;
       }
 
       // this._config = _.merge(DefaultConfig, config || {});
@@ -169,6 +175,36 @@ var BzUtils = function () {
 
       return false;
     }
+  }, {
+    key: 'getStats',
+    value: function getStats() {
+      var time = process.hrtime();
+      time = time[0] * 1e3 + time[1] / 1e6;
+      return {
+        time: time,
+        memory: process.memoryUsage()
+      };
+    }
+  }, {
+    key: 'calcStatsDiff',
+    value: function calcStatsDiff(start, end) {
+      var memory = {
+        heapTotal: 0,
+        heapUsed: 0,
+        rss: 0
+      };
+
+      if (end.memory && start.memory) {
+        memory.heapTotal = end.memory.heapTotal - start.memory.heapTotal;
+        memory.heapUsed = end.memory.heapUsed - start.memory.heapUsed;
+        memory.rss = end.memory.rss - start.memory.rss;
+      }
+
+      return {
+        time: end.time - start.time,
+        memory: memory
+      };
+    }
   }]);
   return BzUtils;
 }();
@@ -178,6 +214,8 @@ module.exports = {
   DefaultConfig: DefaultConfig,
   nullLogger: nullLogger,
   processConfig: BzUtils.processConfig,
+  getStats: BzUtils.getStats,
+  calcStatsDiff: BzUtils.calcStatsDiff,
   isGenerator: BzUtils.isGenerator,
   isPromise: BzUtils.isPromise,
   isStream: BzUtils.isStream,

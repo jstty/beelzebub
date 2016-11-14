@@ -5,7 +5,7 @@ module.exports = [
   function (app) {
     expect(app).to.not.be.null;
 
-    var dump = app.tasks.logger.getBuffer();
+    var dump = app.tasks.helpLogger.getBuffer();
     // console.info('logger dump:', dump);
 
     var expectList = [
