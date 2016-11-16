@@ -55,13 +55,36 @@ var BzUtils = function () {
   }
 
   (0, _createClass3.default)(BzUtils, null, [{
-    key: 'isGenerator',
+    key: 'getInstance',
+
+    /**
+     * get singleton instance of beelzebub
+     * @return beelzebub instance
+     */
+    value: function getInstance() {
+      return beelzebubInst;
+    }
+
+    /**
+     * sets singleton instance of beelzebub
+     * @return beelzebub instance
+     */
+
+  }, {
+    key: 'setInstance',
+    value: function setInstance(inst) {
+      beelzebubInst = inst;
+      return beelzebubInst;
+    }
 
     /**
      * check if function is generator
      * @param {function}
      * @returns {boolean}
      */
+
+  }, {
+    key: 'isGenerator',
     value: function isGenerator(func) {
       return func && func.constructor && func.constructor.name === 'GeneratorFunction';
     }
@@ -174,7 +197,8 @@ var BzUtils = function () {
 }();
 
 module.exports = {
-  beelzebubInst: beelzebubInst,
+  getInstance: BzUtils.getInstance,
+  setInstance: BzUtils.setInstance,
   DefaultConfig: DefaultConfig,
   nullLogger: nullLogger,
   processConfig: BzUtils.processConfig,

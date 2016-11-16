@@ -21,6 +21,7 @@ var when = require('when');
 
 var manifest = require('../package.json');
 var Beelzebub = require('./beelzebub.js');
+var util = require('./util.js');
 
 var BzCLI = function () {
   function BzCLI() {
@@ -37,6 +38,8 @@ var BzCLI = function () {
       var promise = when.resolve();
       var currentDir = process.cwd();
       var bz = new Beelzebub(config || { verbose: true });
+      // need to add this instance to util singleton to it's found when creating tasks
+      util.setInstance(bz);
 
       if (!args) {
         // remove the first two array items

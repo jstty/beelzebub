@@ -2,9 +2,10 @@
 'use strict';
 var path = require('path');
 
+// if ran globally, look for beelzebub installed in current dir
+var bzBinPath = path.resolve(process.cwd(), 'node_modules/beelzebub/bin');
+
 try {
-  // if ran globally, look for beelzebub installed in current dir
-  var bzBinPath = path.resolve([process.cwd(), 'node_modules/beelzebub/bin']);
   require(bzBinPath);
 }
 catch (err) {

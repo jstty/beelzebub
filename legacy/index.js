@@ -14,74 +14,36 @@ var util = require('./util.js');
  */
 var BeelzebubMod = function BeelzebubMod(config) {
   if (!util.beelzebubInst) {
-    util.beelzebubInst = new Beelzebub(config);
+    util.setInstance(new Beelzebub(config));
   }
-  return util.beelzebubInst;
+  return util.getInstance();
 };
 
-// TODO: find a better way to create these functions
 BeelzebubMod.delete = function () {
-  util.beelzebubInst = null;
+  util.setInstance(null);
 };
 BeelzebubMod.create = function (config) {
   return new Beelzebub(config);
 };
-BeelzebubMod.init = function (config) {
-  if (!util.beelzebubInst) {
-    util.beelzebubInst = new Beelzebub();
-  }
-  return util.beelzebubInst.init(config);
-};
-BeelzebubMod.add = function (task, config) {
-  if (!util.beelzebubInst) {
-    util.beelzebubInst = new Beelzebub();
-  }
-  return util.beelzebubInst.add(task, config);
-};
-BeelzebubMod.sequence = function () {
-  if (!util.beelzebubInst) {
-    util.beelzebubInst = new Beelzebub();
-  }
 
-  for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-    args[_key] = arguments[_key];
-  }
+function addToMod(funcName) {
+  BeelzebubMod[funcName] = function () {
+    var _util$getInstance;
 
-  return util.beelzebubInst.sequence.apply(util.beelzebubInst, args);
-};
-BeelzebubMod.parallel = function () {
-  if (!util.beelzebubInst) {
-    util.beelzebubInst = new Beelzebub();
-  }
+    if (!util.getInstance()) {
+      util.setInstance(new Beelzebub());
+    }
 
-  for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-    args[_key2] = arguments[_key2];
-  }
+    return (_util$getInstance = util.getInstance())[funcName].apply(_util$getInstance, arguments);
+  };
+}
 
-  return util.beelzebubInst.parallel.apply(util.beelzebubInst, args);
-};
-BeelzebubMod.run = function () {
-  if (!util.beelzebubInst) {
-    util.beelzebubInst = new Beelzebub();
-  }
-
-  for (var _len3 = arguments.length, args = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
-    args[_key3] = arguments[_key3];
-  }
-
-  return util.beelzebubInst.run.apply(util.beelzebubInst, args);
-};
-BeelzebubMod.printHelp = function () {
-  if (!util.beelzebubInst) {
-    util.beelzebubInst = new Beelzebub();
-  }
-
-  for (var _len4 = arguments.length, args = Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
-    args[_key4] = arguments[_key4];
-  }
-
-  return util.beelzebubInst.printHelp.apply(util.beelzebubInst, args);
-};
+addToMod('init');
+addToMod('add');
+addToMod('sequence');
+addToMod('parallel');
+addToMod('run');
+addToMod('printHelp');
 
 /**
  * CLI Class
