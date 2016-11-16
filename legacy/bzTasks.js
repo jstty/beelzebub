@@ -42,7 +42,7 @@ var BzTasks = function () {
   function BzTasks(config) {
     (0, _classCallCheck3.default)(this, BzTasks);
 
-    this.beelzebub = config.beelzebub || util.beelzebubInst;
+    this.beelzebub = config.beelzebub || util.getInstance();
     util.processConfig(config, this.beelzebub.getConfig(), this);
 
     this.name = config.name || this.constructor.name || 'BzTasks';
