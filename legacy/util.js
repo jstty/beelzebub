@@ -79,6 +79,29 @@ var BzUtils = function () {
     }
 
     /**
+     * get singleton instance of beelzebub
+     * @return beelzebub instance
+     */
+
+  }, {
+    key: 'getInstance',
+    value: function getInstance() {
+      return beelzebubInst;
+    }
+
+    /**
+     * sets singleton instance of beelzebub
+     * @return beelzebub instance
+     */
+
+  }, {
+    key: 'setInstance',
+    value: function setInstance(inst) {
+      beelzebubInst = inst;
+      return beelzebubInst;
+    }
+
+    /**
      * check if function is generator
      * @param {function}
      * @returns {boolean}
