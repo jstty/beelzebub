@@ -2,7 +2,7 @@
 
 var _          = require('lodash');
 var path       = require('path');
-// var Stumpy     = require('stumpy');
+var Stumpy     = require('stumpy');
 var shell      = require('shelljs');
 
 var Beelzebub = require('../../index.js');
@@ -45,13 +45,14 @@ _.forEach(list, function (testList, item) {
           // exec('npm install', { silent: true });
           // console.log("cwd:", process.cwd(), "\n");
 
-          // var stumpy = new Stumpy({
-          //               // display: false,
-          //   buffer: { size: 500 }
-          // });
+          var stumpy = new Stumpy({
+            display: false,
+            buffer:  { size: 500 }
+          });
           app.config = {
-            verbose: true
-            // logger:  stumpy
+            verbose:    true,
+            logger:     stumpy,
+            helpLogger: stumpy
           };
 
           // try to load app.js file

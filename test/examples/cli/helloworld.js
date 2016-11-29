@@ -4,7 +4,7 @@ var expect  = common.expect;
 module.exports = [
   function (app) {
     var dump = app.tasks.logger.getBuffer();
-    // console.info('basic logger dump:', dump);
+    // console.info('logger dump:', dump);
 
     var expectList = [
       'MyTasks task1',
