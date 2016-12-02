@@ -116,6 +116,7 @@ var Beelzebub = function () {
       this._initFunctionList = [];
       this._initDone = false;
       this._tasksRunning = false;
+      this._globalVars = {};
     }
   }, {
     key: 'getConfig',
