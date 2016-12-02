@@ -34,6 +34,7 @@ var whenSeq = require('when/sequence');
 var streamToPromise = require('stream-to-promise');
 
 var manifest = require('../package.json');
+var bzStats = require('./bzStats.js');
 var util = require('./util.js');
 
 /**
@@ -44,8 +45,10 @@ var util = require('./util.js');
 
 var BzTasks = function () {
   function BzTasks(config) {
+    var hidden = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
     (0, _classCallCheck3.default)(this, BzTasks);
 
+    this._hidden = hidden;
     this.beelzebub = config.beelzebub || util.getInstance();
     util.processConfig(config, this.beelzebub.getConfig(), this);
 
@@ -63,7 +66,7 @@ var BzTasks = function () {
 
     this._running = null;
     this._beforeAllRun = false;
-    this._tasksStats = {};
+    this._stats = new bzStats.Task();
 
     // TODO: add cli options/commands
   }
@@ -78,9 +81,72 @@ var BzTasks = function () {
       return namePath;
     }
   }, {
+    key: '$getTaskTree',
+    value: function $getTaskTree() {
+      var _this = this;
+
+      var tree = {
+        name: this.name,
+        tasks: this._tasks,
+        stats: this._stats,
+        subTasks: []
+      };
+
+      var i = 0;
+      _.forEach(this.$getSubTasks(), function (task) {
+        // if task is suppose to be hidden ($root$ for example)
+        // use first sub task as tree
+        if (_this._hidden && i === 0) {
+          tree = task.$getTaskTree();
+        } else {
+          if (_this._hidden) {
+            // this should not really happen
+            _this.logger.warn('multi sub tasks in hidden task node not allowed');
+          }
+
+          tree.subTasks.push(task.$getTaskTree());
+        }
+        i++;
+      });
+
+      return tree;
+    }
+
+    // flatten task tree so it's one level
+
+  }, {
+    key: '$getTaskFlatList',
+    value: function $getTaskFlatList() {
+      var list = [];
+      if (!this._hidden) {
+        list.push({
+          name: this.name,
+          tasks: this._tasks,
+          stats: this._stats
+        });
+      }
+
+      _.forEach(this.$getSubTasks(), function (task) {
+        list = list.concat(task.$getTaskFlatList());
+      });
+
+      return list;
+    }
+  }, {
+    key: '$getStatsSummary',
+    value: function $getStatsSummary(parentSummary) {
+      var summary = this._stats.getSummary(parentSummary);
+
+      _.forEach(this.$getSubTasks(), function (task) {
+        summary = task.$getStatsSummary(summary);
+      });
+
+      return summary;
+    }
+  }, {
     key: '$printHelp',
     value: function $printHelp() {
-      var _this = this;
+      var _this2 = this;
 
       _.forEach(this.$getSubTasks(), function (task) {
         task.$printHelp();
@@ -90,8 +156,8 @@ var BzTasks = function () {
         this.beelzebub.drawBox(this.name);
         _.forEach(this.$helpDocs, function (doc, taskName) {
           // use helpLogger so time stamp's are not printed
-          _this.helpLogger.log(chalk.bold.underline(taskName));
-          _this.helpLogger.log('\t', doc, '\n');
+          _this2.helpLogger.log(chalk.bold.underline(taskName));
+          _this2.helpLogger.log('\t', doc, '\n');
         });
       }
     }
@@ -268,39 +334,32 @@ var BzTasks = function () {
     key: '_taskStatsStart',
     value: function _taskStatsStart(taskName) {
       this.logger.group(taskName);
-
-      if (!this._tasksStats[taskName]) {
-        this._tasksStats[taskName] = {};
-      }
-      this._tasksStats[taskName].start = util.getStats();
+      return this._stats.startTask();
     }
   }, {
     key: '_taskStatsEnd',
-    value: function _taskStatsEnd(taskName) {
-      this._tasksStats[taskName].end = util.getStats();
-      this._tasksStats[taskName].diff = util.calcStatsDiff(this._tasksStats[taskName].start, this._tasksStats[taskName].end);
+    value: function _taskStatsEnd(taskName, statsId) {
+      this._stats.endTask(statsId);
 
       // TODO: add option to not display this
-      var stats = this._tasksStats[taskName];
+      var stats = this._stats.getTask(statsId);
       var time = Number(stats.diff.time.toFixed(2));
-      // const memory = stats.diff.memory;
-      // mem[rss:${memory.rss} heapUsed:${memory.heapUsed} heapTotal:${memory.heapTotal}]
 
-      this.logger.groupEnd(taskName + ' (' + time + 'ms)');
+      this.logger.groupEnd(taskName + ' (' + time + ' ms)');
     }
   }, {
     key: '_runBeforeAll',
     value: function _runBeforeAll() {
-      var _this2 = this;
+      var _this3 = this;
 
       return this._normalizeExecFuncToPromise(this.$beforeAll, this).then(function () {
-        _this2._beforeAllRun = true;
+        _this3._beforeAllRun = true;
       });
     }
   }, {
     key: '_runAfterAll',
     value: function _runAfterAll() {
-      var _this3 = this;
+      var _this4 = this;
 
       // sequance running all sub task AfterAll function
       var afterPromises = [];
@@ -311,30 +370,30 @@ var BzTasks = function () {
       });
 
       return whenSeq(afterPromises).then(function () {
-        return _this3._normalizeExecFuncToPromise(_this3.$afterAll, _this3);
+        return _this4._normalizeExecFuncToPromise(_this4.$afterAll, _this4);
       });
     }
   }, {
     key: '_addTasks',
     value: function _addTasks(tList, task) {
-      var _this4 = this;
+      var _this5 = this;
 
       // this.vLogger.log('addTasksToGulp tList:', tList, ', name:', this.name, ', rootLevel:', this._rootLevel, ', this != task:', this != task);
 
       _.forEach(tList, function (funcName) {
         var taskId = '';
 
-        if (_this4 !== task && !_this4._rootLevel) {
+        if (_this5 !== task && !_this5._rootLevel) {
           taskId += task.name + '.';
         }
         taskId += funcName;
 
-        if (funcName === _this4._defaultTaskFuncName) {
+        if (funcName === _this5._defaultTaskFuncName) {
           taskId = 'default'; // set taskId to 'default'
         }
 
         // this.vLogger.log('taskId:', taskId);
-        _this4._tasks[taskId] = {
+        _this5._tasks[taskId] = {
           taskId: taskId,
           tasksObj: task,
           func: task[funcName]
@@ -537,7 +596,7 @@ var BzTasks = function () {
   }, {
     key: '_sequence',
     value: function _sequence(parent) {
-      var _this5 = this;
+      var _this6 = this;
 
       for (var _len5 = arguments.length, args = Array(_len5 > 1 ? _len5 - 1 : 0), _key5 = 1; _key5 < _len5; _key5++) {
         args[_key5 - 1] = arguments[_key5];
@@ -554,12 +613,12 @@ var BzTasks = function () {
 
       return this._waitForInit().then(function () {
         // normalize tasks (aka args)
-        args = _this5._normalizeTask(parent, args);
+        args = _this6._normalizeTask(parent, args);
 
         var aTasks = [];
         _.forEach(args, function (task) {
           aTasks.push(function () {
-            return _this5._runPromiseTask(parent, task);
+            return _this6._runPromiseTask(parent, task);
           });
         });
 
@@ -577,7 +636,7 @@ var BzTasks = function () {
   }, {
     key: '_parallel',
     value: function _parallel(parent) {
-      var _this6 = this;
+      var _this7 = this;
 
       for (var _len6 = arguments.length, args = Array(_len6 > 1 ? _len6 - 1 : 0), _key6 = 1; _key6 < _len6; _key6++) {
         args[_key6 - 1] = arguments[_key6];
@@ -593,10 +652,10 @@ var BzTasks = function () {
 
       return this._waitForInit().then(function () {
         // normalize tasks (aka args)
-        args = _this6._normalizeTask(parent, args);
+        args = _this7._normalizeTask(parent, args);
 
         var pList = _.map(args, function (task) {
-          return _this6._runPromiseTask(parent, task);
+          return _this7._runPromiseTask(parent, task);
         });
 
         // this.vLogger.log('parallel pList:', pList);
@@ -613,7 +672,7 @@ var BzTasks = function () {
   }, {
     key: '_run',
     value: function _run(parent) {
-      var _this7 = this;
+      var _this8 = this;
 
       for (var _len7 = arguments.length, args = Array(_len7 > 1 ? _len7 - 1 : 0), _key7 = 1; _key7 < _len7; _key7++) {
         args[_key7 - 1] = arguments[_key7];
@@ -631,22 +690,22 @@ var BzTasks = function () {
         var promise = null;
 
         // normalize tasks (aka args)
-        args = _this7._normalizeTask(parent, args);
+        args = _this8._normalizeTask(parent, args);
 
         if (args.length === 1) {
-          promise = _this7._runPromiseTask(parent, args[0]);
+          promise = _this8._runPromiseTask(parent, args[0]);
         } else {
           // multi args mean, run in sequence
-          promise = _this7._sequence.apply(_this7, [parent].concat((0, _toConsumableArray3.default)(args)));
+          promise = _this8._sequence.apply(_this8, [parent].concat((0, _toConsumableArray3.default)(args)));
         }
 
-        _this7._running = promise.then(function (result) {
-          _this7._running = null;
+        _this8._running = promise.then(function (result) {
+          _this8._running = null;
           return result;
         });
 
-        return _this7._running.catch(function (e) {
-          _this7.logger.error(e);
+        return _this8._running.catch(function (e) {
+          _this8.logger.error(e);
         });
       });
     }
@@ -660,7 +719,7 @@ var BzTasks = function () {
   }, {
     key: '_runTask',
     value: function _runTask(task) {
-      var _this8 = this;
+      var _this9 = this;
 
       // this.vLogger.log('task class:', this.name
       //   , ', running task:', task
@@ -683,7 +742,7 @@ var BzTasks = function () {
           task.task = taskParts.join('.');
           // this.vLogger.info('runTask taskName:', taskName, ', runTask:', task.task);
 
-          var tastObject = _this8.$getSubTask(taskName);
+          var tastObject = _this9.$getSubTask(taskName);
 
           // has beforeAll run
           if (!tastObject.$hasRunBefore()) {
@@ -721,7 +780,7 @@ var BzTasks = function () {
   }, {
     key: '_execTaskFun',
     value: function _execTaskFun(taskName, func, parent, vars) {
-      var _this9 = this;
+      var _this10 = this;
 
       var taskInfo = {
         task: taskName,
@@ -734,22 +793,23 @@ var BzTasks = function () {
         // call run beforeAll function which sets internal var if ran before
         // not crazy about using private, but don't want people to thing it's ok to run this
         beforePromise = parent._runBeforeAll().then(function () {
-          return _this9._runBeforeEach(parent, taskInfo);
+          return _this10._runBeforeEach(parent, taskInfo);
         });
       } else {
         beforePromise = this._runBeforeEach(parent, taskInfo);
       }
 
       // run beforeAll
+      var statsId = null;
       return beforePromise.then(function () {
-        parent._taskStatsStart(taskName);
+        statsId = parent._taskStatsStart();
         // run task function
-        return _this9._normalizeExecFuncToPromise(func, parent, vars);
+        return _this10._normalizeExecFuncToPromise(func, parent, vars);
       }).then(function () {
-        parent._taskStatsEnd(taskName);
+        parent._taskStatsEnd(taskName, statsId);
 
         // run afterEach
-        return _this9._normalizeExecFuncToPromise(parent.$afterEach, parent, taskInfo);
+        return _this10._normalizeExecFuncToPromise(parent.$afterEach, parent, taskInfo);
       });
     }
 
@@ -766,7 +826,7 @@ var BzTasks = function () {
   }, {
     key: '_runPromiseTask',
     value: function _runPromiseTask(parent, task) {
-      var _this10 = this;
+      var _this11 = this;
 
       var p = null;
 
@@ -794,7 +854,7 @@ var BzTasks = function () {
                   (function () {
                     task.task = taskParts.join('.');
                     // this.vLogger.info('runPromiseTask taskName:', taskName, ', runTask:', task.task);
-                    var tastObject = _this10.$getSubTask(taskName);
+                    var tastObject = _this11.$getSubTask(taskName);
 
                     // run parent beforeAll running subTask
                     // has beforeAll run
@@ -853,7 +913,7 @@ var BzTasks = function () {
   }, {
     key: '_normalizeTask',
     value: function _normalizeTask(parent, tasks) {
-      var _this11 = this;
+      var _this12 = this;
 
       var objTasks = _.map(tasks, function (task) {
         var taskObj = void 0;
@@ -862,7 +922,7 @@ var BzTasks = function () {
           // if first char "." then relative to parent path
           if (task.charAt(0) === '.') {
             if (!parent) {
-              _this11.logger.trace('parent missing but expected');
+              _this12.logger.trace('parent missing but expected');
             } else {
               task = parent.namePath + task;
             }
@@ -887,13 +947,13 @@ var BzTasks = function () {
                 taskVars = JSON.parse(taskVars);
               } catch (err) {
                 // this is ok
-                _this11.vLogger.warn('Parsing Task Error:', err);
+                _this12.vLogger.warn('Parsing Task Error:', err);
               }
             }
           }
 
-          if (!_this11.$getSubTask(taskName) && !_this11.$getTask(taskName)) {
-            _this11.logger.warn(taskFullName, 'task not added');
+          if (!_this12.$getSubTask(taskName) && !_this12.$getTask(taskName)) {
+            _this12.logger.warn(taskFullName, 'task not added');
             return false;
           }
 
@@ -902,20 +962,20 @@ var BzTasks = function () {
             vars: taskVars
           };
         } else if (_.isArray(task)) {
-          taskObj = _this11._normalizeTask(parent, task);
+          taskObj = _this12._normalizeTask(parent, task);
         } else if (_.isFunction(task)) {
           taskObj = {
             task: task
           };
         } else if (_.isObject(task)) {
           if (!task.hasOwnProperty('task')) {
-            _this11.logger.warn('invalid object: task property required');
+            _this12.logger.warn('invalid object: task property required');
             return null;
           }
 
           return task;
         } else {
-          _this11.logger.warn('unknown task input type');
+          _this12.logger.warn('unknown task input type');
           return null;
         }
 
@@ -925,7 +985,7 @@ var BzTasks = function () {
         }
 
         if (!_.isObject(taskObj.vars)) {
-          _this11.logger.warn('Vars should be an object');
+          _this12.logger.warn('Vars should be an object');
           taskObj.vars = {};
         }
 
@@ -948,10 +1008,10 @@ var BzTasks = function () {
   }, {
     key: '_applyVarDefsToAllTasks',
     value: function _applyVarDefsToAllTasks(objTasks) {
-      var _this12 = this;
+      var _this13 = this;
 
       objTasks = _.map(objTasks, function (task) {
-        return _this12._applyVarDefToTask(task);
+        return _this13._applyVarDefToTask(task);
       });
 
       return objTasks;
@@ -959,11 +1019,11 @@ var BzTasks = function () {
   }, {
     key: '_applyVarDefToTask',
     value: function _applyVarDefToTask(task) {
-      var _this13 = this;
+      var _this14 = this;
 
       if (_.isArray(task)) {
         return _.map(task, function (t) {
-          return _this13._applyVarDefToTask(t);
+          return _this14._applyVarDefToTask(t);
         });
       }
       // task object and task is string
@@ -1009,7 +1069,7 @@ var BzTasks = function () {
   }, {
     key: '_applyVarDefs',
     value: function _applyVarDefs(varDefs, vars) {
-      var _this14 = this;
+      var _this15 = this;
 
       // this.vLogger.info('varDefs:', varDefs);
       // this.vLogger.info('vars:', vars);
@@ -1031,19 +1091,19 @@ var BzTasks = function () {
           if (type === 'string') {
             // not string
             if (!_.isString(vars[key])) {
-              _this14.logger.error(key + ' is not a string but defined as one, converting to string');
+              _this15.logger.error(key + ' is not a string but defined as one, converting to string');
               vars[key] = String(vars[key]);
             }
           } else if (type === 'number') {
             // not number
             if (!_.isNumber(vars[key])) {
-              _this14.logger.error(key + ' is not a number but defined as one, converting to number');
+              _this15.logger.error(key + ' is not a number but defined as one, converting to number');
               vars[key] = Number(vars[key]);
             }
           } else if (type === 'boolean') {
             // not boolean
             if (!_.isBoolean(vars[key])) {
-              _this14.logger.error(key + ' is not a boolean but defined as one, converting to boolean');
+              _this15.logger.error(key + ' is not a boolean but defined as one, converting to boolean');
               // is string, only compare if 'true', otherwise false
               if (_.isString(vars[key])) {
                 vars[key] = vars[key].toLowerCase() === 'true';
@@ -1056,7 +1116,7 @@ var BzTasks = function () {
           } else if (type === 'array') {
             // not array
             if (!_.isArray(vars[key])) {
-              _this14.logger.error(key + ' is not a array but defined as one, converting to array');
+              _this15.logger.error(key + ' is not a array but defined as one, converting to array');
 
               if (_.isString(vars[key])) {
                 try {
@@ -1071,7 +1131,7 @@ var BzTasks = function () {
             }
           } else if (type === 'object') {
             if (!_.isObject(vars[key])) {
-              _this14.logger.error(key + ' is not a object but defined as one, converting to object');
+              _this15.logger.error(key + ' is not a object but defined as one, converting to object');
 
               // convert vars[key] to object
               if (_.isString(vars[key])) {
@@ -1079,7 +1139,7 @@ var BzTasks = function () {
                   vars[key] = JSON.parse(vars[key]);
                 } catch (err) {
                   // if parsing fails then just stick in data prop
-                  _this14.logger.error('object "' + key + '" json parsing error: ' + err);
+                  _this15.logger.error('object "' + key + '" json parsing error: ' + err);
                   vars[key] = { data: vars[key] };
                 }
               } else {
@@ -1089,19 +1149,19 @@ var BzTasks = function () {
 
             var varProps = varDef.properties;
             if (!varProps || !_.isObject(varProps)) {
-              _this14.logger.error('object "' + key + '" properties is not defined as object, skipping all sub properties.');
+              _this15.logger.error('object "' + key + '" properties is not defined as object, skipping all sub properties.');
             } else {
               // recursivly check children (properties)
-              vars[key] = _this14._applyVarDefs(varProps, vars[key]);
+              vars[key] = _this15._applyVarDefs(varProps, vars[key]);
             }
           } else {
-            _this14.logger.warn('Unknown Variable Definition Type: ' + type);
+            _this15.logger.warn('Unknown Variable Definition Type: ' + type);
           }
         }
         // not set to anything
         else {
             if (varDef.required) {
-              _this14.logger.error('Var "' + key + '" is required but not set in vars.');
+              _this15.logger.error('Var "' + key + '" is required but not set in vars.');
             }
 
             var defValue = null;

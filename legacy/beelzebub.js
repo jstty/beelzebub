@@ -19,9 +19,13 @@ var co = require('co');
 var Stumpy = require('stumpy');
 var strftime = require('strftime');
 
+var sparkline = require('sparkline');
+var Table = require('cli-table2');
+
 var manifest = require('../package.json');
 
 var BzTasks = require('./bzTasks.js');
+var bzStats = require('./bzStats.js');
 var util = require('./util.js');
 
 /**
@@ -52,12 +56,9 @@ var Beelzebub = function () {
         var stumpy = new Stumpy({
           dateStringFunc: function customDateStringFunc(date) {
             // display time diff from start
-            var diffStats = this.$getCurrentDiffStats();
+            var diffStats = this._stats.getCurrentDiffStats();
             return strftime('%M:%S.%L', new Date(diffStats.time));
           }.bind(this),
-          buffer: {
-            size: 500
-          },
           group: {
             autoIndent: true,
             indent: {
@@ -80,9 +81,6 @@ var Beelzebub = function () {
         var helpStumpy = new Stumpy('Help', {
           formatFunc: function customFormatFunc(log, options) {
             return log.args;
-          },
-          buffer: {
-            size: 500
           }
         });
         config.helpLogger = helpStumpy;
@@ -91,14 +89,10 @@ var Beelzebub = function () {
       util.processConfig(config, util.DefaultConfig, this);
 
       this._config.beelzebub = this; // don't like this, but needed for BzTasks
-      this._rootTasks = new BzTasks(this._config);
+      this._rootTasks = new BzTasks(this._config, true);
       this._rootTasks.$useAsRoot();
 
-      this._stats = {
-        start: {},
-        end: {},
-        diff: {}
-      };
+      this._stats = new bzStats.Task();
     }
   }, {
     key: 'reset',
@@ -254,18 +248,6 @@ var Beelzebub = function () {
 
       // this.vLogger.log( 'all tasks:', _.keys(this._rootTasks) );
     }
-  }, {
-    key: '$getCurrentDiffStats',
-    value: function $getCurrentDiffStats() {
-      var endStats = util.getStats();
-      var startStats = this._stats.start;
-      // default to now if time doesn't exist
-      if (!startStats.time) {
-        startStats = util.getStats();
-      }
-
-      return util.calcStatsDiff(startStats, endStats);
-    }
 
     /**
      * Runs task(s) - multi args run in sequence, arrays are run in parallel
@@ -282,7 +264,7 @@ var Beelzebub = function () {
       var entryPoint = false;
       if (!this._tasksRunning) {
         entryPoint = true;
-        this._stats.start = util.getStats();
+        this._stats.start();
       }
 
       for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
@@ -294,7 +276,9 @@ var Beelzebub = function () {
       return this._rootTasks._run.apply(this._rootTasks, args).then(function () {
         // if it was the entry point then run afterAll
         if (entryPoint) {
-          return _this._rootTasks._runAfterAll.apply(_this._rootTasks);
+          return _this._rootTasks._runAfterAll.apply(_this._rootTasks).then(function () {
+            _this._printSummary();
+          });
         }
       });
     }
@@ -325,6 +309,46 @@ var Beelzebub = function () {
     value: function printHelp() {
       this.drawBox('Help Docs', 80);
       this._rootTasks.$printHelp();
+    }
+  }, {
+    key: '$getTaskTree',
+    value: function $getTaskTree() {
+      return this._rootTasks.$getTaskTree();
+    }
+  }, {
+    key: '$getTaskFlatList',
+    value: function $getTaskFlatList() {
+      return this._rootTasks.$getTaskFlatList();
+    }
+  }, {
+    key: '_printSummary',
+    value: function _printSummary() {
+      this.drawBox('Summary', 80);
+
+      var summary = new bzStats.Summary();
+      summary.add(this.$getTaskFlatList());
+
+      var timeStats = summary.getTimeStats();
+      var totalTasks = summary.getTotalTasks();
+      var perTaskStats = summary.getPerTaskStats();
+      // let perTimeStats = summary.getPerTimeStats(1000);
+
+      var table = new Table({
+        chars: { 'top': '', 'top-mid': '', 'top-left': '', 'top-right': '', 'bottom': '', 'bottom-mid': '', 'bottom-left': '', 'bottom-right': '', 'left': '', 'left-mid': '', 'mid': '', 'mid-mid': '', 'right': '', 'right-mid': '', 'middle': ' ' },
+        style: { 'padding-left': 0, 'padding-right': 0 }
+      });
+
+      table.push(['Tasks', 'Total:', {
+        hAlign: 'left',
+        content: totalTasks + ','
+      }, 'Per: ' + (1000 * totalTasks / timeStats.total).toFixed(2) + ' sec,', {
+        colSpan: 2,
+        hAlign: 'left',
+        content: 'Times: ' + sparkline(perTaskStats.time)
+      }], ['Time', 'Total:', timeStats.total.toFixed(2) + ' ms,', 'Avg: ' + timeStats.avg.toFixed(2) + ' ms,', 'Min: ' + timeStats.min.toFixed(2) + ' ms,', 'Max: ' + timeStats.max.toFixed(2) + ' ms']);
+
+      this.helpLogger.log(table.toString());
+      this.helpLogger.log(' '); // blank line at end
     }
   }, {
     key: 'drawBox',

@@ -45,14 +45,18 @@ _.forEach(list, function (testList, item) {
           // exec('npm install', { silent: true });
           // console.log("cwd:", process.cwd(), "\n");
 
-          var stumpy = new Stumpy({
+          var logger = new Stumpy({
+            display: false,
+            buffer:  { size: 500 }
+          });
+          var helpLogger = new Stumpy({
             display: false,
             buffer:  { size: 500 }
           });
           app.config = {
             verbose:    true,
-            logger:     stumpy,
-            helpLogger: stumpy
+            logger:     logger,
+            helpLogger: helpLogger
           };
 
           // try to load app.js file
