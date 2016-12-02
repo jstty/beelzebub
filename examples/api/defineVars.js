@@ -36,7 +36,7 @@ let wrapper = function (options) {
     }
 
     task1 (customVars) {
-      this.logger.log(`MyTasks task1 - ${customVars.name} ${customVars.flag}`);
+      this.logger.log(`MyTasks task1 - ${JSON.stringify(this.$getGlobalVars())} ${customVars.name} ${customVars.flag}`);
     }
 
     task2 (customVars) {
@@ -62,7 +62,7 @@ let wrapper = function (options) {
     }
   );
 /* Output:
-MyTasks task1 - hello true
+MyTasks task1 - {} hello true
 MyTasks task2 - 100 true
 MyTasks task3 - "hello world" te,st
 */

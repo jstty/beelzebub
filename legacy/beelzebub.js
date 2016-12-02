@@ -55,9 +55,6 @@ var Beelzebub = function () {
             var diffStats = this.$getCurrentDiffStats();
             return strftime('%M:%S.%L', new Date(diffStats.time));
           }.bind(this),
-          buffer: {
-            size: 500
-          },
           group: {
             autoIndent: true,
             indent: {
@@ -80,9 +77,6 @@ var Beelzebub = function () {
         var helpStumpy = new Stumpy('Help', {
           formatFunc: function customFormatFunc(log, options) {
             return log.args;
-          },
-          buffer: {
-            size: 500
           }
         });
         config.helpLogger = helpStumpy;
@@ -122,6 +116,7 @@ var Beelzebub = function () {
       this._initFunctionList = [];
       this._initDone = false;
       this._tasksRunning = false;
+      this._globalVars = {};
     }
   }, {
     key: 'getConfig',
