@@ -22,16 +22,6 @@ let wrapper = function (options) {
     }
 
     // generator function
-    * $beforeEach (taskInfo) {
-      return this._delay(`MySubBaseTasks1 beforeEach - ${taskInfo.task}`);
-    }
-
-    // generator function
-    * $afterEach (taskInfo) {
-      yield this._delay(`MySubBaseTasks1 afterEach - ${taskInfo.task}`);
-    }
-
-    // generator function
     * $beforeAll () {
       yield this._delay('MySubBaseTasks1 beforeAll');
     }
@@ -39,6 +29,16 @@ let wrapper = function (options) {
     // generator function
     * $afterAll () {
       return this._delay('MySubBaseTasks1 afterAll');
+    }
+
+    // generator function
+    * $beforeEach (taskInfo) {
+      return this._delay(`MySubBaseTasks1 beforeEach - ${taskInfo.task}`);
+    }
+
+    // generator function
+    * $afterEach (taskInfo) {
+      yield this._delay(`MySubBaseTasks1 afterEach - ${taskInfo.task}`);
     }
 
     taskA1 () {
@@ -61,16 +61,6 @@ let wrapper = function (options) {
     }
 
     // generator function
-    * $beforeEach (taskInfo) {
-      return this._delay(`MySubBaseTasks2 beforeEach - ${taskInfo.task}`);
-    }
-
-    // generator function
-    * $afterEach (taskInfo) {
-      yield this._delay(`MySubBaseTasks2 afterEach - ${taskInfo.task}`);
-    }
-
-    // generator function
     * $beforeAll () {
       yield this._delay('MySubBaseTasks2 beforeAll');
     }
@@ -78,6 +68,16 @@ let wrapper = function (options) {
     // generator function
     * $afterAll () {
       return this._delay('MySubBaseTasks2 afterAll');
+    }
+
+    // generator function
+    * $beforeEach (taskInfo) {
+      return this._delay(`MySubBaseTasks2 beforeEach - ${taskInfo.task}`);
+    }
+
+    // generator function
+    * $afterEach (taskInfo) {
+      yield this._delay(`MySubBaseTasks2 afterEach - ${taskInfo.task}`);
     }
 
     taskA2 () {
@@ -99,7 +99,18 @@ let wrapper = function (options) {
       this.logger.log('MyBaseTasks init');
       // see subtasksSimple or Advanced for details on adding sub tasks
       this.$addSubTasks(MySubBaseTasks1);
-      this.$addSubTasks(MySubBaseTasks2);
+    }
+
+    // returns promise
+    $beforeAll () {
+      return this._delay('MyBaseTasks beforeAll').then(() => {
+        return this.$addSubTasks(MySubBaseTasks2);
+      });
+    }
+
+    // returns promise
+    $afterAll () {
+      return this._delay('MyBaseTasks afterAll');
     }
 
     // returns promise
@@ -110,16 +121,6 @@ let wrapper = function (options) {
     // returns promise
     $afterEach (taskInfo) {
       return this._delay(`MyBaseTasks afterEach - ${taskInfo.task} ${JSON.stringify(taskInfo.vars)}`);
-    }
-
-    // returns promise
-    $beforeAll () {
-      return this._delay('MyBaseTasks beforeAll');
-    }
-
-    // returns promise
-    $afterAll () {
-      return this._delay('MyBaseTasks afterAll');
     }
 
     taskA (vars) {
@@ -192,9 +193,9 @@ let wrapper = function (options) {
 MyTasks init
 MyBaseTasks init
 MySubBaseTasks1 init
-MySubBaseTasks2 init
 MyTasks beforeAll
 MyBaseTasks beforeAll
+MySubBaseTasks2 init
 MySubBaseTasks1 beforeAll
 MySubBaseTasks1 beforeEach - taskA1
 MySubBaseTasks1 taskA1
