@@ -10,11 +10,8 @@ let wrapper = function (options) {
   class MyRootLevel extends Beelzebub.Tasks {
     constructor (config) {
       super(config);
-      this.$useAsRoot();
-    }
 
-    default () {
-      this.logger.log('MyRootLevel myDefault');
+      this.$useAsRoot();
     }
 
     task1 () {
@@ -24,33 +21,45 @@ let wrapper = function (options) {
     task2 () {
       this.logger.log('MyRootLevel task2');
     }
-}
+  }
 
-  class MyTasks extends Beelzebub.Tasks {
+  class MyTasks1 extends Beelzebub.Tasks {
+    default () {
+      this.logger.log('MyTasks1 default');
+    }
+  }
+
+  class MyTasks2 extends Beelzebub.Tasks {
     constructor (config) {
       super(config);
+
       this.$setDefault('myDefault');
     }
 
     myDefault () {
-      this.logger.log('MyTasks myDefault');
+      this.logger.log('MyTasks2 myDefault');
     }
-}
+  }
 
   bz.add(MyRootLevel);
-  bz.add(MyTasks);
+  bz.add(MyTasks1);
+  bz.add(MyTasks2);
 
   let p = bz.run(
-    'default',
     'task1',
     'task2',
-    'MyTasks'
+    'MyTasks1',
+    'MyTasks1.default',
+    'MyTasks2',
+    'MyTasks2.myDefault'
   );
 /* Output:
-MyRootLevel myDefault
 MyRootLevel task1
 MyRootLevel task2
-MyTasks myDefault
+MyTasks1 default
+MyTasks1 default
+MyTasks2 myDefault
+MyTasks2 myDefault
 */
 // =====================================================
 

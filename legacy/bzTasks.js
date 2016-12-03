@@ -332,20 +332,30 @@ var BzTasks = function () {
     }
   }, {
     key: '_taskStatsStart',
-    value: function _taskStatsStart(taskName) {
-      this.logger.group(taskName);
+    value: function _taskStatsStart(parent, taskName) {
+      var name = taskName;
+      if (parent.name !== '$root$') {
+        name = parent.name + '.' + taskName;
+      }
+
+      this.logger.group(name);
       return this._stats.startTask();
     }
   }, {
     key: '_taskStatsEnd',
-    value: function _taskStatsEnd(taskName, statsId) {
+    value: function _taskStatsEnd(parent, taskName, statsId) {
+      var name = taskName;
+      if (parent.name !== '$root$') {
+        name = parent.name + '.' + taskName;
+      }
+
       this._stats.endTask(statsId);
 
       // TODO: add option to not display this
       var stats = this._stats.getTask(statsId);
       var time = Number(stats.diff.time.toFixed(2));
 
-      this.logger.groupEnd(taskName + ' (' + time + ' ms)');
+      this.logger.groupEnd(name + ' (' + time + ' ms)');
     }
   }, {
     key: '_runBeforeAll',
@@ -388,8 +398,15 @@ var BzTasks = function () {
         }
         taskId += funcName;
 
-        if (funcName === _this5._defaultTaskFuncName) {
-          taskId = 'default'; // set taskId to 'default'
+        if (funcName === _this5._defaultTaskFuncName && funcName !== 'default') {
+          // default tasks have two entries
+          _this5._tasks[taskId] = {
+            taskId: taskId,
+            tasksObj: task,
+            func: task[funcName]
+          };
+
+          taskId = 'default';
         }
 
         // this.vLogger.log('taskId:', taskId);
@@ -810,11 +827,11 @@ var BzTasks = function () {
       // run beforeAll
       var statsId = null;
       return beforePromise.then(function () {
-        statsId = parent._taskStatsStart();
+        statsId = parent._taskStatsStart(parent, taskName);
         // run task function
         return _this11._normalizeExecFuncToPromise(func, parent, vars);
       }).then(function () {
-        parent._taskStatsEnd(taskName, statsId);
+        parent._taskStatsEnd(parent, taskName, statsId);
 
         // run afterEach
         return _this11._normalizeExecFuncToPromise(parent.$afterEach, parent, taskInfo);

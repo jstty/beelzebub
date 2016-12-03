@@ -30,12 +30,18 @@ var BzTaskStats = function () {
         this._tasksStats = {};
 
         this._start = this._getStats();
+        this._end = null;
     }
 
     (0, _createClass3.default)(BzTaskStats, [{
         key: 'start',
         value: function start() {
             this._start = this._getStats();
+        }
+    }, {
+        key: 'end',
+        value: function end() {
+            this._end = this._getStats();
         }
     }, {
         key: 'startTask',

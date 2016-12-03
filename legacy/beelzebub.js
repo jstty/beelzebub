@@ -265,6 +265,7 @@ var Beelzebub = function () {
       var entryPoint = false;
       if (!this._tasksRunning) {
         entryPoint = true;
+        this._tasksRunning = true;
         this._stats.start();
       }
 
@@ -278,6 +279,7 @@ var Beelzebub = function () {
         // if it was the entry point then run afterAll
         if (entryPoint) {
           return _this._rootTasks._runAfterAll.apply(_this._rootTasks).then(function () {
+            _this._stats.end();
             _this._printSummary();
           });
         }
@@ -308,7 +310,7 @@ var Beelzebub = function () {
   }, {
     key: 'printHelp',
     value: function printHelp() {
-      this.drawBox('Help Docs', 80);
+      this.drawBox('Help Docs');
       this._rootTasks.$printHelp();
     }
   }, {
@@ -324,14 +326,15 @@ var Beelzebub = function () {
   }, {
     key: '_printSummary',
     value: function _printSummary() {
-      this.drawBox('Summary', 80);
+      this.drawBox('Summary');
+      var appTotal = this._stats.getCurrentDiffStats();
 
       var summary = new bzStats.Summary();
       summary.add(this.$getTaskFlatList());
 
       var timeStats = summary.getTimeStats();
       var totalTasks = summary.getTotalTasks();
-      var perTaskStats = summary.getPerTaskStats();
+      // let perTaskStats = summary.getPerTaskStats();
       // let perTimeStats = summary.getPerTimeStats(1000);
 
       var table = new Table({
@@ -342,43 +345,29 @@ var Beelzebub = function () {
       table.push(['Tasks', 'Total:', {
         hAlign: 'left',
         content: totalTasks + ','
-      }, 'Per: ' + (1000 * totalTasks / timeStats.total).toFixed(2) + ' sec,', {
-        colSpan: 2,
-        hAlign: 'left',
-        content: 'Times: ' + sparkline(perTaskStats.time)
-      }], ['Time', 'Total:', timeStats.total.toFixed(2) + ' ms,', 'Avg: ' + timeStats.avg.toFixed(2) + ' ms,', 'Min: ' + timeStats.min.toFixed(2) + ' ms,', 'Max: ' + timeStats.max.toFixed(2) + ' ms']);
+      }, 'Per: ' + (1000 * totalTasks / appTotal.time).toFixed(2) + ' sec'
+      // ,{
+      //   colSpan: 2,
+      //   hAlign:  'left',
+      //   content: `Times: ${sparkline(perTaskStats.time)}`
+      // }
+      ], ['Time', 'Total:', timeStats.total.toFixed(2) + ' ms,', 'Avg: ' + timeStats.avg.toFixed(2) + ' ms,', 'Min: ' + timeStats.min.toFixed(2) + ' ms,', 'Max: ' + timeStats.max.toFixed(2) + ' ms']);
 
       this.helpLogger.log(table.toString());
-      this.helpLogger.log(' '); // blank line at end
     }
   }, {
     key: 'drawBox',
     value: function drawBox(title) {
-      var width = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 60;
+      var width = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 80;
 
-      var sides = {
-        'top': '─',
-        'top-mid': '┬',
-        'top-left': '┌',
-        'top-right': '┐',
-        'bottom': '─',
-        'bottom-mid': '┴',
-        'bottom-left': '└',
-        'bottom-right': '┘',
-        'left': '│',
-        'left-mid': '├',
-        'mid': '─',
-        'mid-mid': '┼',
-        'right': '│',
-        'right-mid': '┤',
-        'middle': '│'
-      };
-
-      var spaceLen = width - title.length - 5;
-      // use helpLogger, so time stamp and all that is not printed
-      this.helpLogger.log(sides['top-left'] + sides['top'].repeat(width - 2) + sides['top-right']);
-      this.helpLogger.log(sides['left'], title, ' '.repeat(spaceLen), sides['right']);
-      this.helpLogger.log(sides['bottom-left'] + sides['bottom'].repeat(width - 2) + sides['bottom-right']);
+      var header = new Table({
+        colWidths: [width]
+      });
+      header.push([{
+        hAlign: 'left',
+        content: title
+      }]);
+      this.helpLogger.log(header.toString());
     }
   }]);
   return Beelzebub;
