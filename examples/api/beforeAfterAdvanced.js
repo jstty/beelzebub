@@ -171,11 +171,11 @@ let wrapper = function (options) {
     task1 () {
       this.logger.log('MyTasks task1');
       return this.$sequence({
-        task: 'MyTasks.MyBaseTasks.taskA',
+        task: '.MyBaseTasks.taskA',
         vars: { hello: 'world' }
       },
-      'MyTasks.MyBaseTasks.taskB',
-      'MyTasks.MyBaseTasks.MySubBaseTasks2.taskA2');
+      '.MyBaseTasks.taskB',
+      '.MyBaseTasks.MySubBaseTasks2.taskA2');
     }
 
     task2 () {

@@ -76,7 +76,7 @@ var BzTasks = function () {
     value: function _buildNamePath(config) {
       var namePath = this.name;
       if (config.parentPath) {
-        namePath = config.parentPath + '.' + config.name;
+        namePath = config.parentPath + '.' + namePath;
       }
       return namePath;
     }
@@ -335,7 +335,7 @@ var BzTasks = function () {
     value: function _taskStatsStart(parent, taskName) {
       var name = taskName;
       if (parent.name !== '$root$') {
-        name = parent.name + '.' + taskName;
+        name = this.namePath + '.' + taskName;
       }
 
       this.logger.group(name);
@@ -346,7 +346,7 @@ var BzTasks = function () {
     value: function _taskStatsEnd(parent, taskName, statsId) {
       var name = taskName;
       if (parent.name !== '$root$') {
-        name = parent.name + '.' + taskName;
+        name = this.namePath + '.' + taskName;
       }
 
       this._stats.endTask(statsId);
@@ -998,6 +998,15 @@ var BzTasks = function () {
             return null;
           }
 
+          // if first char "." then relative to parent path
+          if (task.task.charAt(0) === '.') {
+            if (!parent) {
+              _this13.logger.trace('parent missing but expected');
+            } else {
+              task.task = parent.namePath + task.task;
+            }
+          }
+
           return task;
         } else {
           _this13.logger.warn('unknown task input type');
@@ -1078,7 +1087,7 @@ var BzTasks = function () {
               task.vars = this._applyVarDefs(this.$varDefs[taskName], task.vars);
             }
           } else {
-            this.logger.error('Task "' + taskName + '" - not found');
+            // this.logger.error(`Task "${taskName}" - not found`);
           }
 
           return task;

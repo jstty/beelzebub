@@ -19,7 +19,7 @@ var co = require('co');
 var Stumpy = require('stumpy');
 var strftime = require('strftime');
 
-var sparkline = require('sparkline');
+// const sparkline = require('sparkline');
 var Table = require('cli-table2');
 
 var manifest = require('../package.json');
