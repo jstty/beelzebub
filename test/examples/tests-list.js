@@ -17,6 +17,7 @@ module.exports = {
     'defineVars':          {},
     'decoratorHelp':       {},
     'decoratorVars':       {},
+    'events':              {},
     'kitchenSink':         {}
   },
   'cli': {

@@ -14,6 +14,8 @@ var _createClass3 = _interopRequireDefault(_createClass2);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+var EventEmitter = require('events');
+
 var _ = require('lodash');
 var co = require('co');
 var Stumpy = require('stumpy');
@@ -44,6 +46,8 @@ var Beelzebub = function () {
 
     // add Tasks to Beelzebub
     this.Tasks = BzTasks;
+
+    this.events = new EventEmitter();
   }
 
   (0, _createClass3.default)(Beelzebub, [{
@@ -200,6 +204,46 @@ var Beelzebub = function () {
     key: 'getVarDefsForTaskName',
     value: function getVarDefsForTaskName(taskName) {
       return this._rootTasks.$getVarDefsForTaskName(taskName);
+    }
+
+    /**
+     * add event on listener
+     * @param {string} name - name to listen for
+     * @param {string} filter - (optional)  // TODO: add regex support
+     * @param {function} cb - funtion callback
+     */
+
+  }, {
+    key: 'on',
+    value: function on(name, filter, callback) {
+      if (_.isObject(name)) {
+        var eventInfo = name;
+        name = eventInfo.name;
+        filter = eventInfo.task;
+        callback = eventInfo.callback;
+      }
+
+      if (_.isFunction(filter)) {
+        callback = filter;
+        filter = undefined;
+      }
+
+      var bzThis = this;
+      this.events.on(name, function (taskInfo, data) {
+        // apply filter if exist
+        if (filter) {
+          if (taskInfo.task === filter) {
+            callback.call(bzThis, taskInfo, data);
+          }
+        } else {
+          callback.call(bzThis, taskInfo, data);
+        }
+      });
+    }
+  }, {
+    key: 'emit',
+    value: function emit(name, taskInfo, data) {
+      this.events.emit(name, taskInfo, data);
     }
   }, {
     key: 'add',

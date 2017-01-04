@@ -811,6 +811,11 @@ var BzTasks = function () {
         task: taskName,
         vars: vars
       };
+
+      var fullTaskName = taskName;
+      if (parent && _.isString(parent.name) && parent.name !== '$root$') {
+        fullTaskName = this.namePath + '.' + taskName;
+      }
       // this.vLogger.info('execTaskFun taskName:', JSON.stringify(taskInfo));
 
       var beforePromise = null;
@@ -827,7 +832,25 @@ var BzTasks = function () {
       // run beforeAll
       var statsId = null;
       return beforePromise.then(function () {
+        // after, before
+        _this11.beelzebub.emit('$before', {
+          task: fullTaskName,
+          vars: taskInfo.vars
+        });
+
         statsId = parent._taskStatsStart(parent, taskName);
+
+        // if parent is Object
+        if (_.isObject(parent)) {
+          // add context aware $emit
+          parent.$emit = function (name, data) {
+            _this11.beelzebub.emit(name, {
+              task: fullTaskName,
+              vars: taskInfo.vars
+            }, data);
+          };
+        }
+
         // run task function
         return _this11._normalizeExecFuncToPromise(func, parent, vars);
       }).then(function () {
@@ -835,6 +858,12 @@ var BzTasks = function () {
 
         // run afterEach
         return _this11._normalizeExecFuncToPromise(parent.$afterEach, parent, taskInfo);
+      }).then(function () {
+        // after, after
+        _this11.beelzebub.emit('$after', {
+          task: fullTaskName,
+          vars: taskInfo.vars
+        });
       });
     }
 
