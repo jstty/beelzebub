@@ -4,6 +4,7 @@ let wrapper = function (options) {
 // --!
 
 // =====================================================
+// <EXAMPLE>
   let Beelzebub = require('../../');
   let bz = Beelzebub(options || { verbose: true });
 
@@ -48,7 +49,7 @@ MyTasks task2
 MyTasks afterEach - task2
 MyTasks afterAll
 */
-
+// </EXAMPLE>
 // =====================================================
 
 // !-- FOR TESTS

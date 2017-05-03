@@ -1,7 +1,7 @@
 {
   "name": "beelzebub",
-  "version": "0.14.0",
-  "description": "One hell of a task master!",
+  "version": "0.15.0",
+  "description": "One Hell of a Task Master!",
   "main": "index.js",
   "bin": {
     "bz": "./bin/beelzebub",
@@ -40,12 +40,15 @@
     "url": "git+https://github.com/jstty/beelzebub.git"
   },
   "scripts": {
+    "clean": "find examples -name 'node_modules' -print0 | xargs -0 rm -rf",
+    "build:docs": "node ./build-scripts/build-docs.js",
+    "build:site": "node ./build-scripts/build-site.js",
+    "build:code": "./node_modules/.bin/babel lib --out-dir legacy",
+    "build": "npm run build:code && npm run build:docs && npm run build:site",
+    "prepublish": "npm run build",
+    "pretest": "npm run build",
     "lint": "npm run clean && ./node_modules/.bin/eslint lib examples test",
     "lint:fix": "npm run clean && ./node_modules/.bin/eslint lib examples test --fix",
-    "compile": "./node_modules/.bin/babel lib --out-dir legacy",
-    "clean": "find examples -name 'node_modules' -print0 | xargs -0 rm -rf",
-    "prepublish": "npm run compile",
-    "pretest": "npm run compile",
     "test:all": "npm run lint && cd test && ./test-all-nodes.sh",
     "test": "istanbul --config=test/.istanbul.yml cover _mocha -- --check-leaks -t 5000 -b -R spec test/tests.js",
     "coveralls": "cat ./test/.coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js"
@@ -74,11 +77,16 @@
     "babel-register": "~6.18.0",
     "chai": "~3.5.0",
     "coveralls": "^2.11.15",
+    "docdash": "^0.4.0",
+    "docdown": "^0.7.2",
     "eslint": "^3.10.0",
     "eslint-config-standard": "^6.2.1",
     "eslint-plugin-promise": "^3.3.2",
     "eslint-plugin-standard": "~2.0.1",
+    "glob": "^7.1.1",
+    "ink-docstrap": "^1.3.0",
     "istanbul": "~0.4.5",
+    "jsdoc": "^3.4.3",
     "mocha": "~3.2.0",
     "shelljs": "~0.7.4"
   },

@@ -13,6 +13,7 @@ let wrapper = function (options) {
  */
 
 // =====================================================
+// <EXAMPLE>
   const Beelzebub = require('../../');
   const {defaultTask, help} = require('../../').decorators;
   const bz = Beelzebub(options || { verbose: true });
@@ -54,6 +55,7 @@ MyTasks task2
 MyTasks2 task1
 MyTasks2 task2
 */
+// </EXAMPLE>
 // =====================================================
 
 // !-- FOR TESTS

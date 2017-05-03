@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>$afterEach - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="BzTasks.html">BzTasks</a><ul class='methods'><li data-type='method'><a href="BzTasks.html#$addSubTasks">$addSubTasks</a></li><li data-type='method'><a href="BzTasks.html#$defineTaskVars">$defineTaskVars</a></li><li data-type='method'><a href="BzTasks.html#$getGlobalVars">$getGlobalVars</a></li><li data-type='method'><a href="BzTasks.html#$getName">$getName</a></li><li data-type='method'><a href="BzTasks.html#$getRunning">$getRunning</a></li><li data-type='method'><a href="BzTasks.html#$getStatsSummary">$getStatsSummary</a></li><li data-type='method'><a href="BzTasks.html#$getSubTask">$getSubTask</a></li><li data-type='method'><a href="BzTasks.html#$getSubTasks">$getSubTasks</a></li><li data-type='method'><a href="BzTasks.html#$getTask">$getTask</a></li><li data-type='method'><a href="BzTasks.html#$getTaskFlatList">$getTaskFlatList</a></li><li data-type='method'><a href="BzTasks.html#$getTaskTree">$getTaskTree</a></li><li data-type='method'><a href="BzTasks.html#$getVarDefsForTaskName">$getVarDefsForTaskName</a></li><li data-type='method'><a href="BzTasks.html#$hasRunBefore">$hasRunBefore</a></li><li data-type='method'><a href="BzTasks.html#$hasSubTask">$hasSubTask</a></li><li data-type='method'><a href="BzTasks.html#$hasTask">$hasTask</a></li><li data-type='method'><a href="BzTasks.html#$isRoot">$isRoot</a></li><li data-type='method'><a href="BzTasks.html#$parallel">$parallel</a></li><li data-type='method'><a href="BzTasks.html#$printHelp">$printHelp</a></li><li data-type='method'><a href="BzTasks.html#$register">$register</a></li><li data-type='method'><a href="BzTasks.html#$run">$run</a></li><li data-type='method'><a href="BzTasks.html#$sequence">$sequence</a></li><li data-type='method'><a href="BzTasks.html#$setDefault">$setDefault</a></li><li data-type='method'><a href="BzTasks.html#$setGlobalVars">$setGlobalVars</a></li><li data-type='method'><a href="BzTasks.html#$setName">$setName</a></li><li data-type='method'><a href="BzTasks.html#$setSubTask">$setSubTask</a></li><li data-type='method'><a href="BzTasks.html#$setSubTasks">$setSubTasks</a></li><li data-type='method'><a href="BzTasks.html#$setTaskHelpDocs">$setTaskHelpDocs</a></li><li data-type='method'><a href="BzTasks.html#$useAsRoot">$useAsRoot</a></li></ul></li></ul><h3>Interfaces</h3><ul><li><a href="BzTasks_$afterAll.html">$afterAll</a></li><li><a href="BzTasks_$afterEach.html">$afterEach</a></li><li><a href="BzTasks_$beforeAll.html">$beforeAll</a></li><li><a href="BzTasks_$beforeEach.html">$beforeEach</a></li><li><a href="BzTasks_$init.html">$init</a></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">$afterEach</h1>
+    
+
+    
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+            <span class="ancestors"><a href="BzTasks.html">BzTasks</a>#</span>
+        
+        $afterEach
+        </h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+<dl class="details">
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="bzTasks.js.html">bzTasks.js</a>, <a href="bzTasks.js.html#line341">line 341</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+        
+            <div class="description"><p>This needs to be Extented</p></div>
+        
+
+        
+            <h3>Example</h3>
+            
+    <pre class="prettyprint"><code>  let Beelzebub = require('../../');
+  let bz = Beelzebub(options || { verbose: true });
+
+  class MyTasks extends Beelzebub.Tasks {
+    $beforeEach (taskInfo) {
+      this.logger.log(`MyTasks beforeEach - ${taskInfo.task}`);
+    }
+
+    $afterEach (taskInfo) {
+      this.logger.log(`MyTasks afterEach - ${taskInfo.task}`);
+    }
+
+    $beforeAll () {
+      this.logger.log(`MyTasks beforeAll`);
+    }
+
+    $afterAll () {
+      this.logger.log(`MyTasks afterAll`);
+    }
+
+    // my tasks
+    task1 () {
+      this.logger.log('MyTasks task1');
+    }
+
+    task2 () {
+      this.logger.log('MyTasks task2');
+    }
+  }
+
+  bz.add(MyTasks);
+
+  let p = bz.run('MyTasks.task1', 'MyTasks.task2');
+
+/* Output:
+MyTasks beforeAll
+MyTasks beforeEach - task1
+MyTasks task1
+MyTasks afterEach - task1
+MyTasks beforeEach - task2
+MyTasks task2
+MyTasks afterEach - task2
+MyTasks afterAll
+*/
+</code></pre>
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Mon May 08 2017 22:59:51 GMT-0700 (PDT) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>

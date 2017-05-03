@@ -1,0 +1,39 @@
+#top .logo-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#top .bz {
+}
+
+#top .name {
+    font-size: 55px;
+    font-weight: 600;
+    line-height: 58px;
+    color: #000000;
+}
+
+#top .tagline {
+    font-size: 19px;
+    font-weight: 400;
+    line-height: 20px;
+    letter-spacing: 1.5px;
+    color: #000000;
+}
+
+#top .links {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#top .links .item {
+    padding: 5px;
+}
+
+#top .links a {
+    text-decoration: none;
+    border-bottom: none;
+}
+

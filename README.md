@@ -1,5 +1,5 @@
 <!-- # Beelzebub - One hell of a task master! -->
-<center id="top">![logo](./logo.png)</center>
+<center id="top"><img src="./assets/bz-logo-full.png" /></center>
 
 
 [![Build Status](https://secure.travis-ci.org/jstty/beelzebub.png?branch=master)](http://travis-ci.org/jstty/beelzebub)
@@ -14,7 +14,7 @@
 
 ## Description
 A modern task runner pipeline framwork.
-Allows your Tasks to be Module, Extendable, Flexiable, Managable, and Fire Resistent (up to 30m)!
+Allows your Tasks to be Module, Extendable, Flexiable, Managable, and Fire Resistent!
 
 ## Features
 1. Tasks are based on Promises, support: 

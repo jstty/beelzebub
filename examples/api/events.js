@@ -4,6 +4,7 @@ let wrapper = function (options) {
 // --!
 
 // =====================================================
+// <EXAMPLE>
   let Beelzebub = require('../../');
   let bz = Beelzebub(options || { verbose: true });
 
@@ -79,6 +80,7 @@ MyTasks task2
 customEvent ALL event task: {"task":"MyTasks.task2","vars":{}} , data: {"hello":"world2"}
 $after ALL event task: {"task":"MyTasks.task2","vars":{}} , data:
 */
+// </EXAMPLE>
 // =====================================================
 
 // !-- FOR TESTS
