@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>beelzebub - One Hell of a Task Master!</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+<link type="text/css" rel="stylesheet" href="styles/home.css"></head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="BzTasks.html">BzTasks</a><ul class='methods'><li data-type='method'><a href="BzTasks.html#$addSubTasks">$addSubTasks</a></li><li data-type='method'><a href="BzTasks.html#$defineTaskVars">$defineTaskVars</a></li><li data-type='method'><a href="BzTasks.html#$getGlobalVars">$getGlobalVars</a></li><li data-type='method'><a href="BzTasks.html#$getName">$getName</a></li><li data-type='method'><a href="BzTasks.html#$getRunning">$getRunning</a></li><li data-type='method'><a href="BzTasks.html#$getStatsSummary">$getStatsSummary</a></li><li data-type='method'><a href="BzTasks.html#$getSubTask">$getSubTask</a></li><li data-type='method'><a href="BzTasks.html#$getSubTasks">$getSubTasks</a></li><li data-type='method'><a href="BzTasks.html#$getTask">$getTask</a></li><li data-type='method'><a href="BzTasks.html#$getTaskFlatList">$getTaskFlatList</a></li><li data-type='method'><a href="BzTasks.html#$getTaskTree">$getTaskTree</a></li><li data-type='method'><a href="BzTasks.html#$getVarDefsForTaskName">$getVarDefsForTaskName</a></li><li data-type='method'><a href="BzTasks.html#$hasRunBefore">$hasRunBefore</a></li><li data-type='method'><a href="BzTasks.html#$hasSubTask">$hasSubTask</a></li><li data-type='method'><a href="BzTasks.html#$hasTask">$hasTask</a></li><li data-type='method'><a href="BzTasks.html#$isRoot">$isRoot</a></li><li data-type='method'><a href="BzTasks.html#$parallel">$parallel</a></li><li data-type='method'><a href="BzTasks.html#$printHelp">$printHelp</a></li><li data-type='method'><a href="BzTasks.html#$register">$register</a></li><li data-type='method'><a href="BzTasks.html#$run">$run</a></li><li data-type='method'><a href="BzTasks.html#$sequence">$sequence</a></li><li data-type='method'><a href="BzTasks.html#$setDefault">$setDefault</a></li><li data-type='method'><a href="BzTasks.html#$setGlobalVars">$setGlobalVars</a></li><li data-type='method'><a href="BzTasks.html#$setName">$setName</a></li><li data-type='method'><a href="BzTasks.html#$setSubTask">$setSubTask</a></li><li data-type='method'><a href="BzTasks.html#$setSubTasks">$setSubTasks</a></li><li data-type='method'><a href="BzTasks.html#$setTaskHelpDocs">$setTaskHelpDocs</a></li><li data-type='method'><a href="BzTasks.html#$useAsRoot">$useAsRoot</a></li></ul></li></ul><h3>Interfaces</h3><ul><li><a href="BzTasks_$afterAll.html">$afterAll</a></li><li><a href="BzTasks_$afterEach.html">$afterEach</a></li><li><a href="BzTasks_$beforeAll.html">$beforeAll</a></li><li><a href="BzTasks_$beforeEach.html">$beforeEach</a></li><li><a href="BzTasks_$init.html">$init</a></li></ul>
+</nav>
+
+<div id="main">
+    
+
+    
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    
+
+
+    <section class="readme">
+        <article><center id="top">
+<div class="logo-wrapper">
+    <div class="bz"><img width="212px" src="assets/bz-logo.svg" /></div>
+    <div>
+        <div class="name">beelzebub</div>
+        <div class="tagline">One Hell of a Task Master!</div>
+    </div>
+</div>
+<div class="links">
+    <div class="item"><a target="_blank" href="https://www.npmjs.com/package/beelzebub"><img width="64px" src="assets/npm-logo.svg" /></a></div>
+    <div class="item"><a target="_blank" href="https://github.com/jstty/beelzebub"><img width="64px" src="assets/github-logo.svg" /></a></div>
+</div>
+</center>
+
+<p>A modern task runner pipeline framwork.
+Allows your Tasks to be Module, Extendable, Flexiable, Managable, and Fire Resistent!</p>
+<h2>Features</h2><ol>
+<li>Tasks are based on Promises, support: <ul>
+<li>Generator  (<a href="https://github.com/jstty/beelzebub/blob/master/examples/api/async.js">Example</a>)<ul>
+<li>Using <a href="https://github.com/tj/co">co wrapping</a></li>
+</ul>
+</li>
+<li>Async/Await (<a href="https://github.com/jstty/beelzebub/blob/master/examples/api/async.js">Example</a>)</li>
+<li>Streams (<a href="https://github.com/jstty/beelzebub/blob/master/examples/api/stream.js">Example</a>)<ul>
+<li>Compatiable with your existing <code>gulp</code> tasks</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>ES6 Class base class<ul>
+<li>Extending from other Tasks (<a href="https://github.com/jstty/beelzebub/blob/master/examples/api/extend.js">Example</a>)</li>
+</ul>
+</li>
+<li>Sub Tasks<ul>
+<li>Static - simply by adding another task class to a tasks sub class. (<a href="https://github.com/jstty/beelzebub/blob/master/examples/api/subtasksSimple.js">Example</a>)</li>
+<li>Dynamic - create sub tasks based on configuration (<a href="https://github.com/jstty/beelzebub/blob/master/examples/api/subtasksAdvanced.js">Example</a>)</li>
+</ul>
+</li>
+<li>Run other tasks in an task<ul>
+<li>Parallel (<a href="https://github.com/jstty/beelzebub/blob/master/examples/api/parallel.js">Example</a>)</li>
+<li>Sequance (<a href="https://github.com/jstty/beelzebub/blob/master/examples/api/sequence.js">Example</a>)</li>
+</ul>
+</li>
+<li>Before and After (<a href="https://github.com/jstty/beelzebub/blob/master/examples/api/beforeAfter.js">Simple Example</a>, <a href="https://github.com/jstty/beelzebub/blob/master/examples/api/beforeAfterAdvanced.js">Adv Example</a>)<ul>
+<li>each task</li>
+<li>all tasks</li>
+</ul>
+</li>
+<li>Decorators<ul>
+<li>Setting Default Task (<a href="https://github.com/jstty/beelzebub/blob/master/examples/api/decoratorHelp.js">Example</a>)</li>
+<li>Help Docs (<a href="https://github.com/jstty/beelzebub/blob/master/examples/api/decoratorHelp.js">Example</a>)</li>
+<li>Vars Definitions (for help and set defaults) (<a href="https://github.com/jstty/beelzebub/blob/master/examples/api/decoratorVars.js">Example</a>)</li>
+</ul>
+</li>
+<li>Auto Help Docs (<a href="https://github.com/jstty/beelzebub/blob/master/examples/api/helpDocs.js">ALI Example</a>, <a href="https://github.com/jstty/beelzebub/blob/master/examples/cli/helpDocs.js">CLI Example</a>)</li>
+<li>Passing Options (Vars) to a task or globally (<a href="https://github.com/jstty/beelzebub/blob/master/examples/api/passingVars.js">ALI Example</a>, <a href="https://github.com/jstty/beelzebub/blob/master/examples/cli/defineVars.js">CLI Example</a>)</li>
+<li>CLI (<a href="https://github.com/jstty/beelzebub/blob/master/examples/cli">Examples</a>) and full Javascript API (<a href="https://github.com/jstty/beelzebub/blob/master/examples/api">Examples</a>)</li>
+<li><strong>Totally bad *ss logo!</strong></li>
+</ol>
+<hr>
+<h1>Install</h1><h2>API</h2><pre class="prettyprint source lang-shell"><code>$ npm install beelzebub</code></pre><h2>CLI</h2><pre class="prettyprint source lang-shell"><code>$ npm install beelzebub -g</code></pre></article>
+    </section>
+
+
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Mon May 08 2017 23:05:41 GMT-0700 (PDT) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>

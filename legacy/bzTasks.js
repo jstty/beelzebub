@@ -38,9 +38,8 @@ var bzStats = require('./bzStats.js');
 var util = require('./util.js');
 
 /**
- * ========================================================
  * Beelzebub Task Class, should be extended
- * ========================================================
+ * @class
  */
 
 var BzTasks = function () {
@@ -71,6 +70,13 @@ var BzTasks = function () {
     // TODO: add cli options/commands
   }
 
+  /**
+   * Util to build Name Path
+   * TODO: move this out of the class
+   * @private
+   */
+
+
   (0, _createClass3.default)(BzTasks, [{
     key: '_buildNamePath',
     value: function _buildNamePath(config) {
@@ -80,6 +86,12 @@ var BzTasks = function () {
       }
       return namePath;
     }
+
+    /**
+     * Get Task Tree starting with this task
+     * @returns {object}
+     */
+
   }, {
     key: '$getTaskTree',
     value: function $getTaskTree() {
@@ -112,7 +124,10 @@ var BzTasks = function () {
       return tree;
     }
 
-    // flatten task tree so it's one level
+    /**
+     * Get flatten task tree so it's one level
+     * @returns {object}
+     */
 
   }, {
     key: '$getTaskFlatList',
@@ -132,6 +147,12 @@ var BzTasks = function () {
 
       return list;
     }
+
+    /**
+     * Get task status and all it's sub tasks stats
+     * @returns {object}
+     */
+
   }, {
     key: '$getStatsSummary',
     value: function $getStatsSummary(parentSummary) {
@@ -143,6 +164,12 @@ var BzTasks = function () {
 
       return summary;
     }
+
+    /**
+     * Prints Task help and all sub tasks help
+     * @example {@embed ../examples/api/helpDocs.js}
+     */
+
   }, {
     key: '$printHelp',
     value: function $printHelp() {
@@ -161,82 +188,181 @@ var BzTasks = function () {
         });
       }
     }
+
+    /**
+     * Use this Task as root task
+     * @example {@embed ../examples/api/defaultRootlevel.js}
+     */
+
   }, {
     key: '$useAsRoot',
     value: function $useAsRoot() {
       this._rootLevel = true;
       this.name = '$root$';
     }
+
+    /**
+     * Set a Task as default
+     * @param {string} taskFuncName - This Class (Task) function name
+     * @example {@embed ../examples/api/defaultRootlevel.js}
+     */
+
   }, {
     key: '$setDefault',
     value: function $setDefault(taskFuncName) {
       this._defaultTaskFuncName = taskFuncName;
     }
+
+    /**
+     * Has any of the tasks ran before?
+     * @returns {boolean}
+     */
+
   }, {
     key: '$hasRunBefore',
     value: function $hasRunBefore() {
       return this._beforeAllRun;
     }
+
+    /**
+     * Is this task root level?
+     * @returns {boolean}
+     */
+
   }, {
     key: '$isRoot',
     value: function $isRoot() {
       return this._rootLevel;
     }
+
+    /**
+     * Set name of Task Group/Class, when refering to Task Group in CLI or other Tasks
+     * @param {string} name - New name of Task Group/Class
+     */
+
   }, {
     key: '$setName',
     value: function $setName(name) {
       this.name = name;
     }
+
+    /**
+     * Get name of Task Group/Class
+     * @returns {string}
+     */
+
   }, {
     key: '$getName',
     value: function $getName() {
       return this.name;
     }
+
+    /**
+     * Get Task by Name
+     * @param {string} name - Name of Task to get
+     * @returns {function}
+     */
+
   }, {
     key: '$getTask',
     value: function $getTask(name) {
       return this._tasks[name];
     }
+    /**
+     * Does this Task Group have a Task with the name?
+     * @param {string} name - Name of Task
+     * @returns {boolean}
+     */
+
   }, {
     key: '$hasTask',
     value: function $hasTask(name) {
       return this._tasks.hasOwnProperty(name);
     }
+
+    /**
+     * Get SubTask by Name
+     * @param {string} name - Name of Sub Task
+     * @returns {object}
+     */
+
   }, {
     key: '$getSubTask',
     value: function $getSubTask(name) {
       return this._subTasks[name];
     }
+    /**
+     * Set SubTask
+     * @param {string} name - Name of Sub Task
+     * @param {string} task - Task Class
+     */
+
   }, {
     key: '$setSubTask',
     value: function $setSubTask(name, task) {
       this._subTasks[name] = task;
     }
+    /**
+     * Does this have a Sub Task with the name?
+     * @param {string} name - Name of Sub Task
+     * @returns {boolean}
+     */
+
   }, {
     key: '$hasSubTask',
     value: function $hasSubTask(name) {
       return this._subTasks.hasOwnProperty(name);
     }
+
+    /**
+     * Get All Sub Task(s)
+     * @returns {object}
+     */
+
   }, {
     key: '$getSubTasks',
     value: function $getSubTasks() {
       return this._subTasks;
     }
+    /**
+     * Set All Sub Task(s)
+     * @param {object} tasks
+     */
+
   }, {
     key: '$setSubTasks',
     value: function $setSubTasks(tasks) {
       this._subTasks = tasks;
     }
+
+    /**
+     * Set Global Vars
+     * @param {object} vars
+     */
+
   }, {
     key: '$setGlobalVars',
     value: function $setGlobalVars(vars) {
       this.beelzebub.setGlobalVars(vars);
     }
+    /**
+     * Get Global Vars
+     * @returns {object}
+     */
+
   }, {
     key: '$getGlobalVars',
     value: function $getGlobalVars() {
       return this.beelzebub.getGlobalVars();
     }
+
+    /**
+     * Define Task Vars
+     * @param {string} taskName - Name of Task
+     * @param {object} taskDef - Var Defintion for Task
+     * @example {@embed ../examples/api/defineVars.js}
+     */
+
   }, {
     key: '$defineTaskVars',
     value: function $defineTaskVars(taskName, taskDef) {
@@ -246,6 +372,14 @@ var BzTasks = function () {
 
       this.$varDefs[taskName] = taskDef;
     }
+
+    /**
+     * Set Help Docs for Task
+     * @param {string} taskName - Name of Task
+     * @param {string} helpDocs - Help Docs for Task
+     * @example {@embed ../examples/api/helpDocs.js}
+     */
+
   }, {
     key: '$setTaskHelpDocs',
     value: function $setTaskHelpDocs(taskName, helpDocs) {
@@ -255,6 +389,13 @@ var BzTasks = function () {
 
       this.$helpDocs[taskName] = helpDocs;
     }
+
+    /**
+     * Get Define Task Vars by Name
+     * @param {string} taskStr - Name of Task
+     * @returns {object} Varaible Definition for Task
+     */
+
   }, {
     key: '$getVarDefsForTaskName',
     value: function $getVarDefsForTaskName(taskStr) {
@@ -277,36 +418,79 @@ var BzTasks = function () {
         return this.$varDefs[taskName];
       }
     }
+
+    /**
+     * This needs to be Extented
+     * @interface
+     * @example {@embed ../examples/api/subTasksSimple.js}
+     */
+
   }, {
     key: '$init',
     value: function $init() {
       return null;
     }
+    /**
+     * This needs to be Extented
+     * @interface
+     * @example {@embed ../examples/api/beforeAfter.js}
+     */
+
   }, {
     key: '$beforeEach',
     value: function $beforeEach() {
       return null;
     }
+    /**
+     * This needs to be Extented
+     * @interface
+     * @example {@embed ../examples/api/beforeAfter.js}
+     */
+
   }, {
     key: '$afterEach',
     value: function $afterEach() {
       return null;
     }
+    /**
+     * This needs to be Extented
+     * @interface
+     * @example {@embed ../examples/api/beforeAfterAdvanced.js}
+     */
+
   }, {
     key: '$beforeAll',
     value: function $beforeAll() {
       return null;
     }
+    /**
+     * This needs to be Extented
+     * @interface
+     * @example {@embed ../examples/api/beforeAfterAdvanced.js}
+     */
+
   }, {
     key: '$afterAll',
     value: function $afterAll() {
       return null;
     }
+
+    /**
+     * Is Task Running?
+     * @returns {boolean}
+     */
+
   }, {
     key: '$getRunning',
     value: function $getRunning() {
       return this._running;
     }
+
+    /**
+     * Register the Task with BZ
+     * @returns {object} Promise
+     */
+
   }, {
     key: '$register',
     value: function $register() {
@@ -330,6 +514,12 @@ var BzTasks = function () {
         return results;
       });
     }
+
+    /**
+     * Util - Start Task Stats
+     * @private
+     */
+
   }, {
     key: '_taskStatsStart',
     value: function _taskStatsStart(parent, taskName) {
@@ -341,6 +531,12 @@ var BzTasks = function () {
       this.logger.group(name);
       return this._stats.startTask();
     }
+
+    /**
+     * Util - End Task Stats
+     * @private
+     */
+
   }, {
     key: '_taskStatsEnd',
     value: function _taskStatsEnd(parent, taskName, statsId) {
@@ -357,6 +553,12 @@ var BzTasks = function () {
 
       this.logger.groupEnd(name + ' (' + time + ' ms)');
     }
+
+    /**
+     * Util - Run Before All
+     * @private
+     */
+
   }, {
     key: '_runBeforeAll',
     value: function _runBeforeAll() {
@@ -366,6 +568,12 @@ var BzTasks = function () {
         _this3._beforeAllRun = true;
       });
     }
+
+    /**
+     * Util - Run After All
+     * @private
+     */
+
   }, {
     key: '_runAfterAll',
     value: function _runAfterAll() {
@@ -383,6 +591,12 @@ var BzTasks = function () {
         return _this4._normalizeExecFuncToPromise(_this4.$afterAll, _this4);
       });
     }
+
+    /**
+     * Util - Add Tasks
+     * @private
+     */
+
   }, {
     key: '_addTasks',
     value: function _addTasks(tList, task) {
@@ -421,6 +635,14 @@ var BzTasks = function () {
     // TODO: ??? combine the logic of 'add' and 'addSubTasks'
     // move to recursive run model using task $register instead of mixing sub tasks with current task class
     // TODO: should this always return a promise? when adding in $init should the use be forced to wait on this?
+    /**
+     * Add Sub Tasks
+     * @public
+     * @param {object} Task - Task Class
+     * @param {object} [config={}] - Config for Task
+     * @returns {object} Promise
+     * @example {@embed ../examples/api/subTasksSimple.js}
+    */
 
   }, {
     key: '$addSubTasks',
@@ -456,6 +678,12 @@ var BzTasks = function () {
         return when.resolve();
       }
     }
+
+    /**
+     * Util - Normalize Execute of Function, Promise, or Generator (using CO)
+     * @private
+     */
+
   }, {
     key: '_normalizeExecFuncToPromise',
     value: function _normalizeExecFuncToPromise(func, parent) {
@@ -511,6 +739,12 @@ var BzTasks = function () {
 
       return p;
     }
+
+    /**
+     * Util - Breath First Search Task Builder
+     * @private
+     */
+
   }, {
     key: '_bfsTaskBuilder',
     value: function _bfsTaskBuilder(outList, task, name) {
@@ -543,8 +777,9 @@ var BzTasks = function () {
 
     /**
      * Runs task(s) in sequence
-     * @param task(s) (function or string)
-     * @returns {Promise}
+     * @param {(object|string)} args - task(s)
+     * @returns {Object} Promise
+     * @example {@embed ../examples/api/sequence.js}
      */
 
   }, {
@@ -562,8 +797,9 @@ var BzTasks = function () {
 
     /**
      * Runs task(s) in parallel
-     * @param task(s) (function or string)
-     * @returns {Promise}
+     * @param {(function|string)} args - task(s)
+     * @returns {object} Promise
+     * @example {@embed ../examples/api/parallel.js}
      */
 
   }, {
@@ -581,8 +817,8 @@ var BzTasks = function () {
 
     /**
      * Runs task(s) - multi args run in sequence, arrays are run in parallel
-     * @param task(s) (function or string)
-     * @returns {Promise}
+     * @param {(function|string)} args - task(s)
+     * @returns {object} Promise
      */
 
   }, {
@@ -597,6 +833,12 @@ var BzTasks = function () {
       // TODO: prevent infinite loop
       return (_beelzebub3 = this.beelzebub).run.apply(_beelzebub3, [this].concat(args));
     }
+
+    /**
+     * Util - Breath First Search Task Builder
+     * @private
+     */
+
   }, {
     key: '_waitForInit',
     value: function _waitForInit() {
@@ -613,9 +855,11 @@ var BzTasks = function () {
     }
 
     /**
-     * Internal Run task(s) in sequence
-     * @param task(s) (function or string)
-     * @returns {Promise}
+     * Util - Run task(s) in sequence
+     * @private
+     * @param {(function|string)} [parent] - Parent Task
+     * @param {(object|string)} [args] - Arguments for Task
+     * @returns {object} Promise
      */
 
   }, {
@@ -653,9 +897,11 @@ var BzTasks = function () {
     }
 
     /**
-     * Internal Runs task(s) in parallel
-     * @param task(s) (function or string)
-     * @returns {Promise}
+     * Util - Runs task(s) in parallel
+     * @private
+     * @param {(function|string)} [parent] - Parent Task
+     * @param {(object|string)} [args] - Arguments for Task
+     * @returns {object} Promise
      */
 
   }, {
@@ -689,9 +935,11 @@ var BzTasks = function () {
     }
 
     /**
-     * Runs task(s) - multi args run in sequence, arrays are run in parallel
-     * @param task(s) (function or string)
-     * @returns {Promise}
+     * Util - Runs task(s) - multi args run in sequence, arrays are run in parallel
+     * @private
+     * @param {(function|string)} [parent] - Parent Task
+     * @param {(object|string)} [args] - Arguments for Task
+     * @returns {object} Promise
      */
 
   }, {
@@ -736,9 +984,10 @@ var BzTasks = function () {
     }
 
     /**
-     * run a task
-     * @param task {String}
-     * @returns {Promise}
+     * Util - Run a task
+     * @private
+     * @param {string} task
+     * @returns {object} Promise
      */
 
   }, {
@@ -796,12 +1045,32 @@ var BzTasks = function () {
         this.logger.error('Task "' + taskName + '" - not found');
       }
     }
+
+    /**
+     * Util - Run Before Each
+     * @private
+     * @param {object} parent
+     * @param {object} taskInfo
+     * @returns {object} Promise
+     */
+
   }, {
     key: '_runBeforeEach',
     value: function _runBeforeEach(parent, taskInfo) {
       // run beforeEach
       return this._normalizeExecFuncToPromise(parent.$beforeEach, parent, taskInfo);
     }
+
+    /**
+     * Util - Exec Task Fucntion
+     * @private
+     * @param {string} taskName
+     * @param {function} func
+     * @param {object} parent
+     * @param {object} vars
+     * @returns {object} Promise
+     */
+
   }, {
     key: '_execTaskFun',
     value: function _execTaskFun(taskName, func, parent, vars) {
@@ -868,14 +1137,15 @@ var BzTasks = function () {
     }
 
     /**
-     * Runs task
-     * @param parent object
-     * @param task (function or string)
-     * @returns {Promise}
+     * Util - Runs Promise task
+     * TODO: issues, need to circle back around to top level BZ and trickle down
+     * TODO: can we merge this with runTask?
+     * so it can recursivly chain down to resolve promises all the way down
+     * @private
+     * @param {object} parent - Parent Task
+     * @param {(function|object)} task
+     * @returns {object} Promise
      */
-    // TODO: issues, need to circle back around to top level BZ and trickle down
-    // TODO: can we merge this with runTask?
-    // so it can recursivly chain down to resolve promises all the way down
 
   }, {
     key: '_runPromiseTask',
@@ -964,6 +1234,15 @@ var BzTasks = function () {
       // TODO: what happens to the data at the end? TBD
       return p;
     }
+
+    /**
+     * Util - Normalize Task
+     * @private
+     * @param {object} parent - Parent Task
+     * @param {(function|object)} task
+     * @returns {object} Promise
+     */
+
   }, {
     key: '_normalizeTask',
     value: function _normalizeTask(parent, tasks) {
@@ -1064,8 +1343,10 @@ var BzTasks = function () {
     }
 
     /**
-     * @return {object} tasks object
-     * @param {object} var defs applied oject
+     * Util - Apply Variable Definitions To All Tasks
+     * @private
+     * @param {object} objTasks - Tasks
+     * @returns {object} objTasks
      */
 
   }, {
@@ -1079,6 +1360,14 @@ var BzTasks = function () {
 
       return objTasks;
     }
+
+    /**
+     * Util - Apply Variable Definitions To Task
+     * @private
+     * @param {object} task - Task
+     * @returns {object} task
+     */
+
   }, {
     key: '_applyVarDefToTask',
     value: function _applyVarDefToTask(task) {
@@ -1127,7 +1416,14 @@ var BzTasks = function () {
           }
     }
 
-    // TODO: need loads of tests to cover all the conditionals
+    /**
+     * Util - Apply Variable Definitions to input Variables
+     * TODO: need loads of tests to cover all the conditionals
+     * @private
+     * @param {object} varDefs - variable defintions
+     * @param {object} vars - input variable
+     * @returns {object} vars
+     */
 
   }, {
     key: '_applyVarDefs',

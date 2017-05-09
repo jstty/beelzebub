@@ -47,16 +47,18 @@ addToMod('printHelp');
 
 /**
  * CLI Class
- * @returns promise
+ *
+ * @class
  */
 BeelzebubMod.CLI = BzCLI;
 
 /**
  * CLI function
- * @depricated
- * @param config [object (optional)]
- * @param args [object (optional)]
- * @returns promise
+ *
+ * @deprecated since version 0.5, will be removed in 1.x
+ * @param {Object} [config]
+ * @param {Object} [args]
+ * @returns {Object} Promise
  */
 BeelzebubMod.cli = function (config, args) {
   var cli = new BzCLI();

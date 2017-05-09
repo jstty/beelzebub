@@ -4,6 +4,7 @@ let wrapper = function (options) {
 // --!
 
 // =====================================================
+// <EXAMPLE>
   let Beelzebub = require('../../');
   let bz = Beelzebub(options || { verbose: true });
 
@@ -60,6 +61,7 @@ MyTasks task3
 MyBaseTasks task2
 MyBaseTasks task2 option
 */
+// </EXAMPLE>
 // =====================================================
 
 // !-- FOR TESTS

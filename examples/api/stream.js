@@ -4,6 +4,7 @@ let wrapper = function (options) {
 // --!
 
 // =====================================================
+// <EXAMPLE>
   const fs = require('fs');
   let Beelzebub = require('../../');
   let bz = Beelzebub(options || { verbose: true });
@@ -45,6 +46,7 @@ let wrapper = function (options) {
 MyTasks task1 data size: 840
 MyTasks task2
 */
+// </EXAMPLE>
 // =====================================================
 
 // !-- FOR TESTS

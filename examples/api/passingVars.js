@@ -4,6 +4,7 @@ let wrapper = function (options) {
 // --!
 
 // =====================================================
+// <EXAMPLE>
   const Beelzebub = require('../../');
   const bz = Beelzebub(options || { verbose: true });
   const task = Beelzebub.TmplStrFunc.task;
@@ -48,6 +49,7 @@ MyTasks task1 - hello 1
 MyTasks task2 - world 2
 MyTasks task3 - test 3
 */
+// </EXAMPLE>
 // =====================================================
 
 // !-- FOR TESTS

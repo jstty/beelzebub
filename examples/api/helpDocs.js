@@ -12,7 +12,8 @@ let wrapper = function (options) {
  * 'babel-plugin-transform-decorators-legacy' plugin
  */
 
-// =====================================================
+ // =====================================================
+ // <EXAMPLE>
   const Beelzebub = require('../../');
   const bz = Beelzebub(options || { verbose: true });
 
@@ -65,6 +66,7 @@ MyTasks task2
 MyTasks2 task1
 MyTasks2 task2
 */
+// </EXAMPLE>
 // =====================================================
 
 // !-- FOR TESTS

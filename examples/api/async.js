@@ -4,6 +4,7 @@ let wrapper = function (options) {
 // --!
 
 // =====================================================
+// <EXAMPLE>
   let Beelzebub = require('../../');
   let bz = Beelzebub(options || { verbose: true });
 
@@ -80,6 +81,7 @@ MyTasks task1: after
 MyTasks task2: yield delay 700
 MyTasks task2: after
 */
+// </EXAMPLE>
 // =====================================================
 
 // !-- FOR TESTS

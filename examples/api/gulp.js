@@ -4,6 +4,7 @@ let wrapper = function (options) {
 // --!
 
 // =====================================================
+// <EXAMPLE>
   let Beelzebub = require('../../');
   let bz = Beelzebub(options || { verbose: true });
 
@@ -69,6 +70,7 @@ MyTasks - Number of Dest Files: 3
 MyTasks - Delete Files
 MyTasks - Number of Dest Files: 1
 */
+// </EXAMPLE>
 // =====================================================
 
 // !-- FOR TESTS
