@@ -8,6 +8,7 @@ module.exports = {
     'stream':              {},
     'gulp':                {},
     'defaultRootlevel':    {},
+    'defaultRootlevelAdvanced': {},
     'subtasksSimple':      {},
     'subtasksAdvanced':    {},
     'passingVars':         {},

@@ -57,6 +57,10 @@ $ npm install beelzebub -g
 ```
 
 -------
+# DOCS
+### [Task Class](./docs/taskClass.md)
+
+-------
 # API
 ### [Examples](./examples/api)
 

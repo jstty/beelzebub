@@ -953,6 +953,14 @@ var BzTasks = function () {
 
       // this.vLogger.log('run args:', args);
 
+      // if no args
+      if (_.isArray(args) && args.length === 0) {
+        // check if root, level and has 'default' task
+        if (this._rootLevel && _.isObject(this._tasks[this._defaultTaskFuncName])) {
+          args.push(this._defaultTaskFuncName);
+        }
+      }
+
       if (parent && (_.isString(parent) || _.isArray(parent) || util.isTaskObject(parent))) {
         args.unshift(parent);
         parent = undefined;

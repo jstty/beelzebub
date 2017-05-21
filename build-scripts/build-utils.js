@@ -25,6 +25,26 @@ function searchReplace (fileName, search, replace) {
     fs.writeFileSync(fileName, outData, {encoding: 'utf8'});
 }
 
+function searchReplaceBlock (fileName, startTag, endTag, replace) {
+  let fileData = fs.readFileSync(fileName, {encoding: 'utf8'});
+  let startIdx = fileData.indexOf(startTag);
+  let endIdx = fileData.indexOf(endTag);
+  if (startIdx < 0) {
+    // if can't find tag, then do nothing
+    return;
+  }
+  // else { startIdx += startTag.length + 1; }
+
+  if (endIdx < 0) {
+    endIdx = fileData.length;
+  }
+  else { endIdx += endTag.length + 1; }
+
+  let replaceStr = fileData.substring(startIdx, endIdx);
+  let outData = fileData.replace(replaceStr, replace);
+  fs.writeFileSync(fileName, outData, {encoding: 'utf8'});
+}
+
 function injectExampleLinks (basePath, markdown) {
   let reStr = '\{\@embed ([A-Za-z\.\/]*)}';
   let re = new RegExp(reStr, 'g');
@@ -76,6 +96,7 @@ function injectExampleLinksIntoFile (basePath, fileName) {
 module.exports = {
     splice,
     searchReplace,
+    searchReplaceBlock,
     injectBefore,
     injectExampleLinks,
     injectExampleLinksIntoFile

@@ -79,6 +79,10 @@ var BzCLI = function () {
       // if file sepecified then don't try to loading default files
       if (loadFile) {
         allTasks = this._loadFile(currentDir, allTasks, loadFile, true);
+      } else if (_.isArray(argsObj.files) && argsObj.files.length > 0) {
+        _.forEach(argsObj.files, function (file) {
+          allTasks = _this._loadFile(currentDir, allTasks, file);
+        });
       } else {
         // check if beelzebub.js/json file
         // TODO: only load the first one that exists, don't load all
@@ -108,33 +112,25 @@ var BzCLI = function () {
             runTasks = _this._convertCLIArgsToTasks(argsObj.taskOptions);
             // console.log('runTasks:', runTasks);
 
-            // checked if there are tasks to run
-            if (!runTasks || !_.isArray(runTasks) || !runTasks.length) {
-              console.error('No Tasks to Run');
-            } else {
-              // run tasks
-              // TODO: fix this, so first arg could be object
-              return bz.run.apply(bz, (0, _toConsumableArray3.default)(runTasks));
-            }
+            // run tasks
+            // TODO: fix this, so first arg could be object
+            return bz.run.apply(bz, (0, _toConsumableArray3.default)(runTasks));
           }
         }).catch(function (e) {
           console.error(e);
         });
-      }
-      // check if there are any tasks at all
-      // else if (!allTasks || !_.isArray(allTasks) || !allTasks.length) {
-      else {
-          // only if no help flag
-          if (!showHelp) {
-            console.error('No Tasks Loaded');
-            process.exit();
-            return;
-          } else {
-            cli.showHelp();
-            process.exit();
-            return;
-          }
+      } else {
+        // only if no help flag
+        if (!showHelp) {
+          console.error('No Tasks Loaded');
+          process.exit();
+          return;
+        } else {
+          cli.showHelp();
+          process.exit();
+          return;
         }
+      }
 
       // wait until run complete
       return promise.then(function () {
@@ -176,20 +172,27 @@ var BzCLI = function () {
     key: '_breakApartTasksVarsInArgs',
     value: function _breakApartTasksVarsInArgs(args) {
       var argsObj = {
+        files: [],
         rootOptions: [],
         taskOptions: {}
       };
       var lastOptions = argsObj.rootOptions;
 
       _.forEach(args, function (arg, key) {
-        // if doesn't start with '-' then task
-        if (arg.charAt(0) !== '-') {
-          var task = arg;
-          argsObj.taskOptions[task] = [];
-          lastOptions = argsObj.taskOptions[task];
-        } else {
-          lastOptions.push(arg);
+        // if start with './' then file to load
+        if (arg.indexOf('./') === 0) {
+          argsObj.files.push(arg);
         }
+        // if start with '-' then arg
+        else if (arg.indexOf('-') === 0) {
+            lastOptions.push(arg);
+          }
+          // else task
+          else {
+              var task = arg;
+              argsObj.taskOptions[task] = [];
+              lastOptions = argsObj.taskOptions[task];
+            }
       });
 
       return argsObj;

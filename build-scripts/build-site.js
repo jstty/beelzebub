@@ -39,7 +39,6 @@ exec(jsdocExec, (err, stdout, stderr) => {
     utils.injectBefore(indexFile, '</head>', '<link type="text/css" rel="stylesheet" href="styles/home.css">');
     utils.searchReplace(indexFile, 'Home - Documentation', `${pkg.name} - ${pkg.description}`);
 
-
     // search all '*.html' files in docs/site
     // replace all @embed with examples
     console.log('Injecting Examples...');
@@ -53,12 +52,10 @@ exec(jsdocExec, (err, stdout, stderr) => {
         _.forEach(files, (file) => {
             console.log('Into:', file);
             utils.injectExampleLinksIntoFile(libDir, file);
+            utils.searchReplaceBlock(file, '<footer>', '</footer>', '');
         });
 
         console.log('-------------------------------------');
         console.log('Done!');
     });
 });
-
-
-

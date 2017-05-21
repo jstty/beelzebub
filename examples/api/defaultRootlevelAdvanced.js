@@ -13,19 +13,54 @@ let wrapper = function (options) {
       super(config);
 
       this.$useAsRoot();
+    }
+
+    task1 () {
+      this.logger.log('MyRootLevel task1');
+    }
+
+    task2 () {
+      this.logger.log('MyRootLevel task2');
+    }
+  }
+
+  class MyTasks1 extends Beelzebub.Tasks {
+    default () {
+      this.logger.log('MyTasks1 default');
+    }
+  }
+
+  class MyTasks2 extends Beelzebub.Tasks {
+    constructor (config) {
+      super(config);
+
       this.$setDefault('myDefault');
     }
 
     myDefault () {
-      this.logger.log('MyRootLevel myDefault');
+      this.logger.log('MyTasks2 myDefault');
     }
   }
 
   bz.add(MyRootLevel);
+  bz.add(MyTasks1);
+  bz.add(MyTasks2);
 
-  let p = bz.run();
+  let p = bz.run(
+    'task1',
+    'task2',
+    'MyTasks1',
+    'MyTasks1.default',
+    'MyTasks2',
+    'MyTasks2.myDefault'
+  );
 /* Output:
-MyRootLevel myDefault
+MyRootLevel task1
+MyRootLevel task2
+MyTasks1 default
+MyTasks1 default
+MyTasks2 myDefault
+MyTasks2 myDefault
 */
 // </EXAMPLE>
 // =====================================================

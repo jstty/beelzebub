@@ -9,7 +9,12 @@ module.exports = [
     // console.info('logger dump:', dump);
 
     var expectList = [
-      'MyRootLevel myDefault'
+      'MyRootLevel task1',
+      'MyRootLevel task2',
+      'MyTasks1 default',
+      'MyTasks1 default',
+      'MyTasks2 myDefault',
+      'MyTasks2 myDefault'
     ];
 
     expect(dump.length).is.equal(expectList.length);
