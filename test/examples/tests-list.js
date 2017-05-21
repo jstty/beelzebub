@@ -19,6 +19,7 @@ module.exports = {
     'decoratorHelp':       {},
     'decoratorVars':       {},
     'events':              {},
+    'interfaceTask':       {},
     'kitchenSink':         {}
   },
   'cli': {

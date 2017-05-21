@@ -2,7 +2,8 @@
 
 var Beelzebub = require('./beelzebub.js');
 var BzCLI = require('./bzCLI.js');
-var BzTasks = require('./bzTasks.js');
+var Tasks = require('./bzTasksClass.js');
+var InterfaceTasks = require('./bzInterfaceClass.js');
 var decorators = require('./decorators.js');
 var tmplStrFunc = require('./tmplStrFunc.js');
 var util = require('./util.js');
@@ -67,7 +68,8 @@ BeelzebubMod.cli = function (config, args) {
 // ---------------------------------------------------------------
 
 // add Tasks Class to export module
-BeelzebubMod.Tasks = BzTasks;
+BeelzebubMod.Tasks = Tasks;
+BeelzebubMod.InterfaceTasks = InterfaceTasks;
 
 // add task class decorators to export module
 BeelzebubMod.decorators = decorators;

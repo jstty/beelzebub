@@ -23,7 +23,7 @@ const destDir = path.join(basePath, '..', 'docs');
 
 console.log('Building Docs...');
 let markdown = docdown({
-  'path':  path.join(libDir, 'bzTasks.js'),
+  'path':  path.join(libDir, 'bzTasksClass.js'),
   'title': `beelzebub - Task Class (v${version})`,
   'toc':   'categories',
   'url':   '../lib/bzTasks.js'
@@ -31,6 +31,17 @@ let markdown = docdown({
 
 console.log('Writng Docs...');
 fs.writeFile(path.join(destDir, 'taskClass.md'), utils.injectExampleLinks(libDir, markdown));
+
+console.log('-------------------------------------');
+markdown = docdown({
+  'path':  path.join(libDir, 'bzInterfaceClass.js'),
+  'title': `beelzebub - Task Class (v${version})`,
+  'toc':   'categories',
+  'url':   '../lib/bzTasks.js'
+});
+
+console.log('Writng Docs...');
+fs.writeFile(path.join(destDir, 'interfaceClass.md'), utils.injectExampleLinks(libDir, markdown));
 
 console.log('-------------------------------------');
 console.log('Done!');

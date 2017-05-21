@@ -10,6 +10,7 @@
 * <a href="#$afterEach">`$afterEach`</a>
 * <a href="#$beforeAll">`$beforeAll`</a>
 * <a href="#$beforeEach">`$beforeEach`</a>
+* <a href="#$config">`$config`</a>
 * <a href="#$defineTaskVars">`$defineTaskVars`</a>
 * <a href="#$getGlobalVars">`$getGlobalVars`</a>
 * <a href="#$getName">`$getName`</a>
@@ -52,7 +53,7 @@
 <!-- div -->
 
 <h3 id="$addSubTasks"><a href="#$addSubTasks">#</a>&nbsp;<code>$addSubTasks(Task, [config={}])</code></h3>
-[&#x24C8;](../lib/bzTasks.js#L504 "View in source") [&#x24C9;][1]
+[&#x24C8;](../lib/bzTasks.js#L512 "View in source") [&#x24C9;][1]
 
 Add Sub Tasks
 
@@ -139,9 +140,9 @@ MyBaseTasks task1 - 456
 <!-- div -->
 
 <h3 id="$afterAll"><a href="#$afterAll">#</a>&nbsp;<code>$afterAll()</code></h3>
-[&#x24C8;](../lib/bzTasks.js#L357 "View in source") [&#x24C9;][1]
+[&#x24C8;](../lib/bzTasks.js#L365 "View in source") [&#x24C9;][1]
 
-This needs to be Extented
+This should to be Extented
 
 #### Example
 ```js
@@ -371,9 +372,9 @@ MyTasks afterAll
 <!-- div -->
 
 <h3 id="$afterEach"><a href="#$afterEach">#</a>&nbsp;<code>$afterEach()</code></h3>
-[&#x24C8;](../lib/bzTasks.js#L341 "View in source") [&#x24C9;][1]
+[&#x24C8;](../lib/bzTasks.js#L349 "View in source") [&#x24C9;][1]
 
-This needs to be Extented
+This should to be Extented
 
 #### Example
 ```js
@@ -430,9 +431,9 @@ MyTasks afterAll
 <!-- div -->
 
 <h3 id="$beforeAll"><a href="#$beforeAll">#</a>&nbsp;<code>$beforeAll()</code></h3>
-[&#x24C8;](../lib/bzTasks.js#L349 "View in source") [&#x24C9;][1]
+[&#x24C8;](../lib/bzTasks.js#L357 "View in source") [&#x24C9;][1]
 
-This needs to be Extented
+This should to be Extented
 
 #### Example
 ```js
@@ -662,9 +663,9 @@ MyTasks afterAll
 <!-- div -->
 
 <h3 id="$beforeEach"><a href="#$beforeEach">#</a>&nbsp;<code>$beforeEach()</code></h3>
-[&#x24C8;](../lib/bzTasks.js#L333 "View in source") [&#x24C9;][1]
+[&#x24C8;](../lib/bzTasks.js#L341 "View in source") [&#x24C9;][1]
 
-This needs to be Extented
+This should to be Extented
 
 #### Example
 ```js
@@ -720,8 +721,22 @@ MyTasks afterAll
 
 <!-- div -->
 
+<h3 id="$config"><a href="#$config">#</a>&nbsp;<code>$config()</code></h3>
+[&#x24C8;](../lib/bzTasks.js#L147 "View in source") [&#x24C9;][1]
+
+Gets Current Config
+
+#### Returns
+*(object)*: config
+
+---
+
+<!-- /div -->
+
+<!-- div -->
+
 <h3 id="$defineTaskVars"><a href="#$defineTaskVars">#</a>&nbsp;<code>$defineTaskVars(taskName, taskDef)</code></h3>
-[&#x24C8;](../lib/bzTasks.js#L271 "View in source") [&#x24C9;][1]
+[&#x24C8;](../lib/bzTasks.js#L279 "View in source") [&#x24C9;][1]
 
 Define Task Vars
 
@@ -802,7 +817,7 @@ MyTasks task3 - "hello world" te,st
 <!-- div -->
 
 <h3 id="$getGlobalVars"><a href="#$getGlobalVars">#</a>&nbsp;<code>$getGlobalVars()</code></h3>
-[&#x24C8;](../lib/bzTasks.js#L261 "View in source") [&#x24C9;][1]
+[&#x24C8;](../lib/bzTasks.js#L269 "View in source") [&#x24C9;][1]
 
 Get Global Vars
 
@@ -816,7 +831,7 @@ Get Global Vars
 <!-- div -->
 
 <h3 id="$getName"><a href="#$getName">#</a>&nbsp;<code>$getName()</code></h3>
-[&#x24C8;](../lib/bzTasks.js#L189 "View in source") [&#x24C9;][1]
+[&#x24C8;](../lib/bzTasks.js#L197 "View in source") [&#x24C9;][1]
 
 Get name of Task Group/Class
 
@@ -830,7 +845,7 @@ Get name of Task Group/Class
 <!-- div -->
 
 <h3 id="$getRunning"><a href="#$getRunning">#</a>&nbsp;<code>$getRunning()</code></h3>
-[&#x24C8;](../lib/bzTasks.js#L365 "View in source") [&#x24C9;][1]
+[&#x24C8;](../lib/bzTasks.js#L373 "View in source") [&#x24C9;][1]
 
 Is Task Running?
 
@@ -858,7 +873,7 @@ Get task status and all it's sub tasks stats
 <!-- div -->
 
 <h3 id="$getSubTask"><a href="#$getSubTask">#</a>&nbsp;<code>$getSubTask(name)</code></h3>
-[&#x24C8;](../lib/bzTasks.js#L215 "View in source") [&#x24C9;][1]
+[&#x24C8;](../lib/bzTasks.js#L223 "View in source") [&#x24C9;][1]
 
 Get SubTask by Name
 
@@ -875,7 +890,7 @@ Get SubTask by Name
 <!-- div -->
 
 <h3 id="$getSubTasks"><a href="#$getSubTasks">#</a>&nbsp;<code>$getSubTasks()</code></h3>
-[&#x24C8;](../lib/bzTasks.js#L239 "View in source") [&#x24C9;][1]
+[&#x24C8;](../lib/bzTasks.js#L247 "View in source") [&#x24C9;][1]
 
 Get All Sub Task(s)
 
@@ -889,7 +904,7 @@ Get All Sub Task(s)
 <!-- div -->
 
 <h3 id="$getTask"><a href="#$getTask">#</a>&nbsp;<code>$getTask(name)</code></h3>
-[&#x24C8;](../lib/bzTasks.js#L198 "View in source") [&#x24C9;][1]
+[&#x24C8;](../lib/bzTasks.js#L206 "View in source") [&#x24C9;][1]
 
 Get Task by Name
 
@@ -934,7 +949,7 @@ Get Task Tree starting with this task
 <!-- div -->
 
 <h3 id="$getVarDefsForTaskName"><a href="#$getVarDefsForTaskName">#</a>&nbsp;<code>$getVarDefsForTaskName(taskStr)</code></h3>
-[&#x24C8;](../lib/bzTasks.js#L298 "View in source") [&#x24C9;][1]
+[&#x24C8;](../lib/bzTasks.js#L306 "View in source") [&#x24C9;][1]
 
 Get Define Task Vars by Name
 
@@ -951,7 +966,7 @@ Get Define Task Vars by Name
 <!-- div -->
 
 <h3 id="$hasRunBefore"><a href="#$hasRunBefore">#</a>&nbsp;<code>$hasRunBefore()</code></h3>
-[&#x24C8;](../lib/bzTasks.js#L165 "View in source") [&#x24C9;][1]
+[&#x24C8;](../lib/bzTasks.js#L173 "View in source") [&#x24C9;][1]
 
 Has any of the tasks ran before?
 
@@ -965,7 +980,7 @@ Has any of the tasks ran before?
 <!-- div -->
 
 <h3 id="$hasSubTask"><a href="#$hasSubTask">#</a>&nbsp;<code>$hasSubTask(name)</code></h3>
-[&#x24C8;](../lib/bzTasks.js#L231 "View in source") [&#x24C9;][1]
+[&#x24C8;](../lib/bzTasks.js#L239 "View in source") [&#x24C9;][1]
 
 Does this have a Sub Task with the name?
 
@@ -982,7 +997,7 @@ Does this have a Sub Task with the name?
 <!-- div -->
 
 <h3 id="$hasTask"><a href="#$hasTask">#</a>&nbsp;<code>$hasTask(name)</code></h3>
-[&#x24C8;](../lib/bzTasks.js#L206 "View in source") [&#x24C9;][1]
+[&#x24C8;](../lib/bzTasks.js#L214 "View in source") [&#x24C9;][1]
 
 Does this Task Group have a Task with the name?
 
@@ -999,9 +1014,9 @@ Does this Task Group have a Task with the name?
 <!-- div -->
 
 <h3 id="$init"><a href="#$init">#</a>&nbsp;<code>$init()</code></h3>
-[&#x24C8;](../lib/bzTasks.js#L325 "View in source") [&#x24C9;][1]
+[&#x24C8;](../lib/bzTasks.js#L333 "View in source") [&#x24C9;][1]
 
-This needs to be Extented
+This should be Extented
 
 #### Example
 ```js
@@ -1079,7 +1094,7 @@ MyBaseTasks task1 - 456
 <!-- div -->
 
 <h3 id="$isRoot"><a href="#$isRoot">#</a>&nbsp;<code>$isRoot()</code></h3>
-[&#x24C8;](../lib/bzTasks.js#L173 "View in source") [&#x24C9;][1]
+[&#x24C8;](../lib/bzTasks.js#L181 "View in source") [&#x24C9;][1]
 
 Is this task root level?
 
@@ -1093,7 +1108,7 @@ Is this task root level?
 <!-- div -->
 
 <h3 id="$parallel"><a href="#$parallel">#</a>&nbsp;<code>$parallel(args)</code></h3>
-[&#x24C8;](../lib/bzTasks.js#L640 "View in source") [&#x24C9;][1]
+[&#x24C8;](../lib/bzTasks.js#L648 "View in source") [&#x24C9;][1]
 
 Runs task(s) in parallel
 
@@ -1232,7 +1247,7 @@ MyTasks2 task2
 <!-- div -->
 
 <h3 id="$register"><a href="#$register">#</a>&nbsp;<code>$register()</code></h3>
-[&#x24C8;](../lib/bzTasks.js#L373 "View in source") [&#x24C9;][1]
+[&#x24C8;](../lib/bzTasks.js#L381 "View in source") [&#x24C9;][1]
 
 Register the Task with BZ
 
@@ -1246,7 +1261,7 @@ Register the Task with BZ
 <!-- div -->
 
 <h3 id="$run"><a href="#$run">#</a>&nbsp;<code>$run(args)</code></h3>
-[&#x24C8;](../lib/bzTasks.js#L650 "View in source") [&#x24C9;][1]
+[&#x24C8;](../lib/bzTasks.js#L658 "View in source") [&#x24C9;][1]
 
 Runs task(s) - multi args run in sequence, arrays are run in parallel
 
@@ -1263,7 +1278,7 @@ Runs task(s) - multi args run in sequence, arrays are run in parallel
 <!-- div -->
 
 <h3 id="$sequence"><a href="#$sequence">#</a>&nbsp;<code>$sequence(args)</code></h3>
-[&#x24C8;](../lib/bzTasks.js#L629 "View in source") [&#x24C9;][1]
+[&#x24C8;](../lib/bzTasks.js#L637 "View in source") [&#x24C9;][1]
 
 Runs task(s) in sequence
 
@@ -1335,7 +1350,7 @@ MyTasks task2
 <!-- div -->
 
 <h3 id="$setDefault"><a href="#$setDefault">#</a>&nbsp;<code>$setDefault(taskFuncName)</code></h3>
-[&#x24C8;](../lib/bzTasks.js#L157 "View in source") [&#x24C9;][1]
+[&#x24C8;](../lib/bzTasks.js#L165 "View in source") [&#x24C9;][1]
 
 Set a Task as default
 
@@ -1410,7 +1425,7 @@ MyTasks2 myDefault
 <!-- div -->
 
 <h3 id="$setGlobalVars"><a href="#$setGlobalVars">#</a>&nbsp;<code>$setGlobalVars(vars)</code></h3>
-[&#x24C8;](../lib/bzTasks.js#L254 "View in source") [&#x24C9;][1]
+[&#x24C8;](../lib/bzTasks.js#L262 "View in source") [&#x24C9;][1]
 
 Set Global Vars
 
@@ -1424,7 +1439,7 @@ Set Global Vars
 <!-- div -->
 
 <h3 id="$setName"><a href="#$setName">#</a>&nbsp;<code>$setName(name)</code></h3>
-[&#x24C8;](../lib/bzTasks.js#L181 "View in source") [&#x24C9;][1]
+[&#x24C8;](../lib/bzTasks.js#L189 "View in source") [&#x24C9;][1]
 
 Set name of Task Group/Class, when refering to Task Group in CLI or other Tasks
 
@@ -1438,7 +1453,7 @@ Set name of Task Group/Class, when refering to Task Group in CLI or other Tasks
 <!-- div -->
 
 <h3 id="$setSubTask"><a href="#$setSubTask">#</a>&nbsp;<code>$setSubTask(name, task)</code></h3>
-[&#x24C8;](../lib/bzTasks.js#L223 "View in source") [&#x24C9;][1]
+[&#x24C8;](../lib/bzTasks.js#L231 "View in source") [&#x24C9;][1]
 
 Set SubTask
 
@@ -1453,7 +1468,7 @@ Set SubTask
 <!-- div -->
 
 <h3 id="$setSubTasks"><a href="#$setSubTasks">#</a>&nbsp;<code>$setSubTasks(tasks)</code></h3>
-[&#x24C8;](../lib/bzTasks.js#L246 "View in source") [&#x24C9;][1]
+[&#x24C8;](../lib/bzTasks.js#L254 "View in source") [&#x24C9;][1]
 
 Set All Sub Task(s)
 
@@ -1467,7 +1482,7 @@ Set All Sub Task(s)
 <!-- div -->
 
 <h3 id="$setTaskHelpDocs"><a href="#$setTaskHelpDocs">#</a>&nbsp;<code>$setTaskHelpDocs(taskName, helpDocs)</code></h3>
-[&#x24C8;](../lib/bzTasks.js#L285 "View in source") [&#x24C9;][1]
+[&#x24C8;](../lib/bzTasks.js#L293 "View in source") [&#x24C9;][1]
 
 Set Help Docs for Task
 
@@ -1538,7 +1553,7 @@ MyTasks2 task2
 <!-- div -->
 
 <h3 id="$useAsRoot"><a href="#$useAsRoot">#</a>&nbsp;<code>$useAsRoot()</code></h3>
-[&#x24C8;](../lib/bzTasks.js#L147 "View in source") [&#x24C9;][1]
+[&#x24C8;](../lib/bzTasks.js#L155 "View in source") [&#x24C9;][1]
 
 Use this Task as root task
 

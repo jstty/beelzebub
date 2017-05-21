@@ -26,7 +26,7 @@ var Table = require('cli-table2');
 
 var manifest = require('../package.json');
 
-var BzTasks = require('./bzTasks.js');
+var BzTasks = require('./bzTasksClass.js');
 var bzStats = require('./bzStats.js');
 var util = require('./util.js');
 
