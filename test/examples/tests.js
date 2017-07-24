@@ -94,24 +94,20 @@ _.forEach(list, function (testList, item) {
         tests.forEach(function (test, idx) {
           it('Test ' + (idx + 1), function (done) {
             if (config.type === 'cli') {
-              var argv = [];
-              // file needs to added first
-              argv.push('-f ' + app.file);
-
-              _.forEach(config.args, (item) => {
-                argv.push(item);
+              var cli = new Beelzebub.CLI();
+              cli.run({
+                file:   app.file,
+                config: app.config,
+                args:   config.args
+              })
+              .then((bz) => {
+                app.tasks = bz;
+                test(app);
+                done();
+              })
+              .catch((err) => {
+                console.error('CLI Run Error:', err);
               });
-
-              Beelzebub
-                .cli(app.config, argv)
-                .then((bz) => {
-                  app.tasks = bz;
-                  test(app);
-                  done();
-                })
-                .catch((err) => {
-                  console.error('CLI Run Error:', err);
-                });
             }
             else {
               // console.log(name, ", buffer:", app.config.logger.getBuffer());

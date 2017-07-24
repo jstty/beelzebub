@@ -5,24 +5,24 @@ const path = require('path');
 const _    = require('lodash');
 
 function splice (srcStr, idx, str) {
-    return srcStr.slice(0, idx) + str + srcStr.slice(idx);
+  return srcStr.slice(0, idx) + str + srcStr.slice(idx);
 };
 
 // </head>
 function injectBefore (fileName, tag, injectText) {
-    let fileData = fs.readFileSync(fileName, {encoding: 'utf8'});
+  let fileData = fs.readFileSync(fileName, {encoding: 'utf8'});
 
-    let tagPos = fileData.indexOf(tag);
-    if (tagPos >= 0) {
-        let outData = splice(fileData, tagPos, injectText);
-        fs.writeFileSync(fileName, outData, {encoding: 'utf8'});
-    }
+  let tagPos = fileData.indexOf(tag);
+  if (tagPos >= 0) {
+    let outData = splice(fileData, tagPos, injectText);
+    fs.writeFileSync(fileName, outData, {encoding: 'utf8'});
+  }
 }
 
 function searchReplace (fileName, search, replace) {
-    let fileData = fs.readFileSync(fileName, {encoding: 'utf8'});
-    let outData = fileData.replace(search, replace);
-    fs.writeFileSync(fileName, outData, {encoding: 'utf8'});
+  let fileData = fs.readFileSync(fileName, {encoding: 'utf8'});
+  let outData = fileData.replace(search, replace);
+  fs.writeFileSync(fileName, outData, {encoding: 'utf8'});
 }
 
 function searchReplaceBlock (fileName, startTag, endTag, replace) {
@@ -88,16 +88,16 @@ function injectExampleLinks (basePath, markdown) {
 }
 
 function injectExampleLinksIntoFile (basePath, fileName) {
-    let fileData = fs.readFileSync(fileName, {encoding: 'utf8'});
-    let outData = injectExampleLinks(basePath, fileData);
-    fs.writeFileSync(fileName, outData, {encoding: 'utf8'});
+  let fileData = fs.readFileSync(fileName, {encoding: 'utf8'});
+  let outData = injectExampleLinks(basePath, fileData);
+  fs.writeFileSync(fileName, outData, {encoding: 'utf8'});
 }
 
 module.exports = {
-    splice,
-    searchReplace,
-    searchReplaceBlock,
-    injectBefore,
-    injectExampleLinks,
-    injectExampleLinksIntoFile
+  splice,
+  searchReplace,
+  searchReplaceBlock,
+  injectBefore,
+  injectExampleLinks,
+  injectExampleLinksIntoFile
 };

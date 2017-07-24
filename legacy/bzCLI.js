@@ -30,13 +30,18 @@ var BzCLI = function () {
 
   (0, _createClass3.default)(BzCLI, [{
     key: 'run',
-    value: function run(config, args) {
+    value: function run(_ref) {
       var _this = this;
+
+      var file = _ref.file,
+          cwd = _ref.cwd,
+          config = _ref.config,
+          args = _ref.args;
 
       var allTasks = [];
       var runTasks = [];
       var promise = when.resolve();
-      var currentDir = process.cwd();
+      var currentDir = cwd || process.cwd();
       var bz = new Beelzebub(config || { verbose: true });
       // need to add this instance to util singleton to it's found when creating tasks
       util.setInstance(bz);
@@ -73,7 +78,7 @@ var BzCLI = function () {
 
       var cli = yargs;
       var showHelp = cli.argv.help;
-      var loadFile = cli.argv.file;
+      var loadFile = file || cli.argv.file;
       // console.log('root argv:', cli.argv);
 
       // if file sepecified then don't try to loading default files
