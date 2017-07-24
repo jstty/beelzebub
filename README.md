@@ -66,8 +66,7 @@ $ npm install beelzebub -g
 
 # Simple Example
 ```javascript
-var Beelzebub = require('beelzebub');
-Beelzebub();
+const Beelzebub = require('beelzebub');
 
 class MyTasks extends Beelzebub.Tasks {
     task1() {
@@ -111,15 +110,15 @@ $ bz <global vars> TaskPath <vars to pass to this Task> AnotherTaskPath <vars wi
 ## Simple Example
 ### `beelzebub.js` file
 ```javascript
-var Beelzebub = require('beelzebub');
-Beelzebub();
+const Beelzebub = require('beelzebub');
 
 class MyTasks extends Beelzebub.Tasks {
     task() {
         this.logger.log('MyTasks task');
     }
 }
-Beelzebub.add( MyTasks );
+
+module.exports = MyTasks;
 ```
 
 ```shell
@@ -132,8 +131,7 @@ $ bz MyTasks.task
 
 ### `beelzebub.js` file
 ```javascript
-var Beelzebub = require('beelzebub');
-Beelzebub();
+const Beelzebub = require('beelzebub');
 
 class MyTasks1 extends Beelzebub.Tasks {
     default(aVars) {
@@ -143,23 +141,18 @@ class MyTasks1 extends Beelzebub.Tasks {
 }
 
 class MyTasks2 extends Beelzebub.Tasks {
-    task() {
-      const gVars = this.$getGlobalVars();
+    task(aVars) {
+        const gVars = this.$getGlobalVars();
         this.logger.log(`MyTasks1 task ${gVars.myGlobalVar} ${aVars.v1}`);
     }
 }
-Beelzebub.add( [MyTasks1, MyTask2] );
+
+module.exports = [MyTasks1, MyTasks2];
 ```
 
 ```shell
-$ bz --myGlobalVar=hello TaskGroup1 --v1=1 TaskGroup2.task --v1=2
+$ bz --myGlobalVar=hello MyTasks1 --v1=1 MyTasks2.task --v1=2
 ```
-
-
-```shell
-$ bz --TaskGroup1.v1=hello TaskGroup1 TaskGroup2.task
-```
-
 
 --------
 ## Load File Example

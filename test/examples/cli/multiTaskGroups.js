@@ -3,16 +3,12 @@ var expect  = common.expect;
 
 module.exports = [
   function (app) {
-    expect(app).to.not.be.null;
-
     var dump = app.tasks.logger.getBuffer();
-    // console.info('async logger dump:', dump);
+    // console.info('logger dump:', dump);
 
     var expectList = [
-      'MyTasks beforeAll - task1 hello',
-      'MyTasks task1 - hello true',
-      'MyTasks task2 - 100 true',
-      'MyTasks task3 - "hello world" te,st'
+      'MyTasks1 default hello 1',
+      'MyTasks1 task hello 2'
     ];
 
     expect(dump.length).is.equal(expectList.length);

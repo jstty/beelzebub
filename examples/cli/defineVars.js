@@ -40,6 +40,10 @@ class MyTasks extends Beelzebub.Tasks {
     });
   }
 
+  $beforeAll (taskInfo) {
+    this.logger.log(`MyTasks beforeAll - ${taskInfo.task} ${taskInfo.vars.name}`);
+  }
+
   task1 (customVars) {
     this.logger.log(`MyTasks task1 - ${customVars.name} ${customVars.flag}`);
   }

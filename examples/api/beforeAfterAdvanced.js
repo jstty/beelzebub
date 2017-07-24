@@ -23,8 +23,8 @@ let wrapper = function (options) {
     }
 
     // generator function
-    * $beforeAll () {
-      yield this._delay('MySubBaseTasks1 beforeAll');
+    * $beforeAll (taskInfo) {
+      yield this._delay(`MySubBaseTasks1 beforeAll - ${taskInfo.task}`);
     }
 
     // generator function
@@ -62,8 +62,8 @@ let wrapper = function (options) {
     }
 
     // generator function
-    * $beforeAll () {
-      yield this._delay('MySubBaseTasks2 beforeAll');
+    * $beforeAll (taskInfo) {
+      yield this._delay(`MySubBaseTasks2 beforeAll - ${taskInfo.task}`);
     }
 
     // generator function
@@ -103,8 +103,8 @@ let wrapper = function (options) {
     }
 
     // returns promise
-    $beforeAll () {
-      return this._delay('MyBaseTasks beforeAll').then(() => {
+    $beforeAll (taskInfo) {
+      return this._delay(`MyBaseTasks beforeAll - ${taskInfo.task}`).then(() => {
         return this.$addSubTasks(MySubBaseTasks2);
       });
     }
@@ -160,13 +160,13 @@ let wrapper = function (options) {
     }
 
     // generator function
-    * $beforeAll () {
-      yield this._delay('MyTasks beforeAll');
+    * $beforeAll (taskInfo) {
+      yield this._delay(`MyTasks beforeAll - ${taskInfo.task}`);
     }
 
     // generator function
     * $afterAll () {
-      yield this._delay('MyTasks afterAll');
+      yield this._delay(`MyTasks afterAll`);
     }
 
     task1 () {
@@ -194,10 +194,10 @@ let wrapper = function (options) {
 MyTasks init
 MyBaseTasks init
 MySubBaseTasks1 init
-MyTasks beforeAll
-MyBaseTasks beforeAll
+MyTasks beforeAll - taskA1
+MyBaseTasks beforeAll - taskA1
 MySubBaseTasks2 init
-MySubBaseTasks1 beforeAll
+MySubBaseTasks1 beforeAll - taskA1
 MySubBaseTasks1 beforeEach - taskA1
 MySubBaseTasks1 taskA1
 MySubBaseTasks1 afterEach - taskA1
@@ -209,7 +209,7 @@ MyBaseTasks afterEach - taskA {"hello":"world"}
 MyBaseTasks beforeEach - taskB {}
 MyBaseTasks taskB
 MyBaseTasks afterEach - taskB {}
-MySubBaseTasks2 beforeAll
+MySubBaseTasks2 beforeAll - taskA2
 MySubBaseTasks2 beforeEach - taskA2
 MySubBaseTasks2 taskA2
 MySubBaseTasks2 afterEach - taskA2

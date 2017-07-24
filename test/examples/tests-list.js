@@ -9,8 +9,8 @@ module.exports = {
     'gulp':                {},
     'defaultRootlevel':    {},
     'defaultRootlevelAdvanced': {},
-    'subtasksSimple':      {},
-    'subtasksAdvanced':    {},
+    'subTasksSimple':      {},
+    'subTasksAdvanced':    {},
     'passingVars':         {},
     'beforeAfter':         {},
     'beforeAfterAdvanced': {},
@@ -24,6 +24,12 @@ module.exports = {
   },
   'cli': {
     'helloworld': { 'type': 'cli', 'args': ['MyTasks.task1', 'MyTasks.task2'] },
+    'multiTaskGroups': { 'type': 'cli',
+      'args': [
+        '--myGlobalVar=hello',
+        'MyTasks1', '--v1=1',
+        'MyTasks2.task', '--v1=2'
+      ] },
     'helpDocs':   { 'type': 'cli', 'args': ['--help'] },
     'defineVars': { 'type': 'cli',
       'args': [

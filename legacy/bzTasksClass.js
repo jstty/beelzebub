@@ -1,9 +1,5 @@
 'use strict';
 
-var _typeof2 = require('babel-runtime/helpers/typeof');
-
-var _typeof3 = _interopRequireDefault(_typeof2);
-
 var _toConsumableArray2 = require('babel-runtime/helpers/toConsumableArray');
 
 var _toConsumableArray3 = _interopRequireDefault(_toConsumableArray2);
@@ -444,34 +440,37 @@ var BzTasks = function () {
     /**
      * This should to be Extented
      * @interface
+     * @param {object} taskInfo - {name, vars}
      * @example {@embed ../examples/api/beforeAfter.js}
      */
 
   }, {
     key: '$beforeEach',
-    value: function $beforeEach() {
+    value: function $beforeEach(taskInfo) {
       return null;
     }
     /**
      * This should to be Extented
      * @interface
+     * @param {object} taskInfo - {name, vars}
      * @example {@embed ../examples/api/beforeAfter.js}
      */
 
   }, {
     key: '$afterEach',
-    value: function $afterEach() {
+    value: function $afterEach(taskInfo) {
       return null;
     }
     /**
      * This should to be Extented
      * @interface
+     * @param {object} taskInfo - {name, vars}
      * @example {@embed ../examples/api/beforeAfterAdvanced.js}
      */
 
   }, {
     key: '$beforeAll',
-    value: function $beforeAll() {
+    value: function $beforeAll(taskInfo) {
       return null;
     }
     /**
@@ -572,10 +571,10 @@ var BzTasks = function () {
 
   }, {
     key: '_runBeforeAll',
-    value: function _runBeforeAll() {
+    value: function _runBeforeAll(taskInfo) {
       var _this3 = this;
 
-      return this._normalizeExecFuncToPromise(this.$beforeAll, this).then(function () {
+      return this._normalizeExecFuncToPromise(this.$beforeAll, this, taskInfo).then(function () {
         _this3._beforeAllRun = true;
       });
     }
@@ -1012,8 +1011,6 @@ var BzTasks = function () {
   }, {
     key: '_runTask',
     value: function _runTask(task) {
-      var _this10 = this;
-
       // this.vLogger.log('task class:', this.name
       //   , ', running task:', task
       //   , ', all tasks:', _.keys(this._tasks)
@@ -1031,31 +1028,27 @@ var BzTasks = function () {
       }
 
       if (this.$hasSubTask(taskName)) {
-        var _ret = function () {
-          task.task = taskParts.join('.');
-          // this.vLogger.info('runTask taskName:', taskName, ', runTask:', task.task);
+        task.task = taskParts.join('.');
+        // this.vLogger.info('runTask taskName:', taskName, ', runTask:', task.task);
 
-          var tastObject = _this10.$getSubTask(taskName);
+        var tastObject = this.$getSubTask(taskName);
 
-          // has beforeAll run
-          if (!tastObject.$hasRunBefore()) {
-            // call run beforeAll function which sets internal var if ran before
-            // not crazy about using private, but don't want people to thing it's ok to run this
-            return {
-              v: tastObject._runBeforeAll().then(function () {
-                return tastObject._runTask(task);
-              })
-            };
+        // has beforeAll run
+        if (!tastObject.$hasRunBefore()) {
+          var taskInfo = {
+            task: taskParts[taskParts.length - 1],
+            vars: task.vars
+          };
+          // call run beforeAll function which sets internal var if ran before
+          // not crazy about using private, but don't want people to thing it's ok to run this
+          return tastObject._runBeforeAll(taskInfo).then(function () {
+            return tastObject._runTask(task);
+          });
+        }
+        // beforeAll has already run
+        else {
+            return tastObject._runTask(task);
           }
-          // beforeAll has already run
-          else {
-              return {
-                v: tastObject._runTask(task)
-              };
-            }
-        }();
-
-        if ((typeof _ret === 'undefined' ? 'undefined' : (0, _typeof3.default)(_ret)) === "object") return _ret.v;
       } else if (this.$hasTask(taskName)) {
         var taskObj = this.$getTask(taskName);
 
@@ -1093,7 +1086,7 @@ var BzTasks = function () {
   }, {
     key: '_execTaskFun',
     value: function _execTaskFun(taskName, func, parent, vars) {
-      var _this11 = this;
+      var _this10 = this;
 
       var taskInfo = {
         task: taskName,
@@ -1110,8 +1103,8 @@ var BzTasks = function () {
       if (!parent.$hasRunBefore()) {
         // call run beforeAll function which sets internal var if ran before
         // not crazy about using private, but don't want people to thing it's ok to run this
-        beforePromise = parent._runBeforeAll().then(function () {
-          return _this11._runBeforeEach(parent, taskInfo);
+        beforePromise = parent._runBeforeAll(taskInfo).then(function () {
+          return _this10._runBeforeEach(parent, taskInfo);
         });
       } else {
         beforePromise = this._runBeforeEach(parent, taskInfo);
@@ -1121,7 +1114,7 @@ var BzTasks = function () {
       var statsId = null;
       return beforePromise.then(function () {
         // after, before
-        _this11.beelzebub.emit('$before', {
+        _this10.beelzebub.emit('$before', {
           task: fullTaskName,
           vars: taskInfo.vars
         });
@@ -1132,7 +1125,7 @@ var BzTasks = function () {
         if (_.isObject(parent)) {
           // add context aware $emit
           parent.$emit = function (name, data) {
-            _this11.beelzebub.emit(name, {
+            _this10.beelzebub.emit(name, {
               task: fullTaskName,
               vars: taskInfo.vars
             }, data);
@@ -1140,15 +1133,15 @@ var BzTasks = function () {
         }
 
         // run task function
-        return _this11._normalizeExecFuncToPromise(func, parent, vars);
+        return _this10._normalizeExecFuncToPromise(func, parent, vars);
       }).then(function () {
         parent._taskStatsEnd(parent, taskName, statsId);
 
         // run afterEach
-        return _this11._normalizeExecFuncToPromise(parent.$afterEach, parent, taskInfo);
+        return _this10._normalizeExecFuncToPromise(parent.$afterEach, parent, taskInfo);
       }).then(function () {
         // after, after
-        _this11.beelzebub.emit('$after', {
+        _this10.beelzebub.emit('$after', {
           task: fullTaskName,
           vars: taskInfo.vars
         });
@@ -1169,8 +1162,6 @@ var BzTasks = function () {
   }, {
     key: '_runPromiseTask',
     value: function _runPromiseTask(parent, task) {
-      var _this12 = this;
-
       var p = null;
 
       // if task is array, then run in parallel
@@ -1194,25 +1185,27 @@ var BzTasks = function () {
               if (!this.$hasTask(taskName)) {
                 // now check if in sub level
                 if (this.$hasSubTask(taskName)) {
-                  (function () {
-                    task.task = taskParts.join('.');
-                    // this.vLogger.info('runPromiseTask taskName:', taskName, ', runTask:', task.task);
-                    var tastObject = _this12.$getSubTask(taskName);
+                  task.task = taskParts.join('.');
+                  // this.vLogger.info('runPromiseTask taskName:', taskName, ', runTask:', task.task);
+                  var tastObject = this.$getSubTask(taskName);
 
-                    // run parent beforeAll running subTask
-                    // has beforeAll run
-                    if (!tastObject.$hasRunBefore()) {
-                      // call run beforeAll function which sets internal var if ran before
-                      // not crazy about using private, but don't want people to thing it's ok to run this
-                      p = tastObject._runBeforeAll().then(function () {
-                        return tastObject._runTask(task);
-                      });
+                  // run parent beforeAll running subTask
+                  // has beforeAll run
+                  if (!tastObject.$hasRunBefore()) {
+                    var taskInfo = {
+                      task: taskParts[taskParts.length - 1],
+                      vars: task.vars
+                    };
+                    // call run beforeAll function which sets internal var if ran before
+                    // not crazy about using private, but don't want people to thing it's ok to run this
+                    p = tastObject._runBeforeAll(taskInfo).then(function () {
+                      return tastObject._runTask(task);
+                    });
+                  }
+                  // beforeAll has already run
+                  else {
+                      p = tastObject._runTask(task);
                     }
-                    // beforeAll has already run
-                    else {
-                        p = tastObject._runTask(task);
-                      }
-                  })();
                 } else {
                   var error = 'task name not found: "' + task.task + '"';
                   this.logger.error(error);
@@ -1265,7 +1258,7 @@ var BzTasks = function () {
   }, {
     key: '_normalizeTask',
     value: function _normalizeTask(parent, tasks) {
-      var _this13 = this;
+      var _this11 = this;
 
       var objTasks = _.map(tasks, function (task) {
         var taskObj = void 0;
@@ -1274,7 +1267,7 @@ var BzTasks = function () {
           // if first char "." then relative to parent path
           if (task.charAt(0) === '.') {
             if (!parent) {
-              _this13.logger.trace('parent missing but expected');
+              _this11.logger.trace('parent missing but expected');
             } else {
               task = parent.namePath + task;
             }
@@ -1299,13 +1292,13 @@ var BzTasks = function () {
                 taskVars = JSON.parse(taskVars);
               } catch (err) {
                 // this is ok
-                _this13.vLogger.warn('Parsing Task Error:', err);
+                _this11.vLogger.warn('Parsing Task Error:', err);
               }
             }
           }
 
-          if (!_this13.$getSubTask(taskName) && !_this13.$getTask(taskName)) {
-            _this13.logger.warn(taskFullName, 'task not added');
+          if (!_this11.$getSubTask(taskName) && !_this11.$getTask(taskName)) {
+            _this11.logger.warn(taskFullName, 'task not added');
             return false;
           }
 
@@ -1314,21 +1307,21 @@ var BzTasks = function () {
             vars: taskVars
           };
         } else if (_.isArray(task)) {
-          taskObj = _this13._normalizeTask(parent, task);
+          taskObj = _this11._normalizeTask(parent, task);
         } else if (_.isFunction(task)) {
           taskObj = {
             task: task
           };
         } else if (_.isObject(task)) {
           if (!task.hasOwnProperty('task')) {
-            _this13.logger.warn('invalid object: task property required');
+            _this11.logger.warn('invalid object: task property required');
             return null;
           }
 
           // if first char "." then relative to parent path
           if (task.task.charAt(0) === '.') {
             if (!parent) {
-              _this13.logger.trace('parent missing but expected');
+              _this11.logger.trace('parent missing but expected');
             } else {
               task.task = parent.namePath + task.task;
             }
@@ -1336,7 +1329,7 @@ var BzTasks = function () {
 
           return task;
         } else {
-          _this13.logger.warn('unknown task input type');
+          _this11.logger.warn('unknown task input type');
           return null;
         }
 
@@ -1346,7 +1339,7 @@ var BzTasks = function () {
         }
 
         if (!_.isObject(taskObj.vars)) {
-          _this13.logger.warn('Vars should be an object');
+          _this11.logger.warn('Vars should be an object');
           taskObj.vars = {};
         }
 
@@ -1371,10 +1364,10 @@ var BzTasks = function () {
   }, {
     key: '_applyVarDefsToAllTasks',
     value: function _applyVarDefsToAllTasks(objTasks) {
-      var _this14 = this;
+      var _this12 = this;
 
       objTasks = _.map(objTasks, function (task) {
-        return _this14._applyVarDefToTask(task);
+        return _this12._applyVarDefToTask(task);
       });
 
       return objTasks;
@@ -1390,11 +1383,11 @@ var BzTasks = function () {
   }, {
     key: '_applyVarDefToTask',
     value: function _applyVarDefToTask(task) {
-      var _this15 = this;
+      var _this13 = this;
 
       if (_.isArray(task)) {
         return _.map(task, function (t) {
-          return _this15._applyVarDefToTask(t);
+          return _this13._applyVarDefToTask(t);
         });
       }
       // task object and task is string
@@ -1447,7 +1440,7 @@ var BzTasks = function () {
   }, {
     key: '_applyVarDefs',
     value: function _applyVarDefs(varDefs, vars) {
-      var _this16 = this;
+      var _this14 = this;
 
       // this.vLogger.info('varDefs:', varDefs);
       // this.vLogger.info('vars:', vars);
@@ -1469,19 +1462,19 @@ var BzTasks = function () {
           if (type === 'string') {
             // not string
             if (!_.isString(vars[key])) {
-              _this16.logger.error(key + ' is not a string but defined as one, converting to string');
+              _this14.logger.error(key + ' is not a string but defined as one, converting to string');
               vars[key] = String(vars[key]);
             }
           } else if (type === 'number') {
             // not number
             if (!_.isNumber(vars[key])) {
-              _this16.logger.error(key + ' is not a number but defined as one, converting to number');
+              _this14.logger.error(key + ' is not a number but defined as one, converting to number');
               vars[key] = Number(vars[key]);
             }
           } else if (type === 'boolean') {
             // not boolean
             if (!_.isBoolean(vars[key])) {
-              _this16.logger.error(key + ' is not a boolean but defined as one, converting to boolean');
+              _this14.logger.error(key + ' is not a boolean but defined as one, converting to boolean');
               // is string, only compare if 'true', otherwise false
               if (_.isString(vars[key])) {
                 vars[key] = vars[key].toLowerCase() === 'true';
@@ -1494,7 +1487,7 @@ var BzTasks = function () {
           } else if (type === 'array') {
             // not array
             if (!_.isArray(vars[key])) {
-              _this16.logger.error(key + ' is not a array but defined as one, converting to array');
+              _this14.logger.error(key + ' is not a array but defined as one, converting to array');
 
               if (_.isString(vars[key])) {
                 try {
@@ -1509,7 +1502,7 @@ var BzTasks = function () {
             }
           } else if (type === 'object') {
             if (!_.isObject(vars[key])) {
-              _this16.logger.error(key + ' is not a object but defined as one, converting to object');
+              _this14.logger.error(key + ' is not a object but defined as one, converting to object');
 
               // convert vars[key] to object
               if (_.isString(vars[key])) {
@@ -1517,7 +1510,7 @@ var BzTasks = function () {
                   vars[key] = JSON.parse(vars[key]);
                 } catch (err) {
                   // if parsing fails then just stick in data prop
-                  _this16.logger.error('object "' + key + '" json parsing error: ' + err);
+                  _this14.logger.error('object "' + key + '" json parsing error: ' + err);
                   vars[key] = { data: vars[key] };
                 }
               } else {
@@ -1527,19 +1520,19 @@ var BzTasks = function () {
 
             var varProps = varDef.properties;
             if (!varProps || !_.isObject(varProps)) {
-              _this16.logger.error('object "' + key + '" properties is not defined as object, skipping all sub properties.');
+              _this14.logger.error('object "' + key + '" properties is not defined as object, skipping all sub properties.');
             } else {
               // recursivly check children (properties)
-              vars[key] = _this16._applyVarDefs(varProps, vars[key]);
+              vars[key] = _this14._applyVarDefs(varProps, vars[key]);
             }
           } else {
-            _this16.logger.warn('Unknown Variable Definition Type: ' + type);
+            _this14.logger.warn('Unknown Variable Definition Type: ' + type);
           }
         }
         // not set to anything
         else {
             if (varDef.required) {
-              _this16.logger.error('Var "' + key + '" is required but not set in vars.');
+              _this14.logger.error('Var "' + key + '" is required but not set in vars.');
             }
 
             var defValue = null;

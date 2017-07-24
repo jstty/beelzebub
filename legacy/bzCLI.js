@@ -30,13 +30,19 @@ var BzCLI = function () {
 
   (0, _createClass3.default)(BzCLI, [{
     key: 'run',
-    value: function run(config, args) {
+    value: function run() {
       var _this = this;
+
+      var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+      var file = options.file,
+          cwd = options.cwd,
+          config = options.config,
+          args = options.args;
 
       var allTasks = [];
       var runTasks = [];
       var promise = when.resolve();
-      var currentDir = process.cwd();
+      var currentDir = cwd || process.cwd();
       var bz = new Beelzebub(config || { verbose: true });
       // need to add this instance to util singleton to it's found when creating tasks
       util.setInstance(bz);
@@ -46,10 +52,8 @@ var BzCLI = function () {
         args = process.argv.slice(2);
       }
 
-      // TODO: break apart args array, spliting by tasks (doesn't start with '-')
-      // console.log('args:', args);
+      // break apart args array, spliting by tasks (doesn't start with '-')
       var argsObj = this._breakApartTasksVarsInArgs(args);
-      // console.log('argsObj:', argsObj);
 
       yargs.version(function () {
         return manifest.version;
@@ -73,8 +77,7 @@ var BzCLI = function () {
 
       var cli = yargs;
       var showHelp = cli.argv.help;
-      var loadFile = cli.argv.file;
-      // console.log('root argv:', cli.argv);
+      var loadFile = file || cli.argv.file;
 
       // if file sepecified then don't try to loading default files
       if (loadFile) {
@@ -87,9 +90,7 @@ var BzCLI = function () {
         // check if beelzebub.js/json file
         // TODO: only load the first one that exists, don't load all
         allTasks = this._loadFile(currentDir, allTasks, './beelzebub.js');
-        allTasks = this._loadFile(currentDir, allTasks, './beelzebub.json');
         allTasks = this._loadFile(currentDir, allTasks, './bz.js');
-        allTasks = this._loadFile(currentDir, allTasks, './bz.json');
       }
 
       // check if there are any tasks at all
@@ -108,12 +109,12 @@ var BzCLI = function () {
             cli.showHelp();
             bz.printHelp();
           } else {
-            // TODO: convert CLI args to tasks with vars
+            var rootVars = _this._convertRootCLIArgs(argsObj.rootOptions);
+            bz.setGlobalVars(rootVars);
+
             runTasks = _this._convertCLIArgsToTasks(argsObj.taskOptions);
-            // console.log('runTasks:', runTasks);
 
             // run tasks
-            // TODO: fix this, so first arg could be object
             return bz.run.apply(bz, (0, _toConsumableArray3.default)(runTasks));
           }
         }).catch(function (e) {
@@ -198,6 +199,12 @@ var BzCLI = function () {
       return argsObj;
     }
   }, {
+    key: '_convertRootCLIArgs',
+    value: function _convertRootCLIArgs(rootOptions) {
+      var cli = yargs(rootOptions);
+      return _.cloneDeep(cli.argv);
+    }
+  }, {
     key: '_convertCLIArgsToTasks',
     value: function _convertCLIArgsToTasks(taskOptions) {
       var tasks = [];
@@ -210,7 +217,6 @@ var BzCLI = function () {
 
         if (taskOption.length) {
           var cli = yargs(taskOption);
-          // console.log(taskName, 'argv:', cli.argv);
 
           task.vars = _.cloneDeep(cli.argv);
           delete task.vars['_'];
