@@ -53,7 +53,7 @@
 <!-- div -->
 
 <h3 id="$addSubTasks"><a href="#$addSubTasks">#</a>&nbsp;<code>$addSubTasks(Task, [config={}])</code></h3>
-[&#x24C8;](../lib/bzTasks.js#L512 "View in source") [&#x24C9;][1]
+[&#x24C8;](../lib/bzTasks.js#L515 "View in source") [&#x24C9;][1]
 
 Add Sub Tasks
 
@@ -140,7 +140,7 @@ MyBaseTasks task1 - 456
 <!-- div -->
 
 <h3 id="$afterAll"><a href="#$afterAll">#</a>&nbsp;<code>$afterAll()</code></h3>
-[&#x24C8;](../lib/bzTasks.js#L365 "View in source") [&#x24C9;][1]
+[&#x24C8;](../lib/bzTasks.js#L368 "View in source") [&#x24C9;][1]
 
 This should to be Extented
 
@@ -302,12 +302,12 @@ This should to be Extented
 
     // generator function
     * $beforeAll () {
-      yield this._delay('MyTasks beforeAll');
+      yield this._delay(`MyTasks beforeAll`);
     }
 
     // generator function
     * $afterAll () {
-      yield this._delay('MyTasks afterAll');
+      yield this._delay(`MyTasks afterAll`);
     }
 
     task1 () {
@@ -371,10 +371,13 @@ MyTasks afterAll
 
 <!-- div -->
 
-<h3 id="$afterEach"><a href="#$afterEach">#</a>&nbsp;<code>$afterEach()</code></h3>
-[&#x24C8;](../lib/bzTasks.js#L349 "View in source") [&#x24C9;][1]
+<h3 id="$afterEach"><a href="#$afterEach">#</a>&nbsp;<code>$afterEach(taskInfo)</code></h3>
+[&#x24C8;](../lib/bzTasks.js#L351 "View in source") [&#x24C9;][1]
 
 This should to be Extented
+
+#### Arguments
+1. `taskInfo` *(object)*: {name, vars}
 
 #### Example
 ```js
@@ -430,10 +433,13 @@ MyTasks afterAll
 
 <!-- div -->
 
-<h3 id="$beforeAll"><a href="#$beforeAll">#</a>&nbsp;<code>$beforeAll()</code></h3>
-[&#x24C8;](../lib/bzTasks.js#L357 "View in source") [&#x24C9;][1]
+<h3 id="$beforeAll"><a href="#$beforeAll">#</a>&nbsp;<code>$beforeAll(taskInfo)</code></h3>
+[&#x24C8;](../lib/bzTasks.js#L360 "View in source") [&#x24C9;][1]
 
 This should to be Extented
+
+#### Arguments
+1. `taskInfo` *(object)*: {name, vars}
 
 #### Example
 ```js
@@ -593,12 +599,12 @@ This should to be Extented
 
     // generator function
     * $beforeAll () {
-      yield this._delay('MyTasks beforeAll');
+      yield this._delay(`MyTasks beforeAll`);
     }
 
     // generator function
     * $afterAll () {
-      yield this._delay('MyTasks afterAll');
+      yield this._delay(`MyTasks afterAll`);
     }
 
     task1 () {
@@ -662,10 +668,13 @@ MyTasks afterAll
 
 <!-- div -->
 
-<h3 id="$beforeEach"><a href="#$beforeEach">#</a>&nbsp;<code>$beforeEach()</code></h3>
-[&#x24C8;](../lib/bzTasks.js#L341 "View in source") [&#x24C9;][1]
+<h3 id="$beforeEach"><a href="#$beforeEach">#</a>&nbsp;<code>$beforeEach(taskInfo)</code></h3>
+[&#x24C8;](../lib/bzTasks.js#L342 "View in source") [&#x24C9;][1]
 
 This should to be Extented
+
+#### Arguments
+1. `taskInfo` *(object)*: {name, vars}
 
 #### Example
 ```js
@@ -845,7 +854,7 @@ Get name of Task Group/Class
 <!-- div -->
 
 <h3 id="$getRunning"><a href="#$getRunning">#</a>&nbsp;<code>$getRunning()</code></h3>
-[&#x24C8;](../lib/bzTasks.js#L373 "View in source") [&#x24C9;][1]
+[&#x24C8;](../lib/bzTasks.js#L376 "View in source") [&#x24C9;][1]
 
 Is Task Running?
 
@@ -1108,7 +1117,7 @@ Is this task root level?
 <!-- div -->
 
 <h3 id="$parallel"><a href="#$parallel">#</a>&nbsp;<code>$parallel(args)</code></h3>
-[&#x24C8;](../lib/bzTasks.js#L648 "View in source") [&#x24C9;][1]
+[&#x24C8;](../lib/bzTasks.js#L651 "View in source") [&#x24C9;][1]
 
 Runs task(s) in parallel
 
@@ -1247,7 +1256,7 @@ MyTasks2 task2
 <!-- div -->
 
 <h3 id="$register"><a href="#$register">#</a>&nbsp;<code>$register()</code></h3>
-[&#x24C8;](../lib/bzTasks.js#L381 "View in source") [&#x24C9;][1]
+[&#x24C8;](../lib/bzTasks.js#L384 "View in source") [&#x24C9;][1]
 
 Register the Task with BZ
 
@@ -1261,7 +1270,7 @@ Register the Task with BZ
 <!-- div -->
 
 <h3 id="$run"><a href="#$run">#</a>&nbsp;<code>$run(args)</code></h3>
-[&#x24C8;](../lib/bzTasks.js#L658 "View in source") [&#x24C9;][1]
+[&#x24C8;](../lib/bzTasks.js#L661 "View in source") [&#x24C9;][1]
 
 Runs task(s) - multi args run in sequence, arrays are run in parallel
 
@@ -1278,7 +1287,7 @@ Runs task(s) - multi args run in sequence, arrays are run in parallel
 <!-- div -->
 
 <h3 id="$sequence"><a href="#$sequence">#</a>&nbsp;<code>$sequence(args)</code></h3>
-[&#x24C8;](../lib/bzTasks.js#L637 "View in source") [&#x24C9;][1]
+[&#x24C8;](../lib/bzTasks.js#L640 "View in source") [&#x24C9;][1]
 
 Runs task(s) in sequence
 

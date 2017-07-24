@@ -440,34 +440,37 @@ var BzTasks = function () {
     /**
      * This should to be Extented
      * @interface
+     * @param {object} taskInfo - {name, vars}
      * @example {@embed ../examples/api/beforeAfter.js}
      */
 
   }, {
     key: '$beforeEach',
-    value: function $beforeEach() {
+    value: function $beforeEach(taskInfo) {
       return null;
     }
     /**
      * This should to be Extented
      * @interface
+     * @param {object} taskInfo - {name, vars}
      * @example {@embed ../examples/api/beforeAfter.js}
      */
 
   }, {
     key: '$afterEach',
-    value: function $afterEach() {
+    value: function $afterEach(taskInfo) {
       return null;
     }
     /**
      * This should to be Extented
      * @interface
+     * @param {object} taskInfo - {name, vars}
      * @example {@embed ../examples/api/beforeAfterAdvanced.js}
      */
 
   }, {
     key: '$beforeAll',
-    value: function $beforeAll() {
+    value: function $beforeAll(taskInfo) {
       return null;
     }
     /**
@@ -568,10 +571,10 @@ var BzTasks = function () {
 
   }, {
     key: '_runBeforeAll',
-    value: function _runBeforeAll() {
+    value: function _runBeforeAll(taskInfo) {
       var _this3 = this;
 
-      return this._normalizeExecFuncToPromise(this.$beforeAll, this).then(function () {
+      return this._normalizeExecFuncToPromise(this.$beforeAll, this, taskInfo).then(function () {
         _this3._beforeAllRun = true;
       });
     }
@@ -1032,9 +1035,13 @@ var BzTasks = function () {
 
         // has beforeAll run
         if (!tastObject.$hasRunBefore()) {
+          var taskInfo = {
+            task: taskName,
+            vars: task.vars
+          };
           // call run beforeAll function which sets internal var if ran before
           // not crazy about using private, but don't want people to thing it's ok to run this
-          return tastObject._runBeforeAll().then(function () {
+          return tastObject._runBeforeAll(taskInfo).then(function () {
             return tastObject._runTask(task);
           });
         }
@@ -1096,7 +1103,7 @@ var BzTasks = function () {
       if (!parent.$hasRunBefore()) {
         // call run beforeAll function which sets internal var if ran before
         // not crazy about using private, but don't want people to thing it's ok to run this
-        beforePromise = parent._runBeforeAll().then(function () {
+        beforePromise = parent._runBeforeAll(taskInfo).then(function () {
           return _this10._runBeforeEach(parent, taskInfo);
         });
       } else {
@@ -1185,9 +1192,13 @@ var BzTasks = function () {
                   // run parent beforeAll running subTask
                   // has beforeAll run
                   if (!tastObject.$hasRunBefore()) {
+                    var taskInfo = {
+                      task: taskName,
+                      vars: task.vars
+                    };
                     // call run beforeAll function which sets internal var if ran before
                     // not crazy about using private, but don't want people to thing it's ok to run this
-                    p = tastObject._runBeforeAll().then(function () {
+                    p = tastObject._runBeforeAll(taskInfo).then(function () {
                       return tastObject._runTask(task);
                     });
                   }

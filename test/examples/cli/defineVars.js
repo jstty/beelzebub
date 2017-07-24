@@ -9,6 +9,7 @@ module.exports = [
     // console.info('async logger dump:', dump);
 
     var expectList = [
+      'MyTasks beforeAll - task1 hello',
       'MyTasks task1 - hello true',
       'MyTasks task2 - 100 true',
       'MyTasks task3 - "hello world" te,st'

@@ -30,13 +30,14 @@ var BzCLI = function () {
 
   (0, _createClass3.default)(BzCLI, [{
     key: 'run',
-    value: function run(_ref) {
+    value: function run() {
       var _this = this;
 
-      var file = _ref.file,
-          cwd = _ref.cwd,
-          config = _ref.config,
-          args = _ref.args;
+      var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+      var file = options.file,
+          cwd = options.cwd,
+          config = options.config,
+          args = options.args;
 
       var allTasks = [];
       var runTasks = [];
