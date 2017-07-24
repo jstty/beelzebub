@@ -1,6 +1,6 @@
 {
   "name": "beelzebub",
-  "version": "0.17.0",
+  "version": "1.0.0",
   "description": "One Hell of a Task Master!",
   "main": "index.js",
   "bin": {
