@@ -13,8 +13,8 @@
 
 
 ## Description
-A modern task runner pipeline framwork.
-Allows your Tasks to be Module, Extendable, Flexiable, Managable, and Fire Resistent!
+A modern task runner pipeline framework.
+Allows your Tasks to be Modular, Extendable, Flexible, Managable, and Fire Resistant!
 
 ## Features
 1. Tasks are based on Promises, support: 
@@ -22,7 +22,7 @@ Allows your Tasks to be Module, Extendable, Flexiable, Managable, and Fire Resis
         * Using [co wrapping](https://github.com/tj/co)
     * Async/Await ([Example](./examples/api/async.js))
     * Streams ([Example](./examples/api/stream.js))
-        * Compatiable with your existing `gulp` tasks
+        * Compatible with your existing `gulp` tasks
 2. ES6 Class base class
     * Extending from other Tasks ([Example](./examples/api/extend.js))
 3. Sub Tasks
@@ -30,7 +30,7 @@ Allows your Tasks to be Module, Extendable, Flexiable, Managable, and Fire Resis
     * Dynamic - create sub tasks based on configuration ([Example](./examples/api/subtasksAdvanced.js))
 4. Run other tasks in an task
     * Parallel ([Example](./examples/api/parallel.js))
-    * Sequance ([Example](./examples/api/sequence.js))
+    * Sequence ([Example](./examples/api/sequence.js))
 5. Before and After ([Simple Example](./examples/api/beforeAfter.js), [Adv Example](./examples/api/beforeAfterAdvanced.js))
     * each task
     * all tasks
