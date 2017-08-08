@@ -1,7 +1,7 @@
 #!/bin/bash
 
-ALL_VERSIONS="4.6 5.12 6.9 7.1"
-TEST='mocha --check-leaks -t 5000 -b -R spec test/tests.js'
+ALL_VERSIONS="4 5 6 7 8"
+TEST='npm test'
 
 # run function
 run() {
@@ -14,10 +14,10 @@ run() {
 	fi
 }
 
-echo "================================================="
-echo "-- Building Code..."
-cd ..
-run "npm run-script compile"
+# echo "================================================="
+# echo "-- Building Code..."
+# cd ..
+# run "npm run compile"
 
 for V in $ALL_VERSIONS; do
 	echo "================================================="
@@ -26,7 +26,7 @@ for V in $ALL_VERSIONS; do
 	echo "-------------------------------------------------"
 	echo "- Swiching Node versions..."
 	echo "-------------------------------------------------"
-	run "sudo n $V"
+	run "nvm use v$V"
 	
 	echo "-------------------------------------------------"
 	echo "- Running Tests..."
