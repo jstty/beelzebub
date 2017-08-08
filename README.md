@@ -9,12 +9,17 @@
 [![Dependency Status](https://david-dm.org/jstty/beelzebub.png?theme=shields.io&branch=master)](https://david-dm.org/jstty/beelzebub)
 [![devDependency Status](https://david-dm.org/jstty/beelzebub/dev-status.png?theme=shields.io&branch=master)](https://david-dm.org/jstty/beelzebub#info=devDependencies)
 
-[![NPM](https://nodei.co/npm/beelzebub.png)](https://nodei.co/npm/beelzebub/)
-
+<center>
+<div><a target="_blank" href="https://nodei.co/npm/beelzebub/"><img src="https://nodei.co/npm/beelzebub.png" /></a>
+</div>
+<div>
+<a target="_blank" href="http://twitter.com/beelzebubio"><img width="32px" src="assets/twitter-logo.svg" /></a>
+</div>
+</center>
 
 ## Description
 A modern task runner pipeline framework.
-Allows your Tasks to be Modular, Extendable, Flexible, Managable, and Fire Resistant!
+Allows your Tasks to be Modular, Extendable, Flexible, Manageable, and Fire Resistant!
 
 ## Features
 1. Tasks are based on Promises, support: 
@@ -78,7 +83,7 @@ class MyTasks extends Beelzebub.Tasks {
 Beelzebub.add( MyTasks );
 
 // ------------------------------------
-// Runs the task, returing a promise
+// Runs the task, returning a promise
 Beelzebub.run('MyTasks.task1');
 ```
 
@@ -171,9 +176,14 @@ $ bz --file=./appTasks.js MyTasks.task1
 ```
 
 --------
+## Special Thanks
+To everyone supporting the development and cost to the project.
+I would also like to thank the logo artist [Irving Gerardo](https://thenounproject.com/irvinggerardo)!!!
+
+--------
 ## License
 It should be an obvious choice or you totally missed the [badge at the top](#top).
 
 However for completeness;
 
-*"I Beelzebub, delare myself to be under the [MIT licence](LICENSE)"*
+*"I Beelzebub, declare myself to be under the [MIT licence](LICENSE)"*

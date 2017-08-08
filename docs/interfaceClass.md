@@ -1,4 +1,4 @@
-# beelzebub - Task Class (v1.0.2)
+# beelzebub - Task Class (v1.0.3)
 
 <!-- div class="toc-container" -->
 

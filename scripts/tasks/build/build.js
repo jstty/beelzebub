@@ -1,4 +1,3 @@
-'use strict';
 /**
  * Running:
  * $ bz build.docs

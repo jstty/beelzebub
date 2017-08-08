@@ -1,6 +1,12 @@
+#  NPM files
+package-lock.json
+node_modules
+npm-debug.log
+
+# OS/IDE's
 .DS_Store
 .idea
 .vscode
-node_modules
+
+# test temp files
 test/.coverage
-npm-debug.log
