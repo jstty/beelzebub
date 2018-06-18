@@ -22,7 +22,7 @@ var Stumpy = require('stumpy');
 var strftime = require('strftime');
 
 // const sparkline = require('sparkline');
-var Table = require('cli-table2');
+var Table = require('cli-table3');
 
 var manifest = require('../package.json');
 
@@ -66,7 +66,7 @@ var Beelzebub = function () {
           group: {
             autoIndent: true,
             indent: {
-              // https://github.com/jamestalmage/cli-table2/blob/master/src/utils.js
+              // https://github.com/cli-table/cli-table3/blob/master/src/utils.js
               start: '└─┐',
               line: '  ├',
               end: '┌─┘',

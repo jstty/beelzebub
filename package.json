@@ -49,7 +49,7 @@
   "dependencies": {
     "babel-runtime": "~6.25.0",
     "chalk": "~2.1.0",
-    "cli-table2": "^0.2.0",
+    "cli-table3": "^0.5.0",
     "co": "~4.6.0",
     "lodash": "^4.17.4",
     "sparkline": "^0.2.0",
