@@ -1,4 +1,5 @@
 const { spawn, exec } = require('child_process');
+const _ = require('lodash');
 
 const defaultLogger = {
   log: (data) => {
@@ -7,6 +8,9 @@ const defaultLogger = {
   },
   error: (data) => {
     const write = process.stderr.write;
+    if(_.isObject(data)) {
+      data = JSON.stringify(data, null, 1);
+    }
     write.call(process.stderr, data);
   }
 };

@@ -75,7 +75,7 @@ function injectExampleLinks (basePath, markdown) {
         let sampleCode = fileData.substring(startIdx, endIdx);
 
         markdown = markdown.replace(item, sampleCode);
-        // console.log('sampleData:', sampleData);
+        // console.log('markdown:', markdown);
       }
       catch (err) {
         console.error('injectExampleLinks Error:', err);

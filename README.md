@@ -3,7 +3,6 @@
 
 
 [![Build Status](https://secure.travis-ci.org/jstty/beelzebub.png?branch=master)](http://travis-ci.org/jstty/beelzebub)
-[![bitHound Score](https://www.bithound.io/github/jstty/beelzebub/badges/score.svg?branch=master)](https://www.bithound.io/github/jstty/beelzebub)
 [![Coverage Status](https://coveralls.io/repos/github/jstty/beelzebub/badge.svg?branch=master)](https://coveralls.io/github/jstty/beelzebub?branch=master)
 ![License](https://img.shields.io/npm/l/beelzebub.svg)
 [![Dependency Status](https://david-dm.org/jstty/beelzebub.png?theme=shields.io&branch=master)](https://david-dm.org/jstty/beelzebub)
