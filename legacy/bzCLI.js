@@ -55,9 +55,9 @@ var BzCLI = function () {
       // break apart args array, spliting by tasks (doesn't start with '-')
       var argsObj = this._breakApartTasksVarsInArgs(args);
 
-      yargs.version(function () {
-        return manifest.version;
-      }).usage('bz [--file <filename> | default: beelzebub.js] [--verbose] [--help] <taskToRun [vars]>...').alias('version', 'V').group('version', 'Beelzebub Options:').option('file', {
+      console.log('manifest.version:', manifest.version);
+
+      yargs.version(manifest.version).usage('bz [--file <filename> | default: beelzebub.js] [--verbose] [--help] <taskToRun [vars]>...').alias('version', 'V').group('version', 'Beelzebub Options:').option('file', {
         alias: 'f',
         describe: 'Load a file',
         group: 'Beelzebub Options:'

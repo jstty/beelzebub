@@ -49,33 +49,40 @@ class Build extends Beelzebub.Tasks {
   }
 
   docs () {
-    const destDir = path.join(projectRootDir, 'docs');
-    const libDir = path.join(projectRootDir, 'lib');
-
-    this.logger.log('Building Docs...');
-    let markdown = docdown({
-      'path':  path.join(libDir, 'bzTasksClass.js'),
-      'title': `beelzebub - Task Class (v${version})`,
-      'toc':   'categories',
-      'url':   '../lib/bzTasks.js'
-    });
-
-    this.logger.log('Writng Docs...');
-    fs.writeFile(path.join(destDir, 'taskClass.md'), buildUtils.injectExampleLinks(libDir, markdown));
-
-    this.logger.log('-------------------------------------');
-    markdown = docdown({
-      'path':  path.join(libDir, 'bzInterfaceClass.js'),
-      'title': `beelzebub - Task Class (v${version})`,
-      'toc':   'categories',
-      'url':   '../lib/bzTasks.js'
-    });
-
-    this.logger.log('Writing Docs...');
-    fs.writeFile(path.join(destDir, 'interfaceClass.md'), buildUtils.injectExampleLinks(libDir, markdown));
-
-    this.logger.log('-------------------------------------');
-    this.logger.log('Done!');
+    try {
+      const destDir = path.join(projectRootDir, 'docs');
+      const libDir = path.join(projectRootDir, 'lib');
+  
+      this.logger.log('Building Docs...');
+      let markdown = docdown({
+        'path':  path.join(libDir, 'bzTasksClass.js'),
+        'title': `beelzebub - Task Class (v${version})`,
+        'toc':   'categories',
+        'url':   '../lib/bzTasks.js'
+      });
+  
+      this.logger.log('Writing Task Class Docs...');
+      fs.writeFileSync(path.join(destDir, 'taskClass.md'), buildUtils.injectExampleLinks(libDir, markdown));
+      this.logger.log('Done Writing Task Class Docs');
+  
+      this.logger.log('-------------------------------------');
+      markdown = docdown({
+        'path':  path.join(libDir, 'bzInterfaceClass.js'),
+        'title': `beelzebub - Task Class (v${version})`,
+        'toc':   'categories',
+        'url':   '../lib/bzTasks.js'
+      });
+  
+      this.logger.log('Writing Interface Docs...');
+      fs.writeFileSync(path.join(destDir, 'interfaceClass.md'), buildUtils.injectExampleLinks(libDir, markdown));
+      this.logger.log('Done Writing Interface Docs');
+  
+      this.logger.log('-------------------------------------');
+      this.logger.log('Done!');
+    }
+    catch(err) {
+      this.logger.error('docs Error:', err);
+    }
   }
 
   site () {
