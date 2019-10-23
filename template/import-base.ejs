@@ -1,0 +1,16 @@
+'use strict';
+const Beelzebub = require('beelzebub');
+
+class <%= className %> extends Beelzebub.Tasks {
+  constructor (config) {
+    super(config);
+    this.$setName('<%= className %>');
+  }
+<% for (const [name, cmd] of Object.entries(scripts)) { %>
+  <%= name %>() {
+    this.run("<%- cmd %>");
+  }
+<% } %>
+}
+
+module.exports = <%= className %>;

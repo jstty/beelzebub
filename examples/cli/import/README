@@ -1,0 +1,9 @@
+# Running the following command will import all the package.json "scripts" into a BZ tasks
+```shell
+bz --import .
+```
+
+# Running the following command will import all the package.json "scripts" into a BZ class AND it will update package.json to use the BZ tasks
+```shell
+bz --import --updatePackage .
+```
