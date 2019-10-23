@@ -1,5 +1,13 @@
 'use strict';
 
+var _regenerator = require('babel-runtime/regenerator');
+
+var _regenerator2 = _interopRequireDefault(_regenerator);
+
+var _asyncToGenerator2 = require('babel-runtime/helpers/asyncToGenerator');
+
+var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
+
 var _toConsumableArray2 = require('babel-runtime/helpers/toConsumableArray');
 
 var _toConsumableArray3 = _interopRequireDefault(_toConsumableArray2);
@@ -15,9 +23,12 @@ var _createClass3 = _interopRequireDefault(_createClass2);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var path = require('path');
+var fs = require('fs');
 var _ = require('lodash');
 var yargs = require('yargs');
 var when = require('when');
+var ejs = require('ejs');
+var inquirer = require('inquirer');
 
 var manifest = require('../package.json');
 var Beelzebub = require('./beelzebub.js');
@@ -68,8 +79,13 @@ var BzCLI = function () {
         group: 'Beelzebub Options:'
       }).option('help', {
         alias: 'h',
-        describe: 'print task help',
+        describe: 'Print task help',
         boolean: true,
+        group: 'Beelzebub Options:'
+      }).option('import', {
+        alias: 'f',
+        boolean: false,
+        describe: 'Import package.json scripts',
         group: 'Beelzebub Options:'
       }).showHelpOnFail()
       // .argv
@@ -78,6 +94,17 @@ var BzCLI = function () {
       var cli = yargs;
       var showHelp = cli.argv.help;
       var loadFile = file || cli.argv.file;
+      var importScripts = cli.argv.import;
+
+      // if import script, run import then exit
+      if (importScripts) {
+        this._importScripts(currentDir).then(function () {
+          process.exit();
+        }).catch(function () {
+          process.exit();
+        });
+        return;
+      }
 
       // if file sepecified then don't try to loading default files
       if (loadFile) {
@@ -262,6 +289,137 @@ var BzCLI = function () {
       }
 
       return tasks;
+    }
+  }, {
+    key: '_importScripts',
+    value: function () {
+      var _ref = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee(currentDir) {
+        var replace = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+        var packageFile, outputBzFile, packageJson, scripts, templateFile, templateDate, data, result, writeFile, overwrite;
+        return _regenerator2.default.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                // read package.json from currentDir
+                // console.log(currentDir);
+                packageFile = currentDir + '/package.json';
+                outputBzFile = currentDir + '/beelzebub.js';
+                packageJson = util.readJsonFile(packageFile);
+                // console.log(packageJson);
+
+                if (!_.has(packageJson, 'scripts')) {
+                  _context.next = 23;
+                  break;
+                }
+
+                scripts = packageJson.scripts;
+
+                // TODO: convert script names to valid functions
+                // TODO: escape cmd strings
+                // TODO: test run path is correct
+                // TODO: add run function to bz task class
+
+                _context.prev = 5;
+                templateFile = path.resolve(__dirname, '../template/import-base.ejs');
+                templateDate = fs.readFileSync(templateFile, "utf8");
+                data = {
+                  className: this._capitalize(packageJson.name) + 'Scripts',
+                  scripts: scripts
+                };
+                result = ejs.render(templateDate, data);
+                // console.log(result);
+
+                writeFile = true;
+
+                if (!fs.existsSync(outputBzFile)) {
+                  _context.next = 17;
+                  break;
+                }
+
+                writeFile = false;
+
+                _context.next = 15;
+                return this._prompt({
+                  message: 'beelzebebub file already exists, overwrite?'
+                });
+
+              case 15:
+                overwrite = _context.sent;
+
+                if (overwrite.prompt) {
+                  writeFile = true;
+                }
+
+              case 17:
+
+                if (writeFile) {
+                  // write bz file to dir
+                  fs.writeFileSync(outputBzFile, result, "utf8");
+                  console.log('Created file:', path.relative(currentDir, outputBzFile));
+                }
+                _context.next = 23;
+                break;
+
+              case 20:
+                _context.prev = 20;
+                _context.t0 = _context['catch'](5);
+
+                console.log('Render Error:', _context.t0);
+
+              case 23:
+              case 'end':
+                return _context.stop();
+            }
+          }
+        }, _callee, this, [[5, 20]]);
+      }));
+
+      function _importScripts(_x3) {
+        return _ref.apply(this, arguments);
+      }
+
+      return _importScripts;
+    }()
+  }, {
+    key: '_prompt',
+    value: function _prompt(property) {
+      return inquirer.prompt({
+        type: 'confirm',
+        name: 'prompt',
+        message: property.message,
+        default: false
+      });
+
+      // return new Promise((resolve, reject) => {
+      //   try {
+
+      // let readline = require('readline');
+      // let rl = readline.createInterface(process.stdin, process.stdout);
+      // rl.question(property.message, function(result) {
+      //   console.log('prompt result:', result);
+      //   resolve(result);
+      // });
+
+      // prompt.start();
+      // prompt.get(property, (err, result) => {
+      //   if(err) {
+      //     console.error('prompt error:', err);
+      //     reject(err);
+      //     return;
+      //   }
+      //   console.log('prompt result:', result);
+      //   resolve(result);
+      // });
+      //   }
+      //   catch(err) {
+      //     console.error('Prompt Error:', err);
+      //   }
+      // });
+    }
+  }, {
+    key: '_capitalize',
+    value: function _capitalize(str) {
+      return str.charAt(0).toUpperCase() + str.slice(1);
     }
   }]);
   return BzCLI;

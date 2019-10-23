@@ -11,6 +11,7 @@ var _createClass3 = _interopRequireDefault(_createClass2);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var _ = require('lodash');
+var fs = require('fs');
 
 // internal singleton instance of the class, only created when needed
 var beelzebubInst = null;
@@ -68,6 +69,7 @@ var BzUtils = function () {
 
     /**
      * sets singleton instance of beelzebub
+     * @param {object}
      * @return beelzebub instance
      */
 
@@ -91,6 +93,7 @@ var BzUtils = function () {
 
     /**
      * sets singleton instance of beelzebub
+     * @param {object}
      * @return beelzebub instance
      */
 
@@ -158,6 +161,30 @@ var BzUtils = function () {
       // return b.prototype.isPrototypeOf(a);
       // return a instanceof b;
     }
+
+    /**
+     * reads json string from file
+     * @param {string}
+     * @returns {object}
+     * Note: it could not load file or invalid json, will return NULL
+     */
+
+  }, {
+    key: 'readJsonFile',
+    value: function readJsonFile(file) {
+      var jsonData = null;
+      try {
+        var fileData = fs.readFileSync(file);
+        jsonData = JSON.parse(fileData);
+      } catch (err) {
+        console.error('Error Reading File:', err);
+      }
+
+      return jsonData;
+    }
+
+    // TODO: write doc info here
+
   }, {
     key: 'processConfig',
     value: function processConfig(config, parentConfig, contex) {
@@ -209,7 +236,11 @@ var BzUtils = function () {
       }
     }
 
-    // task objects have a 'task' key and it's either a string or function
+    /**
+     * task objects have a 'task' key and it's either a string or function
+     * @param {object}
+     * @returns {boolean}
+     */
 
   }, {
     key: 'isTaskObject',
@@ -222,6 +253,12 @@ var BzUtils = function () {
 
       return false;
     }
+
+    /**
+     * gets current time and memory usage
+     * @returns {object}
+     */
+
   }, {
     key: 'getStats',
     value: function getStats() {
@@ -232,6 +269,13 @@ var BzUtils = function () {
         memory: process.memoryUsage()
       };
     }
+
+    /**
+     * calculates differance of "stats" object, returns result
+     * @param {object, object}
+     * @returns {object}
+     */
+
   }, {
     key: 'calcStatsDiff',
     value: function calcStatsDiff(start, end) {
@@ -268,5 +312,6 @@ module.exports = {
   isPromise: BzUtils.isPromise,
   isStream: BzUtils.isStream,
   isBaseTask: BzUtils.isBaseTask,
-  isTaskObject: BzUtils.isTaskObject
+  isTaskObject: BzUtils.isTaskObject,
+  readJsonFile: BzUtils.readJsonFile
 };
