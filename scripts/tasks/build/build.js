@@ -40,9 +40,10 @@ class Build extends Beelzebub.Tasks {
   }
 
   code () {
+    const srcDir = path.join(projectRootDir, 'lib');
     const destDir = path.join(projectRootDir, 'legacy');
     const babelPath = path.join(projectRootDir, 'node_modules', '.bin', 'babel');
-    let bableExec = `${babelPath} lib --out-dir ${destDir}`;
+    let bableExec = `${babelPath} ${srcDir} --out-dir ${destDir}`;
 
     this.logger.log('Building Code...');
     return utils.promiseExec(bableExec);

@@ -70,13 +70,14 @@ class Root extends Beelzebub.Tasks {
   test () {
     // TODO: add 'test --all'
     // test --all, "npm run lint && cd test && ./test-all-nodes.sh"
-    const istanbulPath = path.join('.', 'node_modules', '.bin', 'istanbul');
+    // const istanbulPath = path.join('.', 'node_modules', '.bin', 'istanbul');
     const mochaPath = path.join('.', 'node_modules', '.bin', 'mocha');
-    const istanbulConfigPath = path.join('.', 'test', '.istanbul.yml');
+    // const istanbulConfigPath = path.join('.', 'test', '.istanbul.yml');
     const testPath = path.join('.', 'test', 'tests.js');
 
-    const istanbulExec = `${istanbulPath} --config=${istanbulConfigPath} cover ${mochaPath} -- --check-leaks -t 5000 -b -R spec ${testPath}`;
-    return utils.promiseSpawn(istanbulExec);
+    // const exec = `${istanbulPath} --config=${istanbulConfigPath} cover ${mochaPath} -- --check-leaks -t 5000 -b -R spec ${testPath}`;
+    const exec = `${mochaPath} -- --check-leaks -t 5000 -b -R spec ${testPath}`;
+    return utils.promiseSpawn(exec);
   }
 
   coveralls () {
