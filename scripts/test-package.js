@@ -6,7 +6,11 @@ import { spawnSync } from 'node:child_process';
 const projectRoot = path.resolve(import.meta.dirname, '..');
 const manifest = JSON.parse(readFileSync(path.join(projectRoot, 'package.json'), 'utf8'));
 const scratchRoot = mkdtempSync(path.join(tmpdir(), 'beelzebub-package-test-'));
-const npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm';
+const npmCli = process.env.npm_execpath;
+
+if (!npmCli) {
+  throw new Error('npm_execpath is required; run this smoke test through npm');
+}
 
 function run(command, args, cwd) {
   const result = spawnSync(command, args, {
@@ -29,13 +33,13 @@ function run(command, args, cwd) {
   return result.stdout.trim();
 }
 
+function runNpm(args, cwd) {
+  return run(process.execPath, [npmCli, ...args], cwd);
+}
+
 try {
   const packResult = JSON.parse(
-    run(
-      npmCommand,
-      ['pack', '--json', '--ignore-scripts', '--pack-destination', scratchRoot],
-      projectRoot
-    )
+    runNpm(['pack', '--json', '--ignore-scripts', '--pack-destination', scratchRoot], projectRoot)
   );
   const packed = Array.isArray(packResult)
     ? packResult[0]
@@ -49,7 +53,7 @@ try {
     path.join(consumerDir, 'package.json'),
     `${JSON.stringify({ name: 'beelzebub-smoke-consumer', private: true, type: 'module' }, null, 2)}\n`
   );
-  run(npmCommand, ['install', '--ignore-scripts', '--no-audit', '--no-fund', tarball], consumerDir);
+  runNpm(['install', '--ignore-scripts', '--no-audit', '--no-fund', tarball], consumerDir);
 
   writeFileSync(
     path.join(consumerDir, 'smoke.mjs'),
