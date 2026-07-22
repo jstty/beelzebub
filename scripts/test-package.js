@@ -82,15 +82,11 @@ try {
       ''
     ].join('\n')
   );
-  const tscBin = path.join(
-    projectRoot,
-    'node_modules',
-    '.bin',
-    process.platform === 'win32' ? 'tsc.cmd' : 'tsc'
-  );
+  const tscCli = path.join(projectRoot, 'node_modules', 'typescript', 'lib', 'tsc.js');
   run(
-    tscBin,
+    process.execPath,
     [
+      tscCli,
       '--noEmit',
       '--strict',
       '--skipLibCheck',
