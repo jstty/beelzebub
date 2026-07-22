@@ -16,17 +16,24 @@ describe('utility predicates and object helpers', () => {
     const app = bz.create(config);
     const tasks = new BzTasks({ ...config, beelzebub: app });
     const thenable = { then: () => {} };
+    const callableThenable = Object.assign(() => {}, { then: () => {} });
     const generator = function* () {
       yield 1;
     };
 
     expect(util.isPromise(Promise.resolve())).toBe(true);
     expect(util.isPromise(thenable)).toBe(true);
+    expect(util.isPromise(callableThenable)).toBe(true);
+    expect(util.isPromise(() => {})).toBe(false);
+    expect(util.isPromise(1)).toBe(false);
     expect(util.isPromise(null)).toBe(false);
     expect(util.isStream(Readable.from(['data']))).toBe(true);
+    expect(util.isStream({ pipe: true })).toBe(false);
+    expect(util.isStream(null)).toBe(false);
     expect(util.isStream({})).toBe(false);
     expect(util.isGenerator(generator)).toBe(true);
     expect(util.isGenerator(() => {})).toBe(false);
+    expect(util.isGenerator(null)).toBe(false);
     expect(util.isBaseTask(tasks)).toBe(true);
     expect(util.isBaseTask(null)).toBe(false);
     expect(util.isBaseTask({ $sequence() {} })).toBe(false);
@@ -49,6 +56,9 @@ describe('utility predicates and object helpers', () => {
     expect(clone.nested).not.toBe(source.nested);
     expect(clone.nested.list).not.toBe(source.nested.list);
     expect(clone.marker).toBe(marker);
+    expect(util.deepClone(null)).toBeNull();
+    expect(util.deepClone(3)).toBe(3);
+    expect(util.deepClone(marker)).toBe(marker);
 
     const nullPrototype = Object.assign(Object.create(null) as Record<string, unknown>, {
       value: 1
@@ -62,6 +72,12 @@ describe('utility predicates and object helpers', () => {
         added: 'yes'
       })
     ).toEqual({ nested: { left: 1, right: 2 }, keep: true, added: 'yes' });
+    expect(
+      util.deepMerge({ nested: 1 } as Record<string, unknown>, {
+        nested: { replaced: true },
+        ignored: undefined
+      })
+    ).toEqual({ nested: { replaced: true } });
   });
 
   it('applies verbose and silent configuration modes', () => {
@@ -85,6 +101,18 @@ describe('utility predicates and object helpers', () => {
 
     util.processConfig({ silent: true }, { logger, helpLogger }, context);
     expect(context.logger).toBe(util.nullLogger);
+    context.vLogger.log('ignored');
+    context.vLogger.info('ignored');
+
+    const directLogger = new TestLogger();
+    const directHelpLogger = new TestLogger();
+    util.processConfig(
+      { logger: directLogger, helpLogger: directHelpLogger },
+      { logger, helpLogger },
+      context
+    );
+    expect(context.logger).toBe(directLogger);
+    expect(context.helpLogger).toBe(directHelpLogger);
   });
 
   it('calculates time and memory differences with and without memory snapshots', () => {

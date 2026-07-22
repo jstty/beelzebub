@@ -90,12 +90,47 @@ describe('Beelzebub public API edges', () => {
     expect(app.$getTaskTree().name).toBe('$root$');
   });
 
+  it('runs a replacement root default and reports absent variable definitions', async () => {
+    const { config } = createTestConfig();
+    const app = bz.create(config);
+    const calls: string[] = [];
+
+    class RootTasks extends BzTasks {
+      $defaultTask = 'work';
+
+      work(): void {
+        calls.push('root default');
+      }
+    }
+
+    const root = new RootTasks({ ...config, beelzebub: app });
+    root.$useAsRoot();
+    await app.add(root);
+
+    expect(root.$getVarDefsForTaskName('work')).toBeNull();
+    expect(root.$getVarDefsForTaskName('')).toBeNull();
+    await app.run();
+
+    expect(calls).toEqual(['root default']);
+    expect(root.$getName()).toBe('$root$');
+  });
+
   it('constructs default loggers when no logger configuration is supplied', () => {
     const app = new Beelzebub({ silent: true });
 
     expect(app.getConfig().silent).toBe(true);
     expect(app.logger.log('hidden')).toBeUndefined();
     expect(app.helpLogger).toBeDefined();
+  });
+
+  it('uses the default logger formatters for timed and help output', () => {
+    const consoleLog = vi.spyOn(console, 'log').mockImplementation(() => {});
+    const app = new Beelzebub();
+
+    app.logger.log('timed output');
+    app.helpLogger.log('help output');
+
+    expect(consoleLog).toHaveBeenCalledTimes(2);
   });
 
   it('formats a zero-duration summary without dividing by zero', () => {

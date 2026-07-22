@@ -43,6 +43,13 @@ describe('task statistics', () => {
     expect(summary.diff).toBe(parent.diff);
   });
 
+  it('falls back to a fresh snapshot when stored start data is incomplete', () => {
+    const stats = new BzTaskStats();
+    (stats as unknown as { _start: Partial<StatsSnapshot> })._start = {};
+
+    expect(stats.getCurrentDiffStats()).toHaveProperty('memory.heapTotal');
+  });
+
   it('calculates aggregate timing and per-sample statistics', () => {
     const stats = new BzSummaryStats();
     const list = [

@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it } from 'vitest';
+import { PassThrough } from 'node:stream';
 
 import bz, { BzTasks, type BeelzebubConfig } from '../src/index.js';
 import { createTestConfig } from './helpers.js';
@@ -123,6 +124,10 @@ describe('task normalization internals', () => {
       { task: 'UnitTasks.Child.alpha', vars: {} },
       { task: 'UnitTasks.Child.alpha', vars: {} }
     ]);
+
+    expect(child.normalize(undefined, ['.alpha', { task: '.alpha', vars: {} }])).toEqual([
+      { task: '.alpha', vars: {} }
+    ]);
   });
 });
 
@@ -136,12 +141,38 @@ describe('task execution internals', () => {
     expect(logger.messages('warn').join('\n')).toContain('other type?? func:');
   });
 
+  it('drives generators and consumes streams returned through each supported path', async () => {
+    const { tasks } = createTasks();
+    function* calculate(seed: number): Generator<Promise<number> | number, number, number> {
+      const first = yield Promise.resolve(seed);
+      const second = yield 2;
+      return Number(first) + Number(second);
+    }
+
+    await expect(tasks.execute(calculate, tasks, 3)).resolves.toBe(5);
+    await expect(
+      tasks.execute(() => {
+        const stream = new PassThrough();
+        stream.resume();
+        queueMicrotask(() => stream.end('direct'));
+        return stream;
+      }, tasks)
+    ).resolves.toBeUndefined();
+
+    const promisedStream = new PassThrough();
+    promisedStream.resume();
+    setImmediate(() => promisedStream.end('promised'));
+    await expect(tasks.execute(Promise.resolve(promisedStream), tasks)).resolves.toBeUndefined();
+    await expect(tasks.execute(undefined, tasks)).resolves.toBeNull();
+  });
+
   it('runs default and function records and rejects unsupported records', async () => {
     const { tasks } = createTasks();
     tasks.$setDefault('alpha');
     await tasks.$register();
 
     await expect(tasks.runTask()).resolves.toBeUndefined();
+    await expect(tasks.runPromise(tasks, { task: 'alpha.extra' })).resolves.toBeUndefined();
     await expect(
       tasks.runPromise(tasks, { task: () => 'inline', vars: { value: 1 } })
     ).resolves.toBeUndefined();

@@ -53,17 +53,35 @@ describe('task variable definitions', () => {
       }
     });
 
-    expect(captured).toEqual([
-      {
-        text: '99',
-        count: 42,
-        e: 'TRUE',
-        enabled: true,
-        list: ['one', 'two'],
-        settings: { retries: 5, label: '7' },
-        fallback: 'ready'
+    expect(captured[0]).toEqual({
+      text: '99',
+      count: 42,
+      e: 'TRUE',
+      enabled: true,
+      list: ['one', 'two'],
+      settings: { retries: 5, label: '7' },
+      fallback: 'ready'
+    });
+
+    await app.run({
+      task: 'VarsTasks.capture',
+      vars: {
+        text: 'ready',
+        count: 1,
+        enabled: 0,
+        list: ['already-an-array'],
+        settings: { retries: 2, label: 'configured' },
+        fallback: 'explicit'
       }
-    ]);
+    });
+    expect(captured[1]).toEqual({
+      text: 'ready',
+      count: 1,
+      enabled: false,
+      list: ['already-an-array'],
+      settings: { retries: 2, label: 'configured' },
+      fallback: 'explicit'
+    });
     expect(logger.messages('error')).toEqual(
       expect.arrayContaining([
         'text is not a string but defined as one, converting to string',
