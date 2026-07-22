@@ -234,6 +234,8 @@ npm run docs:serve   # serve docs locally at http://localhost:4173/site
 npm run docs:dev     # watch + rebuild while serving locally
 ```
 
+Coverage is enforced at 80% for statements, branches, functions, and lines. The complete local release gate runs the coverage suite and fails if any metric regresses below that floor.
+
 TypeScript 7 does not yet expose the compiler API used by TypeDoc and typescript-eslint. Development therefore installs the official TypeScript 6 compatibility package alongside the TypeScript 7 compiler. Application and declaration compilation still use TypeScript 7.
 
 ---

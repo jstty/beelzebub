@@ -13,10 +13,10 @@ export default defineConfig({
       include: ['src/**/*.ts'],
       exclude: ['src/bin/**', 'src/**/*.d.ts'],
       thresholds: {
-        statements: 60,
-        branches: 50,
-        functions: 70,
-        lines: 60
+        statements: 80,
+        branches: 80,
+        functions: 80,
+        lines: 80
       }
     },
     pool: 'forks'

@@ -662,15 +662,11 @@ export class BzTasks {
             else s = parent.namePath + s;
           }
 
-          const taskParts = s.split('.');
-          const taskName = taskParts.shift() ?? '';
-
-          let taskFullName = s;
           const taskVarParts = s.split(':');
+          const taskFullName = taskVarParts.shift() ?? s;
           let taskVars: Record<string, unknown> | string = {};
 
           if (taskVarParts.length > 0) {
-            taskFullName = taskVarParts.shift() ?? s;
             taskVars = taskVarParts.join(':');
 
             if (typeof taskVars === 'string' && taskVars.length === 0) {
@@ -683,6 +679,9 @@ export class BzTasks {
               }
             }
           }
+
+          const taskParts = taskFullName.split('.');
+          const taskName = taskParts.shift() ?? '';
 
           if (!this.$getSubTask(taskName) && !this.$getTask(taskName)) {
             this.logger.warn(taskFullName, 'task not added');

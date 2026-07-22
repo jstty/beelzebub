@@ -10,7 +10,7 @@ Notable project changes are documented here. The format follows Keep a Changelog
 - Native ESM package exports.
 - TC39 standard task decorators.
 - TypeScript 7 compilation with a temporary TypeScript 6 tooling compatibility layer.
-- Vitest 4 tests, coverage thresholds, tarball consumer tests, and Node 24/26 CI.
+- Vitest 4 tests, 80% coverage thresholds, tarball consumer tests, and Node 24/26 CI.
 - TypeDoc API documentation and a dedicated 1.x migration guide.
 
 ### Changed
