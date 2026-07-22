@@ -1,0 +1,19 @@
+{
+  "entryPoints": ["src/index.ts"],
+  "out": "docs/site",
+  "cleanOutputDir": true,
+  "name": "Beelzebub",
+  "readme": "README.md",
+  "includeVersion": true,
+  "navigationLinks": {
+    "GitHub": "https://github.com/jstty/beelzebub",
+    "npm": "https://www.npmjs.com/package/beelzebub"
+  },
+  "categorizeByGroup": true,
+  "groupOrder": ["Classes", "Functions", "Interfaces", "Type Aliases", "Variables"],
+  "excludePrivate": true,
+  "excludeProtected": true,
+  "excludeInternal": true,
+  "hideGenerator": true,
+  "treatWarningsAsErrors": true
+}

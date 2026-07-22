@@ -1,9 +1,16 @@
 {
   "name": "examples",
   "version": "0.0.1",
+  "private": true,
+  "type": "module",
   "dependencies": {
-    "del": "^2.2.1",
-    "gulp": "^4.0.2",
-    "shelljs": "^0.8.3"
+    "gulp": "^5.0.1"
+  },
+  "engines": {
+    "node": ">=24.15.0"
+  },
+  "packageManager": "npm@12.0.1",
+  "devDependencies": {
+    "@types/gulp": "^4.0.18"
   }
 }

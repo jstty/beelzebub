@@ -1,0 +1,38 @@
+import { expectBufferEquals, type TestFn } from '../../util/common.js';
+
+const tests: TestFn[] = [
+  (app) =>
+    expectBufferEquals(app, [
+      'MyTasks init',
+      'MyBaseTasks init',
+      'MySubBaseTasks1 init',
+      'MyTasks beforeAll - taskA1',
+      'MyBaseTasks beforeAll - taskA1',
+      'MySubBaseTasks2 init',
+      'MySubBaseTasks1 beforeAll - taskA1',
+      'MySubBaseTasks1 beforeEach - taskA1',
+      'MySubBaseTasks1 taskA1',
+      'MySubBaseTasks1 afterEach - taskA1',
+      'MyTasks beforeEach - task1',
+      'MyTasks task1',
+      'MyBaseTasks beforeEach - taskA {"hello":"world"}',
+      'MyBaseTasks taskA - world',
+      'MyBaseTasks afterEach - taskA {"hello":"world"}',
+      'MyBaseTasks beforeEach - taskB {}',
+      'MyBaseTasks taskB',
+      'MyBaseTasks afterEach - taskB {}',
+      'MySubBaseTasks2 beforeAll - taskA2',
+      'MySubBaseTasks2 beforeEach - taskA2',
+      'MySubBaseTasks2 taskA2',
+      'MySubBaseTasks2 afterEach - taskA2',
+      'MyTasks afterEach - task1',
+      'MyTasks beforeEach - task2',
+      'MyTasks task2',
+      'MyTasks afterEach - task2',
+      'MySubBaseTasks1 afterAll',
+      'MySubBaseTasks2 afterAll',
+      'MyBaseTasks afterAll',
+      'MyTasks afterAll'
+    ])
+];
+export default tests;
