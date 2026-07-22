@@ -6,6 +6,7 @@ import { spawnSync } from 'node:child_process';
 const projectRoot = path.resolve(import.meta.dirname, '..');
 const manifest = JSON.parse(readFileSync(path.join(projectRoot, 'package.json'), 'utf8'));
 const scratchRoot = mkdtempSync(path.join(tmpdir(), 'beelzebub-package-test-'));
+const npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm';
 
 function run(command, args, cwd) {
   const result = spawnSync(command, args, {
@@ -31,7 +32,7 @@ function run(command, args, cwd) {
 try {
   const packResult = JSON.parse(
     run(
-      'npm',
+      npmCommand,
       ['pack', '--json', '--ignore-scripts', '--pack-destination', scratchRoot],
       projectRoot
     )
@@ -48,7 +49,7 @@ try {
     path.join(consumerDir, 'package.json'),
     `${JSON.stringify({ name: 'beelzebub-smoke-consumer', private: true, type: 'module' }, null, 2)}\n`
   );
-  run('npm', ['install', '--ignore-scripts', '--no-audit', '--no-fund', tarball], consumerDir);
+  run(npmCommand, ['install', '--ignore-scripts', '--no-audit', '--no-fund', tarball], consumerDir);
 
   writeFileSync(
     path.join(consumerDir, 'smoke.mjs'),
