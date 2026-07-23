@@ -57,7 +57,7 @@
     "build": "tsc -p tsconfig.json && node scripts/post-build.js",
     "build:watch": "tsc -p tsconfig.json --watch",
     "docs:build": "typedoc",
-    "docs:check": "typedoc --emit none",
+    "docs:check": "npm run docs:build && git diff --exit-code -- docs/site",
     "docs:watch": "typedoc --watch",
     "docs:serve": "node scripts/docs-serve.js",
     "docs:dev": "node scripts/docs-dev.js",

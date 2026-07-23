@@ -5,6 +5,8 @@
   "name": "Beelzebub",
   "readme": "README.md",
   "includeVersion": true,
+  "disableGit": true,
+  "sourceLinkTemplate": "https://github.com/jstty/beelzebub/blob/main/src/{path}#L{line}",
   "navigationLinks": {
     "GitHub": "https://github.com/jstty/beelzebub",
     "npm": "https://www.npmjs.com/package/beelzebub"

@@ -75,9 +75,7 @@ jobs:
           npm --prefix examples ci
       - run: npm run coverage
       - run: npm run build
-      - run: npm run docs:build
-      - name: Verify generated documentation is committed
-        run: git diff --exit-code -- docs/site
+      - run: npm run docs:check
       - run: npm run validate-pkg
       - run: npm run audit
 
