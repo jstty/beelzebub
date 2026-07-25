@@ -9,6 +9,8 @@ npm-debug.log
 
 # Build outputs
 dist
+website/dist
+.firebase
 *.tsbuildinfo
 
 # Test/coverage

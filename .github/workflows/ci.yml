@@ -75,7 +75,7 @@ jobs:
           npm --prefix examples ci
       - run: npm run coverage
       - run: npm run build
-      - run: npm run docs:check
+      - run: npm run site:check
       - run: npm run validate-pkg
       - run: npm run audit
 
@@ -83,4 +83,10 @@ jobs:
         with:
           name: coverage
           path: coverage/
+          if-no-files-found: error
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: website-static
+          path: website/dist/
           if-no-files-found: error

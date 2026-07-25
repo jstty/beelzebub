@@ -1,0 +1,490 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Working Beelzebub 2.0 examples for task composition, lifecycle hooks, decorators, streams, modules, and the CLI."
+    />
+    <meta name="theme-color" content="#140d20" />
+    <title>Examples — Beelzebub 2.0</title>
+    <link rel="icon" href="/assets/bz-logo.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/assets/site.css" />
+    <script src="/assets/site.js" defer></script>
+  </head>
+  <body class="examples-page">
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="site-header" data-header>
+      <div class="shell nav-shell">
+        <a class="brand" href="/" aria-label="Beelzebub home">
+          <span class="brand-mark"><img src="/assets/bz-logo.svg" alt="" /></span>
+          <span class="brand-name">beelzebub</span>
+          <span class="version-pill">2.0</span>
+        </a>
+
+        <button
+          class="nav-toggle"
+          type="button"
+          aria-expanded="false"
+          aria-controls="primary-nav"
+          data-nav-toggle
+        >
+          <span class="nav-toggle-line"></span>
+          <span class="nav-toggle-line"></span>
+          <span class="sr-only">Toggle navigation</span>
+        </button>
+
+        <nav class="primary-nav" id="primary-nav" aria-label="Primary" data-nav>
+          <a href="/">Overview</a>
+          <a href="/examples/" aria-current="page">Examples</a>
+          <a href="/api/">API</a>
+          <a href="/migrate/">Migrate to 2.0</a>
+          <a class="nav-github" href="https://github.com/jstty/beelzebub">GitHub</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main">
+      <section class="examples-hero">
+        <div class="shell examples-hero-inner">
+          <div>
+            <span class="eyebrow eyebrow-bright">WORKING PATTERNS</span>
+            <h1>From first task to <span>full pipeline.</span></h1>
+            <p>
+              Copy a focused pattern, run it through the API or CLI, then grow it into the
+              automation your project needs.
+            </p>
+          </div>
+          <div class="example-count" aria-label="Example library summary">
+            <div><strong>10</strong><span>patterns</span></div>
+            <div><strong>5</strong><span>categories</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="examples-content">
+        <div class="shell">
+          <div class="example-toolbar">
+            <div class="example-filters" aria-label="Filter examples">
+              <button type="button" aria-pressed="true" data-filter="all">All</button>
+              <button type="button" aria-pressed="false" data-filter="basics">Basics</button>
+              <button type="button" aria-pressed="false" data-filter="composition">
+                Composition
+              </button>
+              <button type="button" aria-pressed="false" data-filter="lifecycle">Lifecycle</button>
+              <button type="button" aria-pressed="false" data-filter="advanced">Advanced</button>
+              <button type="button" aria-pressed="false" data-filter="cli">CLI</button>
+            </div>
+            <p><span data-visible-count>10</span> examples shown</p>
+          </div>
+
+          <div class="examples-grid">
+            <article class="example-card" data-example-category="basics">
+              <div class="example-card-header">
+                <div class="example-card-title">
+                  <span>Basics</span>
+                  <h2>Hello, task runner</h2>
+                  <p>Methods become named tasks when their class is registered.</p>
+                </div>
+                <a
+                  class="source-link"
+                  href="https://github.com/jstty/beelzebub/blob/main/examples/api/helloworld.ts"
+                  >Source ↗</a
+                >
+              </div>
+              <div class="example-code-wrap">
+                <div class="example-code-bar">
+                  <span>hello.ts</span>
+                  <button type="button" data-copy-panel>
+                    <span data-copy-label>Copy</span>
+                  </button>
+                </div>
+                <pre class="example-code"><code>import bz from 'beelzebub';
+
+class HelloTasks extends bz.Tasks {
+  hello() {
+    this.logger.log('Hello from Beelzebub');
+  }
+}
+
+bz.add(HelloTasks);
+await bz.run('HelloTasks.hello');</code></pre>
+              </div>
+            </article>
+
+            <article
+              class="example-card"
+              id="composition"
+              data-example-category="composition basics"
+            >
+              <div class="example-card-header">
+                <div class="example-card-title">
+                  <span>Composition</span>
+                  <h2>Sequence a release</h2>
+                  <p>Keep dependent work ordered and stop when a step fails.</p>
+                </div>
+                <a
+                  class="source-link"
+                  href="https://github.com/jstty/beelzebub/blob/main/examples/api/sequence.ts"
+                  >Source ↗</a
+                >
+              </div>
+              <div class="example-code-wrap">
+                <div class="example-code-bar">
+                  <span>release.ts</span>
+                  <button type="button" data-copy-panel>
+                    <span data-copy-label>Copy</span>
+                  </button>
+                </div>
+                <pre class="example-code"><code>class ReleaseTasks extends bz.Tasks {
+  release() {
+    return this.$sequence(
+      '.clean',
+      '.compile',
+      '.package'
+    );
+  }
+}
+
+bz.add(ReleaseTasks);
+await bz.run('ReleaseTasks.release');</code></pre>
+              </div>
+            </article>
+
+            <article class="example-card" data-example-category="composition">
+              <div class="example-card-header">
+                <div class="example-card-title">
+                  <span>Composition</span>
+                  <h2>Fan out verification</h2>
+                  <p>Run independent checks together and await them as one task.</p>
+                </div>
+                <a
+                  class="source-link"
+                  href="https://github.com/jstty/beelzebub/blob/main/examples/api/parallel.ts"
+                  >Source ↗</a
+                >
+              </div>
+              <div class="example-code-wrap">
+                <div class="example-code-bar">
+                  <span>verify.ts</span>
+                  <button type="button" data-copy-panel>
+                    <span data-copy-label>Copy</span>
+                  </button>
+                </div>
+                <pre class="example-code"><code>class VerifyTasks extends bz.Tasks {
+  verify() {
+    return this.$parallel(
+      '.lint',
+      '.typecheck',
+      '.test'
+    );
+  }
+}
+
+bz.add(VerifyTasks);
+await bz.run('VerifyTasks.verify');</code></pre>
+              </div>
+            </article>
+
+            <article class="example-card" id="lifecycle" data-example-category="lifecycle advanced">
+              <div class="example-card-header">
+                <div class="example-card-title">
+                  <span>Lifecycle</span>
+                  <h2>Prepare, trace, clean up</h2>
+                  <p>Wrap a run or every task with predictable lifecycle hooks.</p>
+                </div>
+                <a
+                  class="source-link"
+                  href="https://github.com/jstty/beelzebub/blob/main/examples/api/beforeAfter.ts"
+                  >Source ↗</a
+                >
+              </div>
+              <div class="example-code-wrap">
+                <div class="example-code-bar">
+                  <span>hooks.ts</span>
+                  <button type="button" data-copy-panel>
+                    <span data-copy-label>Copy</span>
+                  </button>
+                </div>
+                <pre class="example-code"><code>class DatabaseTasks extends bz.Tasks {
+  $beforeAll() {
+    return openConnection();
+  }
+
+  $beforeEach(taskInfo: TaskInfo) {
+    this.logger.debug(`starting ${taskInfo.task}`);
+  }
+
+  $afterAll() {
+    return closeConnection();
+  }
+}</code></pre>
+              </div>
+            </article>
+
+            <article class="example-card" id="advanced" data-example-category="advanced basics">
+              <div class="example-card-header">
+                <div class="example-card-title">
+                  <span>Typed API</span>
+                  <h2>Decorators + task variables</h2>
+                  <p>Describe help, defaults, and validated variables beside the task.</p>
+                </div>
+                <a
+                  class="source-link"
+                  href="https://github.com/jstty/beelzebub/blob/main/examples/api/decoratorVars.ts"
+                  >Source ↗</a
+                >
+              </div>
+              <div class="example-code-wrap">
+                <div class="example-code-bar">
+                  <span>deploy.ts</span>
+                  <button type="button" data-copy-panel>
+                    <span data-copy-label>Copy</span>
+                  </button>
+                </div>
+                <pre class="example-code"><code>import {
+  BzTasks, defaultTask, help, vars
+} from 'beelzebub';
+
+class DeployTasks extends BzTasks {
+  @defaultTask
+  @help('Deploy the application')
+  @vars({
+    env: { type: 'String', required: true }
+  })
+  deploy(options: { env: string }) {
+    this.logger.info(options.env);
+  }
+}</code></pre>
+              </div>
+            </article>
+
+            <article class="example-card" data-example-category="advanced composition">
+              <div class="example-card-header">
+                <div class="example-card-title">
+                  <span>Modules</span>
+                  <h2>Compose nested task groups</h2>
+                  <p>Give a large project clear namespaces without a single giant class.</p>
+                </div>
+                <a
+                  class="source-link"
+                  href="https://github.com/jstty/beelzebub/blob/main/examples/api/subTasksSimple.ts"
+                  >Source ↗</a
+                >
+              </div>
+              <div class="example-code-wrap">
+                <div class="example-code-bar">
+                  <span>project.ts</span>
+                  <button type="button" data-copy-panel>
+                    <span data-copy-label>Copy</span>
+                  </button>
+                </div>
+                <pre class="example-code"><code>class FrontendTasks extends bz.Tasks {
+  build() {
+    return bundleFrontend();
+  }
+}
+
+class ProjectTasks extends bz.Tasks {
+  $init() {
+    return this.$addSubTasks(FrontendTasks);
+  }
+}
+
+bz.add(ProjectTasks);
+await bz.run('ProjectTasks.FrontendTasks.build');</code></pre>
+              </div>
+            </article>
+
+            <article class="example-card" data-example-category="lifecycle advanced">
+              <div class="example-card-header">
+                <div class="example-card-title">
+                  <span>Signals</span>
+                  <h2>Emit domain events</h2>
+                  <p>Expose progress to reporters without coupling them to task logic.</p>
+                </div>
+                <a
+                  class="source-link"
+                  href="https://github.com/jstty/beelzebub/blob/main/examples/api/events.ts"
+                  >Source ↗</a
+                >
+              </div>
+              <div class="example-code-wrap">
+                <div class="example-code-bar">
+                  <span>events.ts</span>
+                  <button type="button" data-copy-panel>
+                    <span data-copy-label>Copy</span>
+                  </button>
+                </div>
+                <pre class="example-code"><code>const app = bz();
+
+app.on(
+  'artifact.ready',
+  (_taskInfo: TaskInfo, artifact: Artifact) =&gt; {
+    console.log(artifact.path);
+  }
+);
+
+class BuildTasks extends app.Tasks {
+  async build() {
+    const artifact = await compile();
+    this.$emit('artifact.ready', artifact);
+  }
+}</code></pre>
+              </div>
+            </article>
+
+            <article class="example-card" data-example-category="advanced">
+              <div class="example-card-header">
+                <div class="example-card-title">
+                  <span>Interfaces</span>
+                  <h2>Swap task implementations</h2>
+                  <p>Keep a stable contract while projects choose their own implementation.</p>
+                </div>
+                <a
+                  class="source-link"
+                  href="https://github.com/jstty/beelzebub/blob/main/examples/api/interfaceTask.ts"
+                  >Source ↗</a
+                >
+              </div>
+              <div class="example-code-wrap">
+                <div class="example-code-bar">
+                  <span>interface.ts</span>
+                  <button type="button" data-copy-panel>
+                    <span data-copy-label>Copy</span>
+                  </button>
+                </div>
+                <pre class="example-code"><code>class CloudDeploy extends bz.Tasks {
+  deploy() {
+    return uploadToCloud();
+  }
+}
+
+class DeployTarget extends bz.InterfaceTasks {
+  $replaceWith(config: BeelzebubConfig) {
+    return config.provider === 'cloud'
+      ? CloudDeploy
+      : LocalDeploy;
+  }
+}
+
+bz.add(DeployTarget, { provider: 'cloud' });</code></pre>
+              </div>
+            </article>
+
+            <article class="example-card" data-example-category="advanced">
+              <div class="example-card-header">
+                <div class="example-card-title">
+                  <span>Async I/O</span>
+                  <h2>Return a Node stream</h2>
+                  <p>Promises, generators, and streams all participate in task completion.</p>
+                </div>
+                <a
+                  class="source-link"
+                  href="https://github.com/jstty/beelzebub/blob/main/examples/api/stream.ts"
+                  >Source ↗</a
+                >
+              </div>
+              <div class="example-code-wrap">
+                <div class="example-code-bar">
+                  <span>streams.ts</span>
+                  <button type="button" data-copy-panel>
+                    <span data-copy-label>Copy</span>
+                  </button>
+                </div>
+                <pre class="example-code"><code>import { createReadStream, createWriteStream }
+  from 'node:fs';
+
+class AssetTasks extends bz.Tasks {
+  copy() {
+    return createReadStream('src/logo.svg')
+      .pipe(createWriteStream('dist/logo.svg'));
+  }
+}
+
+bz.add(AssetTasks);
+await bz.run('AssetTasks.copy');</code></pre>
+              </div>
+            </article>
+
+            <article class="example-card" data-example-category="cli basics">
+              <div class="example-card-header">
+                <div class="example-card-title">
+                  <span>CLI</span>
+                  <h2>Run the same tasks from <code>bz</code></h2>
+                  <p>Point the CLI at a task file and pass variables after the task name.</p>
+                </div>
+                <a
+                  class="source-link"
+                  href="https://github.com/jstty/beelzebub/blob/main/examples/cli/helloworld.ts"
+                  >Source ↗</a
+                >
+              </div>
+              <div class="example-code-wrap">
+                <div class="example-code-bar">
+                  <span>terminal</span>
+                  <button type="button" data-copy-panel>
+                    <span data-copy-label>Copy</span>
+                  </button>
+                </div>
+                <pre class="example-code"><code># Run a task
+bz --file ./tasks.ts BuildTasks.compile
+
+# Inspect available tasks
+bz --file ./tasks.ts --help
+
+# Pass a typed variable
+bz --file ./tasks.ts DeployTasks.deploy --env production</code></pre>
+              </div>
+            </article>
+          </div>
+
+          <div class="examples-cta">
+            <div>
+              <h2>Need the full implementation?</h2>
+              <p>The repository includes runnable API and CLI projects for every core pattern.</p>
+            </div>
+            <a
+              class="button button-primary"
+              href="https://github.com/jstty/beelzebub/tree/main/examples"
+              >Open examples on GitHub ↗</a
+            >
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="shell footer-grid">
+        <div class="footer-brand">
+          <a class="brand" href="/">
+            <span class="brand-mark"><img src="/assets/bz-logo.svg" alt="" /></span>
+            <span class="brand-name">beelzebub</span>
+          </a>
+          <p>Modular, observable task orchestration for modern Node.js.</p>
+          <span class="footer-license">MIT licensed · Built with fire resistance</span>
+        </div>
+        <div class="footer-column">
+          <strong>Learn</strong>
+          <a href="/examples/">Examples</a>
+          <a href="/api/">API reference</a>
+          <a href="/migrate/">Migration guide</a>
+        </div>
+        <div class="footer-column">
+          <strong>Project</strong>
+          <a href="https://github.com/jstty/beelzebub">GitHub</a>
+          <a href="https://www.npmjs.com/package/beelzebub">npm</a>
+          <a href="https://github.com/jstty/beelzebub/issues">Issues</a>
+        </div>
+        <div class="footer-column">
+          <strong>Version</strong>
+          <span>2.0.0</span>
+          <span>Node 24+</span>
+          <span>ESM only</span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

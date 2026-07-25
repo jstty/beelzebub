@@ -12,6 +12,8 @@ Notable project changes are documented here. The format follows Keep a Changelog
 - TypeScript 7 compilation with a temporary TypeScript 6 tooling compatibility layer.
 - Vitest 4 tests, 80% coverage thresholds, tarball consumer tests, and Node 24/26 CI.
 - TypeDoc API documentation and a dedicated 1.x migration guide.
+- A new responsive product website with an expanded example library, integrated API reference,
+  Firebase Hosting configuration, preview deployment, and automated static-site validation.
 
 ### Changed
 

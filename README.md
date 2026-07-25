@@ -75,10 +75,12 @@ npm install -g beelzebub
 
 # Docs
 
+- [Beelzebub website](https://beelzebub.io)
+- [Examples](https://beelzebub.io/examples/)
+- [API reference](https://beelzebub.io/api/)
 - [Task Class](./docs/taskClass.md)
 - [Interface Class](./docs/interfaceClass.md)
 - [Migrating from v1](./MIGRATION.md)
-- [Generated API reference](./docs/site/index.html)
 
 ---
 
@@ -232,9 +234,17 @@ npm run check       # complete local release gate
 npm run docs:build   # one-off docs build into docs/site
 npm run docs:serve   # serve docs locally at http://localhost:4173/site
 npm run docs:dev     # watch + rebuild while serving locally
+
+# Static website + generated API reference
+npm run site:build   # generate website/dist
+npm run site:dev     # build and serve at http://127.0.0.1:4174
+npm run site:check   # build, validate local links, and check generated docs
+npm run site:preview # publish a Firebase preview channel
 ```
 
 Coverage is enforced at 80% for statements, branches, functions, and lines. The complete local release gate runs the coverage suite and fails if any metric regresses below that floor.
+
+The 2.0 product website lives in this repository under `website/` and deploys as a static site to the `beelzebub-io` Firebase project. See [`website/README.md`](./website/README.md) for the source, build, preview, and production-deployment layout.
 
 TypeScript 7 does not yet expose the compiler API used by TypeDoc and typescript-eslint. Development therefore installs the official TypeScript 6 compatibility package alongside the TypeScript 7 compiler. Application and declaration compilation still use TypeScript 7.
 

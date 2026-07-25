@@ -6,7 +6,7 @@ import globals from 'globals';
 
 export default tseslint.config(
   {
-    ignores: ['dist/**', 'docs/**', 'node_modules/**', 'coverage/**']
+    ignores: ['dist/**', 'docs/**', 'website/dist/**', 'node_modules/**', 'coverage/**']
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,
@@ -33,6 +33,12 @@ export default tseslint.config(
     files: ['examples/**/*.{ts,js}', 'scripts/**/*.{ts,js}'],
     rules: {
       '@typescript-eslint/no-unused-vars': 'off'
+    }
+  },
+  {
+    files: ['website/src/**/*.js'],
+    languageOptions: {
+      globals: globals.browser
     }
   },
   prettier

@@ -1,0 +1,660 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Beelzebub is a TypeScript-first task orchestration framework for composable, observable build pipelines."
+    />
+    <meta name="theme-color" content="#140d20" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://beelzebub.io/" />
+    <meta property="og:title" content="Beelzebub — One Hell of a Task Master" />
+    <meta
+      property="og:description"
+      content="Compose tasks, observe every lifecycle event, and ship typed automation with confidence."
+    />
+    <meta property="og:image" content="https://beelzebub.io/assets/og.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Beelzebub — One Hell of a Task Master" />
+    <meta
+      name="twitter:description"
+      content="Task orchestration for TypeScript teams who want control without ceremony."
+    />
+    <meta name="twitter:image" content="https://beelzebub.io/assets/og.png" />
+    <title>Beelzebub — TypeScript task orchestration</title>
+    <link rel="icon" href="/assets/bz-logo.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/assets/site.css" />
+    <script src="/assets/site.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="site-header" data-header>
+      <div class="shell nav-shell">
+        <a class="brand" href="/" aria-label="Beelzebub home">
+          <span class="brand-mark"><img src="/assets/bz-logo.svg" alt="" /></span>
+          <span class="brand-name">beelzebub</span>
+          <span class="version-pill">2.0</span>
+        </a>
+
+        <button
+          class="nav-toggle"
+          type="button"
+          aria-expanded="false"
+          aria-controls="primary-nav"
+          data-nav-toggle
+        >
+          <span class="nav-toggle-line"></span>
+          <span class="nav-toggle-line"></span>
+          <span class="sr-only">Toggle navigation</span>
+        </button>
+
+        <nav class="primary-nav" id="primary-nav" aria-label="Primary" data-nav>
+          <a href="#why">Why Beelzebub</a>
+          <a href="/examples/">Examples</a>
+          <a href="/api/">API</a>
+          <a href="/migrate/">Migrate to 2.0</a>
+          <a class="nav-github" href="https://github.com/jstty/beelzebub">GitHub</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main">
+      <section class="hero">
+        <div class="hero-grid" aria-hidden="true"></div>
+        <div class="hero-glow hero-glow-one" aria-hidden="true"></div>
+        <div class="hero-glow hero-glow-two" aria-hidden="true"></div>
+
+        <div class="shell hero-layout">
+          <div class="hero-copy">
+            <a class="release-kicker" href="/migrate/">
+              <span class="release-dot"></span>
+              Beelzebub 2.0 is forged for Node 24+
+              <span aria-hidden="true">→</span>
+            </a>
+
+            <h1>Orchestrate every task.<br /><span>See every move.</span></h1>
+            <p class="hero-lede">
+              A TypeScript-first task runner for pipelines that need to stay modular, observable,
+              and under control as they grow.
+            </p>
+
+            <div class="hero-actions">
+              <a class="button button-primary" href="#quickstart">
+                Start building
+                <span aria-hidden="true">↗</span>
+              </a>
+              <a class="button button-secondary" href="/examples/">
+                Explore examples
+                <span aria-hidden="true">→</span>
+              </a>
+            </div>
+
+            <div class="install-command" data-copy-wrap>
+              <span class="terminal-prompt" aria-hidden="true">$</span>
+              <code>npm install beelzebub</code>
+              <button type="button" data-copy="npm install beelzebub">
+                <span data-copy-label>Copy</span>
+              </button>
+            </div>
+
+            <ul class="hero-proof" aria-label="Release highlights">
+              <li><span>✓</span> Native ESM</li>
+              <li><span>✓</span> Strict TypeScript</li>
+              <li><span>✓</span> Zero runtime vulnerabilities</li>
+            </ul>
+          </div>
+
+          <div class="hero-console" aria-label="Example task pipeline dashboard">
+            <div class="console-frame">
+              <div class="console-topbar">
+                <div class="window-controls" aria-hidden="true">
+                  <span></span><span></span><span></span>
+                </div>
+                <div class="console-title">
+                  <span class="pulse-dot"></span>
+                  release.pipeline
+                </div>
+                <div class="run-status">RUNNING</div>
+              </div>
+
+              <div class="console-summary">
+                <div>
+                  <span class="metric-label">TASKS</span>
+                  <strong>06</strong>
+                  <span class="metric-delta">all healthy</span>
+                </div>
+                <div>
+                  <span class="metric-label">ELAPSED</span>
+                  <strong>428<span>ms</span></strong>
+                  <span class="metric-delta">−18% vs last</span>
+                </div>
+                <div>
+                  <span class="metric-label">SUCCESS</span>
+                  <strong>100<span>%</span></strong>
+                  <span class="metric-delta">no retries</span>
+                </div>
+              </div>
+
+              <div class="console-body">
+                <div class="pipeline-panel">
+                  <div class="panel-heading">
+                    <span>Execution graph</span>
+                    <span class="live-label"><i></i> live</span>
+                  </div>
+                  <div class="task-flow" aria-hidden="true">
+                    <div class="flow-node node-done">
+                      <span class="node-icon">✓</span>
+                      <div><strong>prepare</strong><small>42 ms</small></div>
+                    </div>
+                    <div class="flow-branch">
+                      <div class="branch-line"></div>
+                      <div class="flow-node node-done">
+                        <span class="node-icon">✓</span>
+                        <div><strong>lint</strong><small>86 ms</small></div>
+                      </div>
+                      <div class="flow-node node-done">
+                        <span class="node-icon">✓</span>
+                        <div><strong>test</strong><small>214 ms</small></div>
+                      </div>
+                    </div>
+                    <div class="flow-node node-active">
+                      <span class="node-icon"></span>
+                      <div><strong>build</strong><small>running</small></div>
+                    </div>
+                    <div class="flow-node node-queued">
+                      <span class="node-icon"></span>
+                      <div><strong>package</strong><small>queued</small></div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="events-panel">
+                  <div class="panel-heading">
+                    <span>Lifecycle</span>
+                    <span>07:42:18</span>
+                  </div>
+                  <ol class="event-stream">
+                    <li>
+                      <span class="event-time">.012</span>
+                      <i class="event-hook"></i>
+                      <span><b>$beforeAll</b> release</span>
+                    </li>
+                    <li>
+                      <span class="event-time">.054</span>
+                      <i class="event-ok"></i>
+                      <span><b>done</b> prepare</span>
+                    </li>
+                    <li>
+                      <span class="event-time">.140</span>
+                      <i class="event-ok"></i>
+                      <span><b>done</b> lint</span>
+                    </li>
+                    <li>
+                      <span class="event-time">.354</span>
+                      <i class="event-ok"></i>
+                      <span><b>done</b> test</span>
+                    </li>
+                    <li class="event-current">
+                      <span class="event-time">.428</span>
+                      <i class="event-live"></i>
+                      <span><b>run</b> build</span>
+                    </li>
+                  </ol>
+                </div>
+              </div>
+
+              <div class="console-footer">
+                <span><i class="legend-complete"></i> complete</span>
+                <span><i class="legend-running"></i> running</span>
+                <span><i class="legend-queued"></i> queued</span>
+                <span class="console-mode">parallel → sequence</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="shell signal-strip">
+          <span>Built for modern automation</span>
+          <ul>
+            <li>Node.js 24+</li>
+            <li>TypeScript 7</li>
+            <li>TC39 decorators</li>
+            <li>Promises &amp; streams</li>
+            <li>CLI + API</li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="section section-light" id="why">
+        <div class="shell">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">CONTROL WITHOUT CEREMONY</span>
+              <h2>Pipeline power that stays understandable.</h2>
+            </div>
+            <p>
+              Beelzebub gives every task a namespace, lifecycle, and observable result—without
+              turning your automation into a platform project.
+            </p>
+          </div>
+
+          <div class="feature-grid">
+            <article class="feature-card feature-card-wide">
+              <div class="feature-number">01</div>
+              <div class="feature-icon compose-icon" aria-hidden="true">
+                <span></span><span></span><span></span>
+              </div>
+              <h3>Compose work your way</h3>
+              <p>
+                Run ordered sequences, fan work out in parallel, nest task groups, or mix all three
+                in the same release flow.
+              </p>
+              <div class="mini-code">
+                <code><span>return</span> this.$sequence(</code>
+                <code>&nbsp;&nbsp;<b>'.verify'</b>, <b>'.build'</b>, <b>'.ship'</b></code>
+                <code>);</code>
+              </div>
+            </article>
+
+            <article class="feature-card">
+              <div class="feature-number">02</div>
+              <div class="feature-icon trace-icon" aria-hidden="true">
+                <span></span><span></span><span></span><span></span>
+              </div>
+              <h3>Trace the lifecycle</h3>
+              <p>
+                Hook into before/after events, emit domain signals, and inspect task timing when a
+                pipeline behaves unexpectedly.
+              </p>
+              <div class="trace-list" aria-hidden="true">
+                <span><i></i>$before</span>
+                <span><i></i>Build.compile</span>
+                <span><i></i>$after</span>
+              </div>
+            </article>
+
+            <article class="feature-card feature-card-dark">
+              <div class="feature-number">03</div>
+              <div class="feature-icon type-icon" aria-hidden="true">T</div>
+              <h3>Typed from config to task</h3>
+              <p>
+                Ship declarations, validate task variables, and use standard decorators without a
+                legacy transform pipeline.
+              </p>
+              <ul class="check-list">
+                <li>Strict declarations</li>
+                <li>Typed variables</li>
+                <li>Native ESM</li>
+              </ul>
+            </article>
+
+            <article class="feature-card feature-card-wide feature-card-red">
+              <div class="feature-number">04</div>
+              <div class="feature-icon module-icon" aria-hidden="true">
+                <span>BZ</span>
+              </div>
+              <h3>Turn repeatable work into modules</h3>
+              <p>
+                Extend task classes, swap implementations through interfaces, and share automation
+                across repositories without copying scripts.
+              </p>
+              <a class="text-link" href="/examples/#advanced">See advanced patterns →</a>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section-code" id="quickstart">
+        <div class="shell">
+          <div class="code-layout">
+            <div class="code-copy">
+              <span class="eyebrow eyebrow-bright">FROM ZERO TO ORCHESTRATED</span>
+              <h2>Readable enough for day one. Capable enough for release day.</h2>
+              <p>
+                Define public methods as tasks, register the class, then run fully-qualified task
+                paths. Beelzebub handles initialization, composition, variables, lifecycle hooks,
+                and completion.
+              </p>
+
+              <div class="code-tabs" role="tablist" aria-label="Quick start examples">
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected="true"
+                  aria-controls="tab-panel-basic"
+                  id="tab-basic"
+                  data-tab="basic"
+                >
+                  Basic
+                </button>
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected="false"
+                  aria-controls="tab-panel-compose"
+                  id="tab-compose"
+                  data-tab="compose"
+                >
+                  Compose
+                </button>
+                <button
+                  type="button"
+                  role="tab"
+                  aria-selected="false"
+                  aria-controls="tab-panel-decorators"
+                  id="tab-decorators"
+                  data-tab="decorators"
+                >
+                  Decorators
+                </button>
+              </div>
+
+              <div class="code-benefit">
+                <span class="benefit-icon">↳</span>
+                <div>
+                  <strong>One mental model</strong>
+                  <p>The same task classes power the JavaScript API and the <code>bz</code> CLI.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="code-window">
+              <div class="code-window-bar">
+                <span>beelzebub.ts</span>
+                <button type="button" data-copy-panel>
+                  <span data-copy-label>Copy code</span>
+                </button>
+              </div>
+
+              <pre
+                class="code-panel is-active"
+                id="tab-panel-basic"
+                role="tabpanel"
+                aria-labelledby="tab-basic"
+                data-panel="basic"
+              ><code><span class="tok-key">import</span> bz <span class="tok-key">from</span> <span class="tok-string">'beelzebub'</span>;
+
+<span class="tok-key">class</span> <span class="tok-type">BuildTasks</span> <span class="tok-key">extends</span> bz.Tasks {
+  <span class="tok-fn">clean</span>() {
+    <span class="tok-key">this</span>.logger.log(<span class="tok-string">'clean'</span>);
+  }
+
+  <span class="tok-key">async</span> <span class="tok-fn">compile</span>() {
+    <span class="tok-key">await</span> compileProject();
+  }
+}
+
+bz.add(BuildTasks);
+<span class="tok-key">await</span> bz.run(
+  <span class="tok-string">'BuildTasks.clean'</span>,
+  <span class="tok-string">'BuildTasks.compile'</span>
+);</code></pre>
+
+              <pre
+                class="code-panel"
+                id="tab-panel-compose"
+                role="tabpanel"
+                aria-labelledby="tab-compose"
+                data-panel="compose"
+                hidden
+              ><code><span class="tok-key">class</span> <span class="tok-type">ReleaseTasks</span> <span class="tok-key">extends</span> bz.Tasks {
+  <span class="tok-fn">verify</span>() {
+    <span class="tok-key">return</span> <span class="tok-key">this</span>.$parallel(
+      <span class="tok-string">'.lint'</span>,
+      <span class="tok-string">'.test'</span>
+    );
+  }
+
+  <span class="tok-fn">release</span>() {
+    <span class="tok-key">return</span> <span class="tok-key">this</span>.$sequence(
+      <span class="tok-string">'.verify'</span>,
+      <span class="tok-string">'.build'</span>,
+      <span class="tok-string">'.publish'</span>
+    );
+  }
+}</code></pre>
+
+              <pre
+                class="code-panel"
+                id="tab-panel-decorators"
+                role="tabpanel"
+                aria-labelledby="tab-decorators"
+                data-panel="decorators"
+                hidden
+              ><code><span class="tok-key">import</span> {
+  BzTasks, defaultTask, help, vars
+} <span class="tok-key">from</span> <span class="tok-string">'beelzebub'</span>;
+
+<span class="tok-key">class</span> <span class="tok-type">DeployTasks</span> <span class="tok-key">extends</span> BzTasks {
+  @defaultTask
+  @help(<span class="tok-string">'Deploy the application'</span>)
+  @vars({
+    env: { type: <span class="tok-string">'string'</span>, required: <span class="tok-key">true</span> }
+  })
+  <span class="tok-fn">deploy</span>(options: { env: string }) {
+    <span class="tok-key">this</span>.logger.info(options.env);
+  }
+}</code></pre>
+
+              <div class="code-output">
+                <span class="output-label">OUTPUT</span>
+                <code><i></i> 3 tasks complete <b>428 ms</b></code>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section-observe">
+        <div class="shell observe-layout">
+          <div class="observe-preview" aria-hidden="true">
+            <div class="observe-card">
+              <div class="observe-header">
+                <div>
+                  <span class="eyebrow">RUN SUMMARY</span>
+                  <strong>release.production</strong>
+                </div>
+                <span class="success-badge">SUCCESS</span>
+              </div>
+              <div class="run-chart">
+                <div class="chart-row">
+                  <span>prepare</span>
+                  <i style="--bar: 18%"></i>
+                  <small>42ms</small>
+                </div>
+                <div class="chart-row">
+                  <span>lint</span>
+                  <i style="--bar: 36%"></i>
+                  <small>86ms</small>
+                </div>
+                <div class="chart-row">
+                  <span>test</span>
+                  <i style="--bar: 88%"></i>
+                  <small>214ms</small>
+                </div>
+                <div class="chart-row">
+                  <span>build</span>
+                  <i style="--bar: 54%"></i>
+                  <small>132ms</small>
+                </div>
+                <div class="chart-row">
+                  <span>publish</span>
+                  <i style="--bar: 28%"></i>
+                  <small>68ms</small>
+                </div>
+              </div>
+              <div class="observe-stats">
+                <div><span>Total tasks</span><strong>5</strong></div>
+                <div><span>Wall time</span><strong>428 ms</strong></div>
+                <div><span>Failures</span><strong>0</strong></div>
+              </div>
+            </div>
+            <div class="signal-card signal-card-one">
+              <span class="signal-icon">⌁</span>
+              <div><small>custom event</small><strong>artifact.ready</strong></div>
+            </div>
+            <div class="signal-card signal-card-two">
+              <span class="signal-icon">✓</span>
+              <div><small>hook complete</small><strong>$afterAll</strong></div>
+            </div>
+          </div>
+
+          <div class="observe-copy">
+            <span class="eyebrow">OBSERVABILITY IS BUILT IN</span>
+            <h2>When a pipeline changes, you can see why.</h2>
+            <p>
+              Every task group owns execution statistics and lifecycle events. Bring your own
+              logger, subscribe to framework events, or emit domain-specific signals directly from a
+              running task.
+            </p>
+            <ul class="observe-list">
+              <li>
+                <span>01</span>
+                <div>
+                  <strong>Per-task timing</strong>
+                  <p>Understand which operation shaped the total run.</p>
+                </div>
+              </li>
+              <li>
+                <span>02</span>
+                <div>
+                  <strong>Lifecycle events</strong>
+                  <p>Watch before and after hooks at task or pipeline scope.</p>
+                </div>
+              </li>
+              <li>
+                <span>03</span>
+                <div>
+                  <strong>Injectable logging</strong>
+                  <p>Route task output into the logging stack you already use.</p>
+                </div>
+              </li>
+            </ul>
+            <a class="text-link dark-link" href="/api/classes/Beelzebub.html#on">
+              Explore lifecycle events →
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section-examples">
+        <div class="shell">
+          <div class="section-heading compact-heading">
+            <div>
+              <span class="eyebrow">PATTERNS, NOT PSEUDOCODE</span>
+              <h2>Start from a working example.</h2>
+            </div>
+            <a class="button button-ink" href="/examples/">Browse every example →</a>
+          </div>
+
+          <div class="example-preview-grid">
+            <a class="example-preview-card" href="/examples/#composition">
+              <span class="example-index">01</span>
+              <div class="example-glyph glyph-flow" aria-hidden="true"><i></i><i></i><i></i></div>
+              <span class="example-tag">COMPOSITION</span>
+              <h3>Sequence + parallel</h3>
+              <p>Build deterministic pipelines while letting independent work fan out.</p>
+              <span class="card-link">Open pattern →</span>
+            </a>
+            <a class="example-preview-card" href="/examples/#lifecycle">
+              <span class="example-index">02</span>
+              <div class="example-glyph glyph-hooks" aria-hidden="true">
+                <i></i><i></i><i></i><i></i>
+              </div>
+              <span class="example-tag">LIFECYCLE</span>
+              <h3>Hooks + events</h3>
+              <p>Prepare resources, trace each task, and clean up exactly once.</p>
+              <span class="card-link">Open pattern →</span>
+            </a>
+            <a class="example-preview-card" href="/examples/#advanced">
+              <span class="example-index">03</span>
+              <div class="example-glyph glyph-modules" aria-hidden="true">
+                <i>BZ</i><i>UI</i><i>API</i>
+              </div>
+              <span class="example-tag">ADVANCED</span>
+              <h3>Subtasks + interfaces</h3>
+              <p>Package complex automation behind stable, replaceable task contracts.</p>
+              <span class="card-link">Open pattern →</span>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section-release">
+        <div class="shell release-card">
+          <div class="release-copy">
+            <span class="eyebrow eyebrow-bright">BEELZEBUB 2.0</span>
+            <h2>Old spirit. Modern runtime.</h2>
+            <p>
+              The 2.0 release keeps the composable task model and gives it native ESM, strict types,
+              standard decorators, modern Node APIs, and a smaller dependency surface.
+            </p>
+            <div class="release-actions">
+              <a class="button button-white" href="/migrate/">Read migration guide</a>
+              <a class="text-link light-link" href="/api/">Open API reference →</a>
+            </div>
+          </div>
+          <div class="release-terminal" aria-label="Beelzebub version output">
+            <div class="terminal-bar"><span></span><span></span><span></span></div>
+            <div class="terminal-lines">
+              <code><i>$</i> bz --version</code>
+              <code class="terminal-result">2.0.0</code>
+              <code><i>$</i> node --version</code>
+              <code class="terminal-result">v24.15.0</code>
+              <code><i>$</i> bz --help</code>
+              <code class="terminal-result">ready to raise hell.</code>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section final-cta">
+        <div class="shell final-cta-inner">
+          <img src="/assets/bz-logo.svg" alt="" />
+          <span class="eyebrow">ONE HELL OF A TASK MASTER</span>
+          <h2>Give your automation<br />a better command center.</h2>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#quickstart">Get started</a>
+            <a class="button button-secondary" href="https://github.com/jstty/beelzebub">
+              View on GitHub
+            </a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="shell footer-grid">
+        <div class="footer-brand">
+          <a class="brand" href="/">
+            <span class="brand-mark"><img src="/assets/bz-logo.svg" alt="" /></span>
+            <span class="brand-name">beelzebub</span>
+          </a>
+          <p>Modular, observable task orchestration for modern Node.js.</p>
+          <span class="footer-license">MIT licensed · Built with fire resistance</span>
+        </div>
+        <div class="footer-column">
+          <strong>Learn</strong>
+          <a href="/examples/">Examples</a>
+          <a href="/api/">API reference</a>
+          <a href="/migrate/">Migration guide</a>
+        </div>
+        <div class="footer-column">
+          <strong>Project</strong>
+          <a href="https://github.com/jstty/beelzebub">GitHub</a>
+          <a href="https://www.npmjs.com/package/beelzebub">npm</a>
+          <a href="https://github.com/jstty/beelzebub/issues">Issues</a>
+        </div>
+        <div class="footer-column">
+          <strong>Version</strong>
+          <span>2.0.0</span>
+          <span>Node 24+</span>
+          <span>ESM only</span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

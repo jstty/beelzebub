@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="A practical guide to migrating Beelzebub 1.x task projects to the typed, ESM-only Beelzebub 2.0 release."
+    />
+    <meta name="theme-color" content="#140d20" />
+    <title>Migrate to 2.0 — Beelzebub</title>
+    <link rel="icon" href="/assets/bz-logo.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/assets/site.css" />
+    <script src="/assets/site.js" defer></script>
+  </head>
+  <body class="examples-page migration-page">
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="site-header" data-header>
+      <div class="shell nav-shell">
+        <a class="brand" href="/" aria-label="Beelzebub home">
+          <span class="brand-mark"><img src="/assets/bz-logo.svg" alt="" /></span>
+          <span class="brand-name">beelzebub</span>
+          <span class="version-pill">2.0</span>
+        </a>
+
+        <button
+          class="nav-toggle"
+          type="button"
+          aria-expanded="false"
+          aria-controls="primary-nav"
+          data-nav-toggle
+        >
+          <span class="nav-toggle-line"></span>
+          <span class="nav-toggle-line"></span>
+          <span class="sr-only">Toggle navigation</span>
+        </button>
+
+        <nav class="primary-nav" id="primary-nav" aria-label="Primary" data-nav>
+          <a href="/">Overview</a>
+          <a href="/examples/">Examples</a>
+          <a href="/api/">API</a>
+          <a href="/migrate/" aria-current="page">Migrate to 2.0</a>
+          <a class="nav-github" href="https://github.com/jstty/beelzebub">GitHub</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main">
+      <section class="examples-hero migration-hero">
+        <div class="shell examples-hero-inner">
+          <div>
+            <span class="eyebrow eyebrow-bright">BEELZEBUB 1.x → 2.0</span>
+            <h1>Modernize the runtime. <span>Keep the task model.</span></h1>
+            <p>
+              Beelzebub 2.0 moves to Node 24+, native ESM, strict TypeScript, and standard
+              decorators. Use this checklist to make the breaking changes deliberately.
+            </p>
+          </div>
+          <div class="migration-badge">
+            <span>Minimum runtime</span>
+            <strong>Node 24.15+</strong>
+            <small>ESM only · npm 12 for contributors</small>
+          </div>
+        </div>
+      </section>
+
+      <section class="migration-content">
+        <div class="shell migration-layout">
+          <aside class="migration-nav" aria-label="Migration sections">
+            <span>On this page</span>
+            <a href="#before">Before you begin</a>
+            <a href="#runtime">Runtime + imports</a>
+            <a href="#api">API changes</a>
+            <a href="#decorators">Decorators</a>
+            <a href="#async">Async behavior</a>
+            <a href="#cli">CLI task files</a>
+            <a href="#checklist">Checklist</a>
+          </aside>
+
+          <div class="migration-main">
+            <section class="migration-section" id="before">
+              <span class="eyebrow">WHAT CHANGED</span>
+              <h2>A focused breaking release.</h2>
+              <p>
+                The public task concepts remain familiar, but the infrastructure beneath them has
+                been replaced. Plan this as a runtime migration, not a routine dependency update.
+              </p>
+              <div class="breaking-grid">
+                <article>
+                  <span>01</span>
+                  <strong>Node 24.15+</strong>
+                  <p>Update local development, containers, and every CI runner first.</p>
+                </article>
+                <article>
+                  <span>02</span>
+                  <strong>Native ESM</strong>
+                  <p>Replace CommonJS entry points and add an ESM package boundary.</p>
+                </article>
+                <article>
+                  <span>03</span>
+                  <strong>Standard decorators</strong>
+                  <p>Usage stays familiar; custom legacy decorator implementations change.</p>
+                </article>
+              </div>
+            </section>
+
+            <section class="migration-section" id="runtime">
+              <span class="eyebrow">STEP 1</span>
+              <h2>Upgrade Node and imports.</h2>
+              <p>
+                Use Node.js 24.15 or newer and set <code>"type": "module"</code> in the consuming
+                package. CommonJS callers must convert to ESM or use a dynamic import boundary.
+              </p>
+              <div class="diff-window" aria-label="CommonJS to ESM import example">
+                <div class="example-code-bar">
+                  <span>tasks.js</span>
+                  <button type="button" data-copy-panel>
+                    <span data-copy-label>Copy new code</span>
+                  </button>
+                </div>
+                <pre
+                  class="example-code"
+                ><code><span class="diff-remove">- const Beelzebub = require('beelzebub');</span>
+<span class="diff-add">+ import bz from 'beelzebub';</span>
+
+class BuildTasks extends bz.Tasks {
+  build() {
+    return compile();
+  }
+}
+
+bz.add(BuildTasks);
+await bz.run('BuildTasks.build');</code></pre>
+              </div>
+            </section>
+
+            <section class="migration-section" id="api">
+              <span class="eyebrow">STEP 2</span>
+              <h2>Update the changed entry points.</h2>
+              <div class="migration-table-wrap">
+                <table class="migration-table">
+                  <thead>
+                    <tr>
+                      <th scope="col">1.x</th>
+                      <th scope="col">2.0</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><code>require('beelzebub')</code></td>
+                      <td><code>import bz from 'beelzebub'</code></td>
+                    </tr>
+                    <tr>
+                      <td>Shared global instance</td>
+                      <td><code>bz</code> facade or <code>bz.create(config)</code></td>
+                    </tr>
+                    <tr>
+                      <td><code>Beelzebub.cli()</code></td>
+                      <td><code>bz</code> binary or <code>new BzCLI().run()</code></td>
+                    </tr>
+                    <tr>
+                      <td>Babel-built CommonJS</td>
+                      <td>Native ESM + shipped declarations</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <p class="migration-note">
+                Tests that use the singleton can call <code>bz.delete()</code> between cases.
+                Independent applications can use <code>bz.create(config)</code>.
+              </p>
+            </section>
+
+            <section class="migration-section" id="decorators">
+              <span class="eyebrow">STEP 3</span>
+              <h2>Move custom decorators to the standard API.</h2>
+              <p>
+                Built-in <code>@defaultTask</code>, <code>@help</code>, and
+                <code>@vars</code> syntax remains the same. Do not enable
+                <code>experimentalDecorators</code>. Rewrite custom decorators from the legacy
+                descriptor signature to <code>(value, context)</code>.
+              </p>
+              <div class="migration-callout">
+                <strong>TypeScript configuration</strong>
+                <pre><code>{
+  "compilerOptions": {
+    "target": "ES2024",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "strict": true,
+    "verbatimModuleSyntax": true
+  }
+}</code></pre>
+              </div>
+            </section>
+
+            <section class="migration-section" id="async">
+              <span class="eyebrow">STEP 4</span>
+              <h2>Prefer native async control flow.</h2>
+              <p>
+                Promises, async functions, generators, and Node streams remain supported. New work
+                should use <code>async</code>/<code>await</code>; generator tasks continue to run
+                for compatibility.
+              </p>
+              <div class="diff-window" aria-label="Generator to async function example">
+                <div class="example-code-bar"><span>build.ts</span></div>
+                <pre class="example-code"><code><span class="diff-remove">- *build() {</span>
+<span class="diff-remove">-   yield compile();</span>
+<span class="diff-remove">- }</span>
+<span class="diff-add">+ async build() {</span>
+<span class="diff-add">+   await compile();</span>
+<span class="diff-add">+ }</span></code></pre>
+              </div>
+            </section>
+
+            <section class="migration-section" id="cli">
+              <span class="eyebrow">STEP 5</span>
+              <h2>Load TypeScript task files explicitly.</h2>
+              <p>
+                JavaScript task files load through native <code>import()</code>. For task files that
+                contain TypeScript syntax or decorators, install <code>tsx</code> in the consuming
+                project and register it with Node.
+              </p>
+              <div class="install-command migration-command" data-copy-wrap>
+                <span class="terminal-prompt" aria-hidden="true">$</span>
+                <code
+                  >node --import tsx ./node_modules/beelzebub/dist/bin/beelzebub.js --file
+                  ./beelzebub.ts BuildTasks.build</code
+                >
+                <button
+                  type="button"
+                  data-copy="node --import tsx ./node_modules/beelzebub/dist/bin/beelzebub.js --file ./beelzebub.ts BuildTasks.build"
+                >
+                  <span data-copy-label>Copy</span>
+                </button>
+              </div>
+            </section>
+
+            <section class="migration-section" id="checklist">
+              <span class="eyebrow">SHIP IT SAFELY</span>
+              <h2>Migration checklist.</h2>
+              <ol class="migration-checklist">
+                <li>Upgrade local Node, containers, and CI runners to Node 24.15 or newer.</li>
+                <li>Convert package boundaries, imports, and exports to ESM.</li>
+                <li>Update custom decorators to the TC39 standard decorator API.</li>
+                <li>Replace calls to the removed <code>Beelzebub.cli()</code> helper.</li>
+                <li>Configure a TypeScript loader or compile TypeScript CLI task files.</li>
+                <li>Run existing tasks and compare hook, variable, stream, and CLI behavior.</li>
+              </ol>
+              <div class="migration-actions">
+                <a class="button button-primary" href="/examples/">Review 2.0 examples</a>
+                <a class="button button-ink" href="/api/">Open API reference</a>
+              </div>
+            </section>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="shell footer-grid">
+        <div class="footer-brand">
+          <a class="brand" href="/">
+            <span class="brand-mark"><img src="/assets/bz-logo.svg" alt="" /></span>
+            <span class="brand-name">beelzebub</span>
+          </a>
+          <p>Modular, observable task orchestration for modern Node.js.</p>
+          <span class="footer-license">MIT licensed · Built with fire resistance</span>
+        </div>
+        <div class="footer-column">
+          <strong>Learn</strong>
+          <a href="/examples/">Examples</a>
+          <a href="/api/">API reference</a>
+          <a href="/migrate/">Migration guide</a>
+        </div>
+        <div class="footer-column">
+          <strong>Project</strong>
+          <a href="https://github.com/jstty/beelzebub">GitHub</a>
+          <a href="https://www.npmjs.com/package/beelzebub">npm</a>
+          <a href="https://github.com/jstty/beelzebub/issues">Issues</a>
+        </div>
+        <div class="footer-column">
+          <strong>Version</strong>
+          <span>2.0.0</span>
+          <span>Node 24+</span>
+          <span>ESM only</span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
