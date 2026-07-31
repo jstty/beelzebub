@@ -8,6 +8,10 @@ const manifest = JSON.parse(readFileSync(path.join(projectRoot, 'package.json'),
 const scratchRoot = mkdtempSync(path.join(tmpdir(), 'beelzebub-package-test-'));
 const npmCli = process.env.npm_execpath;
 
+if (manifest.scripts?.prepare !== 'npm run build') {
+  throw new Error('Git dependencies require "prepare": "npm run build"');
+}
+
 if (!npmCli) {
   throw new Error('npm_execpath is required; run this smoke test through npm');
 }

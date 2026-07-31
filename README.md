@@ -66,6 +66,18 @@ Tasks are **Modular, Extendable, Flexible, Manageable, and Fire Resistant!**
 npm install beelzebub
 ```
 
+To try the unreleased 2.0 branch directly from GitHub:
+
+```json
+{
+  "dependencies": {
+    "beelzebub": "github:jstty/beelzebub#dev/v2.0"
+  }
+}
+```
+
+Git installs run the package's `prepare` lifecycle and build the untracked `dist/` output locally.
+
 ## CLI
 ```shell
 npm install -g beelzebub

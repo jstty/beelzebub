@@ -22,6 +22,7 @@ Notable project changes are documented here. The format follows Keep a Changelog
 - CLI parsing uses `node:util.parseArgs` and native ESM loading.
 - Promise, generator, sequence, parallel, and stream execution use native Node and JavaScript APIs.
 - Examples use TypeScript and Gulp 5.
+- Git dependencies build their untracked `dist/` output through npm's `prepare` lifecycle.
 
 ### Removed
 
