@@ -1,20 +1,27 @@
 # Migrating from Beelzebub 1.x to 2.0
 
-Beelzebub 2.0 is a breaking modernization release. It replaces the Babel/CommonJS implementation with typed native ESM and raises the runtime baseline to Node.js 24.15.
+Beelzebub 2.0 is a breaking modernization release. It replaces the Babel implementation with typed modern JavaScript, ships ESM and CommonJS entry points, and raises the runtime baseline to Node.js 24.15.
 
 ## Runtime and installation
 
 - Upgrade Node.js to 24.15 or newer. CI should also test Node 26.
 - Use npm 12 when contributing to Beelzebub itself.
-- Add `"type": "module"` to consuming projects or use `.mjs` files.
-- Replace `require('beelzebub')` with ESM imports.
+- Existing CommonJS consumers can continue to use the callable `require('beelzebub')` API.
+- ESM consumers can use the native default and named exports.
 
-```diff
-- const Beelzebub = require('beelzebub');
-+ import bz from 'beelzebub';
+CommonJS:
+
+```js
+const bz = require('beelzebub');
 ```
 
-The package is intentionally ESM-only. CommonJS consumers must migrate to ESM or load it with dynamic `import()`.
+ESM:
+
+```ts
+import bz from 'beelzebub';
+```
+
+Both forms resolve to the same singleton facade. The CommonJS entry also exposes named exports as properties, such as `bz.BzTasks` and `bz.BzCLI`.
 
 ## API changes
 
@@ -71,7 +78,7 @@ Generator tasks continue to run for compatibility.
 
 ## CLI task files
 
-JavaScript task files load through native dynamic `import()`. To load `.ts` task files containing types or decorators, install `tsx` in the consuming project and register it with Node:
+ESM and CommonJS JavaScript task files load through Node's module system. To load `.ts` task files containing types or decorators, install `tsx` in the consuming project and register it with Node:
 
 ```sh
 node --import tsx ./node_modules/beelzebub/dist/bin/beelzebub.js \
@@ -101,7 +108,6 @@ Beelzebub ships JavaScript, source maps, declarations, and declaration maps. Con
 ## Removed 1.x infrastructure
 
 - Babel and legacy decorator transforms
-- CommonJS package entry points
 - `Beelzebub.cli()`
 - Mocha, Chai, Istanbul, and Coveralls project tooling
 - Lodash, `co`, `when`, `yargs`, `strftime`, and `stream-to-promise`
@@ -109,8 +115,8 @@ Beelzebub ships JavaScript, source maps, declarations, and declaration maps. Con
 
 ## Migration checklist
 
-1. Upgrade Node and convert the consuming project to ESM.
-2. Replace `require` and `module.exports` with imports and exports.
+1. Upgrade Node to 24.15 or newer.
+2. Choose the ESM or CommonJS package entry point that fits the consuming project.
 3. Update custom decorators to the standard decorator API.
 4. Replace `Beelzebub.cli()` calls.
 5. Compile TypeScript task files or run the CLI with a TypeScript loader.

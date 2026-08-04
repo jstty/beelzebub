@@ -1,11 +1,15 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterAll, afterEach, describe, expect, it, vi } from 'vitest';
 import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
-import { pathToFileURL } from 'node:url';
 
-import bz, { BzCLI } from '../src/index.js';
+import bz, { BzCLI, BzTasks } from '../src/index.js';
 import { createTestConfig } from './helpers.js';
+
+const testGlobal = globalThis as typeof globalThis & {
+  __beelzebubTestTasksBase?: typeof BzTasks;
+};
+testGlobal.__beelzebubTestTasksBase = BzTasks;
 
 class ExposedCLI extends BzCLI {
   parse(args: string[]): Record<string, unknown> {
@@ -44,11 +48,11 @@ function createTemporaryDirectory(): string {
 }
 
 function writeTasksModule(directory: string, filename = 'tasks.mjs'): string {
-  const sourceEntry = pathToFileURL(path.resolve('src/index.ts')).href;
   const file = path.join(directory, filename);
   writeFileSync(
     file,
-    `import { BzTasks } from ${JSON.stringify(sourceEntry)};
+    `const BzTasks = globalThis.__beelzebubTestTasksBase;
+if (!BzTasks) throw new Error('test task base is unavailable');
 export default class FileTasks extends BzTasks {
   constructor(config) {
     super(config);
@@ -73,6 +77,10 @@ afterEach(() => {
   for (const directory of temporaryDirectories.splice(0)) {
     rmSync(directory, { recursive: true, force: true });
   }
+});
+
+afterAll(() => {
+  delete testGlobal.__beelzebubTestTasksBase;
 });
 
 describe('BzCLI run behavior', () => {
@@ -130,6 +138,26 @@ describe('BzCLI run behavior', () => {
     );
   });
 
+  it.each(['--file', '-f'])(
+    'loads an explicit file when %s and its value are separate arguments',
+    async (fileFlag) => {
+      const directory = createTemporaryDirectory();
+      writeTasksModule(directory);
+      const { config, logger } = createTestConfig();
+
+      const app = await new BzCLI().run({
+        cwd: directory,
+        config,
+        args: [fileFlag, './tasks.mjs', 'FileTasks.run', '--count=4']
+      });
+
+      expect(app).toBeDefined();
+      expect(logger.messages('log')).toEqual(
+        expect.arrayContaining([expect.stringContaining('file-task {"count":4')])
+      );
+    }
+  );
+
   it('loads positional files and prints nested task options in help', async () => {
     const directory = createTemporaryDirectory();
     writeTasksModule(directory);
@@ -150,10 +178,9 @@ describe('BzCLI run behavior', () => {
 
   it('reports initialization errors from loaded task classes', async () => {
     const directory = createTemporaryDirectory();
-    const sourceEntry = pathToFileURL(path.resolve('src/index.ts')).href;
     writeFileSync(
       path.join(directory, 'broken.mjs'),
-      `import { BzTasks } from ${JSON.stringify(sourceEntry)};
+      `const BzTasks = globalThis.__beelzebubTestTasksBase;
 export default class BrokenTasks extends BzTasks {
   $init() { throw new Error('broken init'); }
 }
@@ -175,6 +202,42 @@ export default class BrokenTasks extends BzTasks {
     await expect(
       new BzCLI().run({ cwd: directory, file: 'tasks.mjs', config, args: [] })
     ).resolves.toBeDefined();
+  });
+
+  it('loads the conventional beelzebub.js file when no file is specified', async () => {
+    const directory = createTemporaryDirectory();
+    writeFileSync(path.join(directory, 'package.json'), '{"type":"module"}\n');
+    writeTasksModule(directory, 'beelzebub.js');
+    const { config, logger } = createTestConfig();
+
+    await expect(
+      new BzCLI().run({ cwd: directory, config, args: ['FileTasks.run', '--count=2'] })
+    ).resolves.toBeDefined();
+
+    expect(logger.messages('log')).toContain('file-task {"count":2,"label":"","nested":{}}');
+  });
+
+  it('reports task failures without rejecting the CLI run', async () => {
+    const directory = createTemporaryDirectory();
+    const { config, logger } = createTestConfig();
+    writeFileSync(
+      path.join(directory, 'failing-task.mjs'),
+      `const BzTasks = globalThis.__beelzebubTestTasksBase;
+export default class FailingTasks extends BzTasks {
+  run() { throw new Error('CLI task failed'); }
+}
+`
+    );
+    await expect(
+      new BzCLI().run({
+        cwd: directory,
+        file: 'failing-task.mjs',
+        config,
+        args: ['FailingTasks.run']
+      })
+    ).resolves.toBeDefined();
+
+    expect(logger.messages('error').join(' ')).toContain('CLI task failed');
   });
 });
 
@@ -223,6 +286,11 @@ describe('BzCLI parsing and loading edges', () => {
       { task: 'Build', vars: {} },
       { task: 'Test', vars: { count: 2 } }
     ]);
+    expect(cli.split(['--file'])).toEqual({
+      files: [],
+      rootOptions: ['--file'],
+      taskOptions: {}
+    });
   });
 
   it('supports parser defaults and ungrouped help options', () => {
@@ -274,5 +342,28 @@ describe('BzCLI parsing and loading edges', () => {
     await expect(cli.load(directory, [], 'named.mjs')).resolves.toEqual([
       expect.objectContaining({ task: 1 })
     ]);
+
+    writeFileSync(path.join(directory, 'commonjs.cjs'), "module.exports = ['one', 'two'];\n");
+    await expect(cli.load(directory, ['existing'], 'commonjs.cjs')).resolves.toEqual([
+      'existing',
+      'one',
+      'two'
+    ]);
+  });
+
+  it('prints help and exits when native argument parsing fails', () => {
+    const cli = new ExposedCLI();
+    const error = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const stdout = vi.spyOn(process.stdout, 'write').mockImplementation(() => true);
+    const exit = vi.spyOn(process, 'exit').mockImplementation(((code?: number | string | null) => {
+      throw new Error(`exit:${String(code)}`);
+    }) as never);
+
+    expect(() => cli.safeParse([], { file: { type: 'string', alias: 'invalid' } })).toThrow(
+      'exit:1'
+    );
+    expect(error).toHaveBeenCalledWith('Error:', expect.stringContaining('short'));
+    expect(stdout.mock.calls.flat().join('')).toContain('--file');
+    expect(exit).toHaveBeenCalledWith(1);
   });
 });

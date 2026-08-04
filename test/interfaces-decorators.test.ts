@@ -138,6 +138,17 @@ describe('standard decorators', () => {
     );
     expect(() => vars({})(undefined, field)).toThrow('@vars can only be applied to methods');
   });
+
+  it('allows help and vars initializers on task-like objects without metadata methods', () => {
+    const helpContext = decoratorContext('method', 'documented');
+    const varsContext = decoratorContext('method', 'configured');
+
+    help('documentation')(undefined, helpContext.context);
+    vars({ count: { type: 'number' } })(undefined, varsContext.context);
+
+    expect(() => helpContext.initializers[0]?.call({})).not.toThrow();
+    expect(() => varsContext.initializers[0]?.call({})).not.toThrow();
+  });
 });
 
 describe('public task metadata helpers', () => {

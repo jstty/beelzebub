@@ -1,7 +1,17 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { Readable } from 'node:stream';
 
-import bz, { Beelzebub, BzTasks, TmplStrFunc } from '../src/index.js';
+import bz, {
+  Beelzebub,
+  BzCLI,
+  BzTasks,
+  InterfaceTasks,
+  TmplStrFunc,
+  decorators,
+  defaultTask,
+  help,
+  vars
+} from '../src/index.js';
 import * as util from '../src/util.js';
 import { createTestConfig, TestLogger } from './helpers.js';
 
@@ -132,6 +142,15 @@ describe('utility predicates and object helpers', () => {
 });
 
 describe('template and singleton public helpers', () => {
+  it('exposes constructors and decorators through the singleton namespace', () => {
+    expect(bz.CLI).toBe(BzCLI);
+    expect(bz.Tasks).toBe(BzTasks);
+    expect(bz.InterfaceTasks).toBe(InterfaceTasks);
+    expect(bz.TmplStrFunc).toBe(TmplStrFunc);
+    expect(bz.decorators).toMatchObject({ defaultTask, help, vars });
+    expect(decorators).toMatchObject({ defaultTask, help, vars });
+  });
+
   it('builds task objects from tagged and empty template inputs', () => {
     expect(TmplStrFunc.task`Build.run:${{ count: 2 }}`).toEqual({
       task: 'Build.run',

@@ -5,11 +5,18 @@
   "type": "module",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
     }
   },
-  "types": "./dist/index.d.ts",
+  "main": "./dist/index.cjs",
+  "types": "./dist/index.d.cts",
   "bin": {
     "bz": "./dist/bin/beelzebub.js",
     "beelzebub": "./dist/bin/beelzebub.js"
@@ -72,15 +79,15 @@
     "test": "vitest run",
     "test:package": "node scripts/test-package.js",
     "test:watch": "vitest",
-    "coverage": "vitest run --coverage",
+    "coverage": "vitest run --coverage --exclude \"test/examples/**\"",
     "lint": "eslint . --max-warnings=0",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.test.json",
-    "validate-pkg": "publint && attw --pack . --ignore-rules cjs-resolves-to-esm",
+    "validate-pkg": "publint && attw --pack .",
     "audit": "npm audit --audit-level=high && npm --prefix examples audit --audit-level=high",
-    "check": "npm run format:check && npm run lint && npm run typecheck && npm run coverage && npm run build && npm run test:package && npm run site:check && npm run validate-pkg && npm run audit",
+    "check": "npm run format:check && npm run lint && npm run typecheck && npm test && npm run coverage && npm run build && npm run test:package && npm run site:check && npm run validate-pkg && npm run audit",
     "prepare": "npm run build",
     "prepublishOnly": "npm run clean && npm run build && npm run validate-pkg"
   },

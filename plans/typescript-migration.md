@@ -1,6 +1,6 @@
 # Beelzebub 2.0 modernization status
 
-This branch contains the in-progress 2.0 TypeScript and ESM rewrite. The original 1.x implementation remains on `master` until the release is accepted.
+This branch contains the in-progress 2.0 TypeScript rewrite. The original 1.x implementation remains on `master` until the release is accepted.
 
 ## Release baseline
 
@@ -11,7 +11,7 @@ This branch contains the in-progress 2.0 TypeScript and ESM rewrite. The origina
 | Package manager | npm 12 |
 | Compiler | TypeScript 7 |
 | Compiler API bridge | TypeScript 6 compatibility package |
-| Modules | Native ESM only |
+| Modules | Native ESM and callable CommonJS entry points |
 | Tests | Vitest 4 with V8 coverage |
 | Lint/format | ESLint 10 and Prettier 3 |
 | Documentation | TypeDoc plus maintained Markdown guides |
@@ -25,7 +25,7 @@ This branch contains the in-progress 2.0 TypeScript and ESM rewrite. The origina
 - Root and examples lockfiles regenerated with current dependency majors.
 - Gulp example upgraded to Gulp 5; `del` and shelljs replaced with `node:fs` APIs.
 - Strict TypeScript 7 source and test checks enabled, including exact optional properties.
-- Package tarball tested for ESM exports, TypeScript declarations, and CLI execution.
+- Package tarball tested for ESM and CommonJS exports, TypeScript declarations, and CLI execution.
 - CI updated for Node 24/26 on Linux, macOS, and Windows.
 - README, task guide, interface guide, migration guide, changelog, and TypeDoc updated.
 

@@ -9,12 +9,12 @@
 A modern, fully-typed task runner pipeline framework.
 Tasks are **Modular, Extendable, Flexible, Manageable, and Fire Resistant!**
 
-> **v2.0** is a ground-up TypeScript rewrite for Node.js 24+, with native ESM and TC39 standard decorators.
+> **v2.0** is a ground-up TypeScript rewrite for Node.js 24+, with ESM and CommonJS entry points and TC39 standard decorators.
 
 ## What's New in v2.0
 
 - **TypeScript-first** — full type definitions ship in the package
-- **ESM-only** — `"type": "module"`, native `import`/`export`
+- **ESM + CommonJS** — native `import` and a callable `require('beelzebub')` compatibility entry
 - **Node.js 24 LTS minimum** (`>=24.15.0`) — tested on Node 24 and Node 26
 - **TypeScript 7** compilation, declarations, and strict checking
 - **TC39 standard decorators** — no Babel and no `experimentalDecorators`
@@ -24,7 +24,7 @@ Tasks are **Modular, Extendable, Flexible, Manageable, and Fire Resistant!**
 
 ### Breaking Changes from v1
 - **Node.js 24.15+** required (was Node 6+)
-- **ESM only** — `require('beelzebub')` no longer works; use `import`
+- **Dual package entry points** — both `import bz from 'beelzebub'` and `const bz = require('beelzebub')` are supported
 - **Decorators** use the TC39 standard signature. The `@defaultTask`, `@help('...')`, `@vars({...})` usage syntax is unchanged
 - `Beelzebub.cli()` static helper removed — use `new BzCLI().run(opts)` or the `bz` binary
 - `Beelzebub.Tasks` etc. are accessed via the singleton instance: `bz.Tasks`, `bz.InterfaceTasks`
@@ -59,7 +59,7 @@ Tasks are **Modular, Extendable, Flexible, Manageable, and Fire Resistant!**
 ## Requirements
 
 - Node.js **>= 24.15.0**
-- ESM project (`"type": "module"` in your `package.json`)
+- An ESM or CommonJS project
 
 ## API
 ```shell
@@ -113,6 +113,24 @@ class MyTasks extends bz.Tasks {
 
 bz.add(MyTasks);
 await bz.run('MyTasks.task1');
+```
+
+The same callable API is available to CommonJS projects:
+
+```js
+const bz = require('beelzebub');
+
+class MyTasks extends bz.Tasks {
+    task1() {
+        this.logger.log('MyTasks task1');
+    }
+}
+
+bz.add(MyTasks);
+bz.run('MyTasks.task1').catch((error) => {
+    console.error(error);
+    process.exitCode = 1;
+});
 ```
 
 ## Decorator Example
@@ -237,7 +255,7 @@ npm run typecheck   # TypeScript 7 source + test checks
 npm run lint        # eslint
 npm run format      # prettier --write
 npm test            # vitest run
-npm run coverage    # vitest run --coverage
+npm run coverage    # instrument the focused unit suite
 npm run test:package # pack, install, typecheck, and run the CLI
 npm run audit       # root and example dependency audits
 npm run check       # complete local release gate
@@ -254,7 +272,7 @@ npm run site:check   # build, validate local links, and check generated docs
 npm run site:preview # publish a Firebase preview channel
 ```
 
-Coverage is enforced at 80% for statements, branches, functions, and lines. The complete local release gate runs the coverage suite and fails if any metric regresses below that floor.
+Coverage is enforced at 90% for statements, branches, functions, and lines. The complete local release gate runs all tests, then instruments the focused unit suite and fails if any metric regresses below that floor. Example integration tests remain in `npm test`; they run source files through Node's separate TypeScript loader, which cannot be merged reliably into Vitest's V8 source maps.
 
 The 2.0 product website lives in this repository under `website/` and deploys as a static site to the `beelzebub-io` Firebase project. See [`website/README.md`](./website/README.md) for the source, build, preview, and production-deployment layout.
 

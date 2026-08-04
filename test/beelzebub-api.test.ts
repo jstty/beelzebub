@@ -12,6 +12,25 @@ afterEach(() => {
 });
 
 describe('Beelzebub public API edges', () => {
+  it('runs explicitly queued initialization functions in order', async () => {
+    const app = bz.create(createTestConfig().config);
+    const calls: string[] = [];
+
+    app.addInitFunction(() => {
+      calls.push('first');
+      return 'one';
+    });
+    app.addInitFunction(async () => {
+      await Promise.resolve();
+      calls.push('second');
+      return 'two';
+    });
+
+    await expect(app.getInitPromise()).resolves.toEqual(['one', 'two']);
+    expect(calls).toEqual(['first', 'second']);
+    expect(app.isLoading()).toBe(false);
+  });
+
   it('stores global variables and ignores event registrations without callbacks', () => {
     const { config } = createTestConfig();
     const app = bz.create(config);
@@ -26,6 +45,21 @@ describe('Beelzebub public API edges', () => {
     expect(app.getGlobalVars()).toEqual({ mode: 'coverage' });
     expect(callback).toHaveBeenCalledOnce();
     expect(callback).toHaveBeenCalledWith({ task: 'Expected.task' }, 2);
+  });
+
+  it('supports object event registrations without a task filter', () => {
+    const app = bz.create(createTestConfig().config);
+    const calls: Array<{ context: unknown; data: unknown }> = [];
+
+    app.on({
+      name: 'notice',
+      callback: function (_taskInfo, data) {
+        calls.push({ context: this, data });
+      }
+    });
+    app.emit('notice', { task: 'Any.task' }, { ready: true });
+
+    expect(calls).toEqual([{ context: app, data: { ready: true } }]);
   });
 
   it('reports missing modules, invalid classes, and unknown values passed to add', () => {
@@ -164,5 +198,23 @@ describe('Beelzebub public API edges', () => {
 
     expect(tasks.$getName()).toBe('Named');
     expect(tasks.namePath).toBe('Parent.Named');
+  });
+
+  it('merges add-time configuration into constructed task classes', async () => {
+    const { config, logger } = createTestConfig();
+    const app = bz.create(config);
+
+    class ConfiguredTasks extends BzTasks {
+      work(): void {
+        this.vLogger.info('configured');
+      }
+    }
+
+    app.add(ConfiguredTasks, { name: 'RenamedTasks', verbose: true });
+    await app.getInitPromise();
+    await app.run('RenamedTasks.work');
+
+    expect(app.$getTaskFlatList().map((entry) => entry.name)).toContain('RenamedTasks');
+    expect(logger.messages('info')).toContain('[RenamedTasks] - configured');
   });
 });

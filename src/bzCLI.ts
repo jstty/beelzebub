@@ -51,6 +51,12 @@ const ROOT_OPTIONS: OptionMap = {
   help: { alias: 'h', describe: 'print task help', type: 'boolean', group: 'Beelzebub Options:' }
 };
 
+const ROOT_STRING_OPTION_FLAGS = new Set(
+  Object.entries(ROOT_OPTIONS).flatMap(([name, def]) =>
+    def.type === 'string' ? [`--${name}`, ...(def.alias ? [`-${def.alias}`] : [])] : []
+  )
+);
+
 /**
  * Beelzebub CLI driver. Replaces the legacy yargs-based implementation with a
  * `node:util.parseArgs` core plus a tiny help formatter that preserves the
@@ -146,8 +152,16 @@ export class BzCLI {
     };
     let lastOptions: string[] = argsObj.rootOptions;
 
-    for (const arg of args) {
-      if (arg.startsWith('./')) {
+    for (let i = 0; i < args.length; i++) {
+      const arg = args[i]!;
+      if (lastOptions === argsObj.rootOptions && ROOT_STRING_OPTION_FLAGS.has(arg)) {
+        lastOptions.push(arg);
+        const value = args[i + 1];
+        if (value !== undefined) {
+          lastOptions.push(value);
+          i++;
+        }
+      } else if (arg.startsWith('./')) {
         argsObj.files.push(arg);
       } else if (arg.startsWith('-')) {
         lastOptions.push(arg);

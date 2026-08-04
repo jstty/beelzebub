@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta
       name="description"
-      content="A practical guide to migrating Beelzebub 1.x task projects to the typed, ESM-only Beelzebub 2.0 release."
+      content="A practical guide to migrating Beelzebub 1.x task projects to the typed, dual-module Beelzebub 2.0 release."
     />
     <meta name="theme-color" content="#140d20" />
     <title>Migrate to 2.0 — Beelzebub</title>
@@ -53,14 +53,15 @@
             <span class="eyebrow eyebrow-bright">BEELZEBUB 1.x → 2.0</span>
             <h1>Modernize the runtime. <span>Keep the task model.</span></h1>
             <p>
-              Beelzebub 2.0 moves to Node 24+, native ESM, strict TypeScript, and standard
-              decorators. Use this checklist to make the breaking changes deliberately.
+              Beelzebub 2.0 moves to Node 24+, strict TypeScript, standard decorators, and modern
+              ESM and CommonJS entry points. Use this checklist to make the breaking changes
+              deliberately.
             </p>
           </div>
           <div class="migration-badge">
             <span>Minimum runtime</span>
             <strong>Node 24.15+</strong>
-            <small>ESM only · npm 12 for contributors</small>
+            <small>ESM + CommonJS · npm 12 for contributors</small>
           </div>
         </div>
       </section>
@@ -94,8 +95,8 @@
                 </article>
                 <article>
                   <span>02</span>
-                  <strong>Native ESM</strong>
-                  <p>Replace CommonJS entry points and add an ESM package boundary.</p>
+                  <strong>Dual modules</strong>
+                  <p>Use native ESM or keep the callable CommonJS API.</p>
                 </article>
                 <article>
                   <span>03</span>
@@ -107,22 +108,21 @@
 
             <section class="migration-section" id="runtime">
               <span class="eyebrow">STEP 1</span>
-              <h2>Upgrade Node and imports.</h2>
+              <h2>Upgrade Node and choose your module format.</h2>
               <p>
-                Use Node.js 24.15 or newer and set <code>"type": "module"</code> in the consuming
-                package. CommonJS callers must convert to ESM or use a dynamic import boundary.
+                Use Node.js 24.15 or newer. Existing CommonJS projects can keep
+                <code>require('beelzebub')</code>; ESM projects get native default and named
+                imports. Both entry points share the same callable facade.
               </p>
-              <div class="diff-window" aria-label="CommonJS to ESM import example">
+              <div class="diff-window" aria-label="CommonJS and ESM import examples">
                 <div class="example-code-bar">
                   <span>tasks.js</span>
                   <button type="button" data-copy-panel>
                     <span data-copy-label>Copy new code</span>
                   </button>
                 </div>
-                <pre
-                  class="example-code"
-                ><code><span class="diff-remove">- const Beelzebub = require('beelzebub');</span>
-<span class="diff-add">+ import bz from 'beelzebub';</span>
+                <pre class="example-code"><code>const bz = require('beelzebub');
+<span class="diff-add">// ESM equivalent: import bz from 'beelzebub';</span>
 
 class BuildTasks extends bz.Tasks {
   build() {
@@ -131,7 +131,7 @@ class BuildTasks extends bz.Tasks {
 }
 
 bz.add(BuildTasks);
-await bz.run('BuildTasks.build');</code></pre>
+void bz.run('BuildTasks.build');</code></pre>
               </div>
             </section>
 
@@ -149,7 +149,7 @@ await bz.run('BuildTasks.build');</code></pre>
                   <tbody>
                     <tr>
                       <td><code>require('beelzebub')</code></td>
-                      <td><code>import bz from 'beelzebub'</code></td>
+                      <td><code>require('beelzebub')</code> or native <code>import</code></td>
                     </tr>
                     <tr>
                       <td>Shared global instance</td>
@@ -161,7 +161,7 @@ await bz.run('BuildTasks.build');</code></pre>
                     </tr>
                     <tr>
                       <td>Babel-built CommonJS</td>
-                      <td>Native ESM + shipped declarations</td>
+                      <td>ESM + CommonJS with shipped declarations</td>
                     </tr>
                   </tbody>
                 </table>
@@ -242,7 +242,7 @@ await bz.run('BuildTasks.build');</code></pre>
               <h2>Migration checklist.</h2>
               <ol class="migration-checklist">
                 <li>Upgrade local Node, containers, and CI runners to Node 24.15 or newer.</li>
-                <li>Convert package boundaries, imports, and exports to ESM.</li>
+                <li>Keep CommonJS or adopt ESM, then use the matching package entry point.</li>
                 <li>Update custom decorators to the TC39 standard decorator API.</li>
                 <li>Replace calls to the removed <code>Beelzebub.cli()</code> helper.</li>
                 <li>Configure a TypeScript loader or compile TypeScript CLI task files.</li>
@@ -284,7 +284,7 @@ await bz.run('BuildTasks.build');</code></pre>
           <strong>Version</strong>
           <span>2.0.0</span>
           <span>Node 24+</span>
-          <span>ESM only</span>
+          <span>ESM + CommonJS</span>
         </div>
       </div>
     </footer>

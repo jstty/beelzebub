@@ -31,13 +31,13 @@ afterEach(() => {
 });
 
 function createTasks(hidden = false) {
-  const { config, logger } = createTestConfig({ verbose: true });
+  const { config, logger, helpLogger } = createTestConfig({ verbose: true });
   const app = bz(config);
   const tasks = new ExposedTasks(
     { ...config, beelzebub: app, name: 'UnitTasks' } as BeelzebubConfig,
     hidden
   );
-  return { app, tasks, config, logger };
+  return { app, tasks, config, logger, helpLogger };
 }
 
 describe('task normalization internals', () => {
@@ -189,5 +189,71 @@ describe('task execution internals', () => {
 
     expect(tasks.$getTaskTree().name).toBe('First');
     expect(logger.messages('warn')).toContain('multi sub tasks in hidden task node not allowed');
+  });
+
+  it('dispatches directly into a nested task and runs its before-all hook once', async () => {
+    const { app, tasks, config } = createTasks();
+    const calls: string[] = [];
+
+    class ChildTasks extends ExposedTasks {
+      override $beforeAll(): void {
+        calls.push('beforeAll');
+      }
+
+      override alpha(): Record<string, unknown> {
+        calls.push('alpha');
+        return {};
+      }
+    }
+
+    const child = new ChildTasks({ ...config, beelzebub: app, name: 'Child' });
+    await child.$register();
+    tasks.$setSubTask('Child', child);
+
+    await tasks.runTask({ task: 'Child.alpha' });
+    await tasks.runTask({ task: 'Child.alpha' });
+
+    expect(calls).toEqual(['beforeAll', 'alpha', 'alpha']);
+    expect(child.$hasRunBefore()).toBe(true);
+  });
+
+  it('registers and runs a subtask added after application initialization', async () => {
+    const { app, tasks, logger } = createTasks();
+
+    class LateTasks extends BzTasks {
+      work(): void {
+        this.logger.log('late task ran');
+      }
+    }
+
+    app.add(tasks);
+    await app.getInitPromise();
+    await tasks.$addSubTasks(LateTasks, { name: 'Late' });
+    await app.run('UnitTasks.Late.work');
+
+    expect(tasks.$hasSubTask('Late')).toBe(true);
+    expect(tasks.$getSubTask('Late')?.namePath).toBe('UnitTasks.Late');
+    expect(logger.messages('log')).toContain('late task ran');
+  });
+
+  it('aggregates recursive stats and prints parent and child help', async () => {
+    const { app, tasks, config, logger, helpLogger } = createTasks();
+    const child = new ExposedTasks({ ...config, beelzebub: app, name: 'Child' });
+
+    tasks.$setTaskHelpDocs('alpha', 'Parent alpha task');
+    child.$setTaskHelpDocs('alpha', 'Child alpha task');
+    await tasks.$register();
+    await child.$register();
+    tasks.$setSubTask('Child', child);
+    await tasks.runTask({ task: 'alpha' });
+    await tasks.runTask({ task: 'Child.alpha' });
+    tasks.$printHelp();
+
+    expect(tasks.$getStatsSummary().tasksRuns).toHaveLength(2);
+    expect(tasks.$getTaskFlatList().map((entry) => entry.name)).toEqual(['UnitTasks', 'Child']);
+    expect(logger.messages('group')).toContain('UnitTasks.alpha');
+    expect(helpLogger.messages('log').join('\n')).toContain('Parent alpha task');
+    expect(helpLogger.messages('log').join('\n')).toContain('Child alpha task');
+    expect(tasks.$getName()).toBe('UnitTasks');
   });
 });

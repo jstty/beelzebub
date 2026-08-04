@@ -103,6 +103,12 @@ export class BzSummaryStats {
   }
 
   private _calcTimes(): void {
+    this._time = {
+      total: 0,
+      avg: 0,
+      min: Number.MAX_SAFE_INTEGER,
+      max: 0
+    };
     for (const run of this._runs) {
       const t = (run.diff as StatsDiff).time ?? 0;
       this._time.total += t;

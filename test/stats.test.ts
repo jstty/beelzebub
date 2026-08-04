@@ -98,4 +98,14 @@ describe('task statistics', () => {
     expect(stats.getPerTaskStats()).toEqual({ time: [0] });
     expect(stats.getPerTimeStats(10)).toEqual({ tasks: [] });
   });
+
+  it('recalculates aggregate timing when runs are added in multiple batches', () => {
+    const stats = new BzSummaryStats();
+
+    stats.add([{ name: 'First', tasks: {}, stats: { getRuns: () => [run(4)] } }] as never);
+    stats.add([{ name: 'Second', tasks: {}, stats: { getRuns: () => [run(6)] } }] as never);
+
+    expect(stats.getTotalTasks()).toBe(2);
+    expect(stats.getTimeStats()).toEqual({ total: 10, avg: 5, min: 4, max: 6 });
+  });
 });

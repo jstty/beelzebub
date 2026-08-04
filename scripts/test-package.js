@@ -75,6 +75,23 @@ try {
   if (esmOutput !== 'esm-ok') throw new Error(`Unexpected ESM smoke output: ${esmOutput}`);
 
   writeFileSync(
+    path.join(consumerDir, 'smoke.cjs'),
+    [
+      "const bz = require('beelzebub');",
+      'const { Beelzebub, BzCLI, BzTasks, defaultTask, help, vars } = bz;',
+      "if (typeof bz !== 'function') throw new Error('CommonJS export is not callable');",
+      "if (bz.default !== bz) throw new Error('CommonJS default export is not interoperable');",
+      'for (const value of [Beelzebub, BzCLI, BzTasks, defaultTask, help, vars]) {',
+      "  if (typeof value !== 'function') throw new Error('expected CommonJS export is missing');",
+      '}',
+      "console.log('cjs-ok');",
+      ''
+    ].join('\n')
+  );
+  const cjsOutput = run(process.execPath, ['smoke.cjs'], consumerDir);
+  if (cjsOutput !== 'cjs-ok') throw new Error(`Unexpected CommonJS smoke output: ${cjsOutput}`);
+
+  writeFileSync(
     path.join(consumerDir, 'smoke.ts'),
     [
       "import bz, { BzTasks, type BeelzebubConfig, type TaskInfo } from 'beelzebub';",
@@ -83,6 +100,17 @@ try {
       '}',
       'const config: BeelzebubConfig = { verbose: false };',
       'bz(config).add(SmokeTasks);',
+      ''
+    ].join('\n')
+  );
+  writeFileSync(
+    path.join(consumerDir, 'smoke.cts'),
+    [
+      "import bz = require('beelzebub');",
+      'class CommonJSTasks extends bz.BzTasks {',
+      '  run(): void {}',
+      '}',
+      'bz().add(CommonJSTasks);',
       ''
     ].join('\n')
   );
@@ -101,7 +129,8 @@ try {
       'NodeNext',
       '--target',
       'ES2024',
-      'smoke.ts'
+      'smoke.ts',
+      'smoke.cts'
     ],
     consumerDir
   );
@@ -110,6 +139,27 @@ try {
   const cliVersion = run(process.execPath, [cliBin, '--version'], consumerDir);
   if (cliVersion !== manifest.version) {
     throw new Error(`CLI version mismatch: expected ${manifest.version}, received ${cliVersion}`);
+  }
+
+  writeFileSync(
+    path.join(consumerDir, 'tasks.mjs'),
+    [
+      "import { BzTasks } from 'beelzebub';",
+      'export default class SmokeTasks extends BzTasks {',
+      "  run() { console.log('cli-file-ok'); }",
+      '}',
+      ''
+    ].join('\n')
+  );
+  for (const fileArgs of [
+    ['--file', './tasks.mjs'],
+    ['-f', './tasks.mjs'],
+    ['--file=./tasks.mjs']
+  ]) {
+    const cliOutput = run(process.execPath, [cliBin, ...fileArgs, 'SmokeTasks.run'], consumerDir);
+    if (!cliOutput.includes('cli-file-ok')) {
+      throw new Error(`CLI did not load its task file with ${fileArgs.join(' ')}`);
+    }
   }
 
   console.log(`package smoke test passed: ${manifest.name}@${manifest.version}`);
