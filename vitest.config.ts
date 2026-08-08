@@ -9,7 +9,7 @@ export default defineConfig({
     execArgv: ['--import', 'tsx'],
     coverage: {
       provider: 'v8',
-      reporter: ['text', 'html', 'lcov'],
+      reporter: ['text', 'html', 'lcov', 'json-summary'],
       include: ['src/**/*.ts'],
       exclude: ['src/bin/**', 'src/**/*.d.ts'],
       thresholds: {
