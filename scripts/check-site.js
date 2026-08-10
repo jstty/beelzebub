@@ -3,6 +3,7 @@ import path from 'node:path';
 
 const projectRoot = path.resolve(import.meta.dirname, '..');
 const outputRoot = path.join(projectRoot, 'website', 'dist');
+const firebaseConfig = JSON.parse(readFileSync(path.join(projectRoot, 'firebase.json'), 'utf8'));
 const requiredFiles = [
   'index.html',
   'examples/index.html',
@@ -86,6 +87,16 @@ if (!/\.site-header\s*\{[^}]*position:\s*sticky/s.test(siteCss)) {
 }
 if (!siteCss.includes('background: rgba(22, 13, 34, 0.78)')) {
   failures.push('assets/site.css is missing the tinted mobile navigation background');
+}
+
+const defaultHostingHeaders = firebaseConfig.hosting?.headers?.find(
+  (entry) => entry.source === '**'
+)?.headers;
+const defaultCacheControl = defaultHostingHeaders?.find(
+  (header) => header.key.toLowerCase() === 'cache-control'
+)?.value;
+if (defaultCacheControl !== 'public,max-age=0,must-revalidate') {
+  failures.push('firebase.json must revalidate unversioned site files immediately');
 }
 
 if (failures.length > 0) {

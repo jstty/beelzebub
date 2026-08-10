@@ -149,7 +149,7 @@ jobs:
           if-no-files-found: error
 
   preview:
-    name: Firebase Hosting preview
+    name: Firebase Hosting preview (PR only)
     needs: quality
     if: >-
       github.event_name == 'pull_request' &&
