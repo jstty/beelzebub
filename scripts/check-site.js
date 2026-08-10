@@ -59,6 +59,12 @@ for (const htmlFile of productHtmlFiles) {
   if (!html.includes('class="site-header"')) {
     failures.push(`${relativeHtml} is missing the shared site header`);
   }
+  if (!/href="\/assets\/site\.css\?v=[a-f0-9]{12}"/.test(html)) {
+    failures.push(`${relativeHtml} is missing its versioned site stylesheet`);
+  }
+  if (!/src="\/assets\/site\.js\?v=[a-f0-9]{12}"/.test(html)) {
+    failures.push(`${relativeHtml} is missing its versioned site script`);
+  }
 
   for (const match of html.matchAll(/(?:href|src)="(\/[^"#?]*)/g)) {
     const target = match[1];

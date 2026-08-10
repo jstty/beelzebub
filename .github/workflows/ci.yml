@@ -186,5 +186,7 @@ jobs:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_BEELZEBUB_IO }}
           projectId: beelzebub-io
+          # A fresh channel URL prevents an old browser cache from masking a new PR deployment.
+          channelId: pr-${{ github.event.number }}-${{ github.run_id }}
           expires: 7d
           firebaseToolsVersion: 15.26.0
