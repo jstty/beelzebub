@@ -4,12 +4,18 @@ The Beelzebub 2.0 product site is a dependency-free static site served by Fireba
 
 - Source: `website/src`
 - Generated output: `website/dist`
-- API reference: generated from `docs/site` and mounted at `/api`
+- API reference: generated from exported TypeScript declarations and TSDoc into `/api`
 - Firebase project: `beelzebub-io`
 
 Use `npm run site:build` to generate the complete site and `npm run site:serve` to
 preview the generated output. The repository's normal CI uploads that output as
 the `website-static` artifact.
+
+The standalone TypeDoc output remains in `docs/site` for repository documentation.
+The public `/api` page uses the same TypeDoc source model but renders it through the
+product site's navigation, typography, colors, search, and responsive layout. Do not
+edit `website/dist/api/index.html` directly; it is regenerated from the code comments
+and exported types during every site build.
 
 With the Firebase CLI installed and authenticated, use `npm run site:preview` to
 publish the `v2-preview` channel in the `beelzebub-io` project.

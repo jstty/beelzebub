@@ -29,7 +29,7 @@ function collectHtmlFiles(directory) {
   for (const entry of readdirSync(directory, { withFileTypes: true })) {
     const absolutePath = path.join(directory, entry.name);
     if (entry.isDirectory()) {
-      if (entry.name !== 'api') files.push(...collectHtmlFiles(absolutePath));
+      files.push(...collectHtmlFiles(absolutePath));
     } else if (entry.name.endsWith('.html')) {
       files.push(absolutePath);
     }
@@ -65,6 +65,14 @@ for (const htmlFile of productHtmlFiles) {
       failures.push(`${relativeHtml} references missing local path ${target}`);
     }
   }
+}
+
+const apiHtml = readFileSync(path.join(outputRoot, 'api', 'index.html'), 'utf8');
+if (!apiHtml.includes('data-api-symbol')) {
+  failures.push('api/index.html is missing generated API symbols');
+}
+if (!apiHtml.includes('Generated from exported TypeScript and TSDoc')) {
+  failures.push('api/index.html is not the source-generated API page');
 }
 
 if (failures.length > 0) {

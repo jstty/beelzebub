@@ -101,3 +101,60 @@ function filterExamples(button) {
 for (const filter of filters) {
   filter.addEventListener('click', () => filterExamples(filter));
 }
+
+const apiSearch = document.querySelector('[data-api-search]');
+const apiSymbols = [...document.querySelectorAll('[data-api-symbol]')];
+const apiGroups = [...document.querySelectorAll('[data-api-group]')];
+const apiResultCount = document.querySelector('[data-api-result-count]');
+const apiEmpty = document.querySelector('[data-api-empty]');
+
+function filterApiSymbols() {
+  if (!(apiSearch instanceof HTMLInputElement)) return;
+  const query = apiSearch.value.trim().toLowerCase();
+  let visibleTotal = 0;
+
+  for (const symbol of apiSymbols) {
+    const searchText = symbol.getAttribute('data-api-search-text') ?? '';
+    const visible = query.length === 0 || searchText.includes(query);
+    symbol.hidden = !visible;
+    if (visible) visibleTotal += 1;
+  }
+
+  for (const group of apiGroups) {
+    const visibleSymbols = [...group.querySelectorAll('[data-api-symbol]')].filter(
+      (symbol) => !symbol.hidden
+    );
+    group.hidden = visibleSymbols.length === 0;
+    const count = group.querySelector('[data-api-group-count]');
+    if (count) count.textContent = String(visibleSymbols.length);
+  }
+
+  if (apiResultCount) apiResultCount.textContent = String(visibleTotal);
+  if (apiEmpty) apiEmpty.hidden = visibleTotal !== 0;
+}
+
+apiSearch?.addEventListener('input', filterApiSymbols);
+
+document.addEventListener('keydown', (event) => {
+  if (event.key !== '/' || event.metaKey || event.ctrlKey || event.altKey) return;
+  if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement)
+    return;
+  if (!(apiSearch instanceof HTMLInputElement)) return;
+  event.preventDefault();
+  apiSearch.focus();
+});
+
+function revealApiHash() {
+  const id = window.location.hash.slice(1);
+  if (!id) return;
+  const target = document.getElementById(id);
+  const symbol = target?.closest('[data-api-symbol]');
+  if (symbol?.hidden && apiSearch instanceof HTMLInputElement) {
+    apiSearch.value = '';
+    filterApiSymbols();
+  }
+  target?.closest('details')?.setAttribute('open', '');
+}
+
+revealApiHash();
+window.addEventListener('hashchange', revealApiHash);
