@@ -97,14 +97,20 @@ if (apiHtml.includes('source of truth')) {
 if (!/\.site-header\s*\{[^}]*position:\s*sticky/s.test(siteCss)) {
   failures.push('assets/site.css does not keep the shared header sticky');
 }
-if (!siteCss.includes('background: rgba(10, 6, 17, 0.94)')) {
-  failures.push('assets/site.css is missing the dark mobile navigation glass');
+if (!siteCss.includes('background: rgba(10, 6, 17, 0.78)')) {
+  failures.push('assets/site.css is missing the translucent mobile navigation glass');
 }
-if (!siteCss.includes('body.nav-open::before') || !siteCss.includes('blur(22px) saturate(80%)')) {
+if (!siteCss.includes('body.nav-open::before') || !siteCss.includes('blur(26px) saturate(88%)')) {
   failures.push('assets/site.css is missing the frosted mobile navigation scrim');
 }
-if (!siteCss.includes('--paper: #d2c9bf') || !siteCss.includes('--white: #ded5cb')) {
+if (!siteCss.includes('--paper: #ada299') || !siteCss.includes('--white: #d0c2b6')) {
   failures.push('assets/site.css is missing the muted warm-stone palette');
+}
+if (siteCss.includes('min-width: 560px')) {
+  failures.push('assets/site.css still forces the overview console wider than a phone');
+}
+if (!siteCss.includes('@keyframes hero-color-drift')) {
+  failures.push('assets/site.css is missing the animated hero color fields');
 }
 
 const defaultHostingHeaders = firebaseConfig.hosting?.headers?.find(
