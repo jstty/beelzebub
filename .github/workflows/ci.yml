@@ -83,8 +83,6 @@ jobs:
 
       - name: Create coverage summary
         if: always()
-        env:
-          COVERAGE_OUTCOME: ${{ steps.coverage.outcome }}
         run: node scripts/coverage-summary.js coverage-summary.md
 
       - name: Post coverage summary
