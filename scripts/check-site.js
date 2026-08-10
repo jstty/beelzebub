@@ -55,6 +55,9 @@ for (const htmlFile of productHtmlFiles) {
   if (!html.includes('class="skip-link"')) {
     failures.push(`${relativeHtml} is missing a skip link`);
   }
+  if (!html.includes('class="site-header"')) {
+    failures.push(`${relativeHtml} is missing the shared site header`);
+  }
 
   for (const match of html.matchAll(/(?:href|src)="(\/[^"#?]*)/g)) {
     const target = match[1];
@@ -68,11 +71,21 @@ for (const htmlFile of productHtmlFiles) {
 }
 
 const apiHtml = readFileSync(path.join(outputRoot, 'api', 'index.html'), 'utf8');
+const siteCss = readFileSync(path.join(outputRoot, 'assets', 'site.css'), 'utf8');
 if (!apiHtml.includes('data-api-symbol')) {
   failures.push('api/index.html is missing generated API symbols');
 }
 if (!apiHtml.includes('Generated from exported TypeScript and TSDoc')) {
   failures.push('api/index.html is not the source-generated API page');
+}
+if (apiHtml.includes('class="api-hero"') || apiHtml.includes('source of truth')) {
+  failures.push('api/index.html still includes the removed API hero');
+}
+if (!/\.site-header\s*\{[^}]*position:\s*sticky/s.test(siteCss)) {
+  failures.push('assets/site.css does not keep the shared header sticky');
+}
+if (!siteCss.includes('background: rgba(22, 13, 34, 0.78)')) {
+  failures.push('assets/site.css is missing the tinted mobile navigation background');
 }
 
 if (failures.length > 0) {

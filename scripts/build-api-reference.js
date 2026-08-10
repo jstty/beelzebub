@@ -247,11 +247,6 @@ function renderPage(project) {
   const groups = API_GROUPS.filter((group) =>
     reflections.some((reflection) => reflection.kind === group.kind)
   );
-  const classCount = reflections.filter((item) => item.kind === ReflectionKind.Class).length;
-  const interfaceCount = reflections.filter(
-    (item) => item.kind === ReflectionKind.Interface
-  ).length;
-
   return `<!doctype html>
 <html lang="en">
   <head>
@@ -289,21 +284,6 @@ function renderPage(project) {
     </header>
 
     <main id="main">
-      <section class="api-hero">
-        <div class="shell api-hero-inner">
-          <div>
-            <span class="eyebrow eyebrow-bright">GENERATED FROM THE SOURCE</span>
-            <h1>Build against the <span>source of truth.</span></h1>
-            <p>Every exported class, interface, type, and member—generated from Beelzebub's TypeScript declarations and code comments on every build.</p>
-          </div>
-          <div class="api-hero-stats" aria-label="API reference summary">
-            <div><strong>${reflections.length}</strong><span>exports</span></div>
-            <div><strong>${classCount}</strong><span>classes</span></div>
-            <div><strong>${interfaceCount}</strong><span>interfaces</span></div>
-          </div>
-        </div>
-      </section>
-
       <section class="api-content">
         <div class="shell api-layout">
           <aside class="api-sidebar">
