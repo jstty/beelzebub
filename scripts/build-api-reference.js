@@ -242,6 +242,16 @@ function renderNavigation(groups, reflections) {
     .join('');
 }
 
+function renderQuickNavigation(groups, reflections) {
+  return groups
+    .map((group) => {
+      const count = reflections.filter((reflection) => reflection.kind === group.kind).length;
+      if (count === 0) return '';
+      return `<a href="#api-${slugify(group.label)}"><span>${escapeHtml(group.label)}</span><small>${count}</small></a>`;
+    })
+    .join('');
+}
+
 function renderPage(project) {
   const reflections = project.children ?? [];
   const groups = API_GROUPS.filter((group) =>
@@ -284,15 +294,31 @@ function renderPage(project) {
     </header>
 
     <main id="main">
+      <section class="api-hero" aria-labelledby="api-hero-title">
+        <div class="shell api-hero-inner">
+          <div class="api-hero-heading">
+            <div>
+              <span class="eyebrow eyebrow-bright">API REFERENCE</span>
+              <h1 id="api-hero-title">Find the API you need.</h1>
+            </div>
+            <p><strong data-api-result-count>${reflections.length}</strong> exported symbols, generated directly from Beelzebub's TypeScript and TSDoc.</p>
+          </div>
+          <label class="api-search api-hero-search">
+            <span>Search the reference</span>
+            <input type="search" placeholder="Try run, BzTasks, VarDef…" autocomplete="off" data-api-search />
+            <kbd>/</kbd>
+          </label>
+          <nav class="api-quick-nav" aria-label="Jump to API sections">
+            <span>Jump to</span>
+            ${renderQuickNavigation(groups, reflections)}
+          </nav>
+        </div>
+      </section>
+
       <section class="api-content">
         <div class="shell api-layout">
           <aside class="api-sidebar">
-            <label class="api-search">
-              <span>Find a symbol</span>
-              <input type="search" placeholder="run, BzTasks, VarDef…" autocomplete="off" data-api-search />
-              <kbd>/</kbd>
-            </label>
-            <p class="api-result-count"><strong data-api-result-count>${reflections.length}</strong> exported symbols</p>
+            <strong class="api-sidebar-label">Browse symbols</strong>
             <nav class="api-nav" aria-label="API symbols">${renderNavigation(groups, reflections)}</nav>
             <p class="api-generated-note"><span></span> Generated from exported TypeScript and TSDoc.</p>
           </aside>

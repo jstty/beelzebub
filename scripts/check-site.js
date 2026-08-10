@@ -85,14 +85,26 @@ if (!apiHtml.includes('data-api-symbol')) {
 if (!apiHtml.includes('Generated from exported TypeScript and TSDoc')) {
   failures.push('api/index.html is not the source-generated API page');
 }
-if (apiHtml.includes('class="api-hero"') || apiHtml.includes('source of truth')) {
-  failures.push('api/index.html still includes the removed API hero');
+if (!apiHtml.includes('class="api-hero"') || !apiHtml.includes('class="api-quick-nav"')) {
+  failures.push('api/index.html is missing the search hero or section jump bar');
+}
+if (!/<section class="api-hero"[\s\S]*data-api-search[\s\S]*<\/section>/.test(apiHtml)) {
+  failures.push('api/index.html search is not inside the API hero');
+}
+if (apiHtml.includes('source of truth')) {
+  failures.push('api/index.html still includes the removed source-of-truth marketing copy');
 }
 if (!/\.site-header\s*\{[^}]*position:\s*sticky/s.test(siteCss)) {
   failures.push('assets/site.css does not keep the shared header sticky');
 }
-if (!siteCss.includes('background: rgba(22, 13, 34, 0.78)')) {
-  failures.push('assets/site.css is missing the tinted mobile navigation background');
+if (!siteCss.includes('background: rgba(10, 6, 17, 0.94)')) {
+  failures.push('assets/site.css is missing the dark mobile navigation glass');
+}
+if (!siteCss.includes('body.nav-open::before') || !siteCss.includes('blur(22px) saturate(80%)')) {
+  failures.push('assets/site.css is missing the frosted mobile navigation scrim');
+}
+if (!siteCss.includes('--paper: #d2c9bf') || !siteCss.includes('--white: #ded5cb')) {
+  failures.push('assets/site.css is missing the muted warm-stone palette');
 }
 
 const defaultHostingHeaders = firebaseConfig.hosting?.headers?.find(

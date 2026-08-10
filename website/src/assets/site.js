@@ -149,7 +149,8 @@ function revealApiHash() {
   if (!id) return;
   const target = document.getElementById(id);
   const symbol = target?.closest('[data-api-symbol]');
-  if (symbol?.hidden && apiSearch instanceof HTMLInputElement) {
+  const group = target?.closest('[data-api-group]');
+  if ((symbol?.hidden || group?.hidden) && apiSearch instanceof HTMLInputElement) {
     apiSearch.value = '';
     filterApiSymbols();
   }
