@@ -48,15 +48,15 @@ if (!fs.existsSync(summaryPath)) {
     const value = summary[key];
     const band = coverageBand(value.pct);
 
-    return `| ${label} | ${value.covered} / ${value.total} | ${badge(`${value.pct}%`, band.color, `${label}: ${value.pct}%`)} |`;
+    return `| ${label} | ${badge(`${value.pct}%`, band.color, `${label}: ${value.pct}%`)} |`;
   });
 
   body = [
     marker,
     '## Test coverage',
     '',
-    '| Metric | Covered | Coverage |',
-    '| --- | ---: | ---: |',
+    '| Metric | Coverage |',
+    '| --- | ---: |',
     ...rows,
     '',
     `Required threshold: **${threshold}%** for every metric.`,
