@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Five live motion directions for the Beelzebub 2.0 website background."
+    />
+    <meta name="theme-color" content="#09050e" />
+    <title>Motion Lab — Beelzebub</title>
+    <link rel="icon" href="/assets/bz-logo.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/assets/site.css" />
+    <link rel="stylesheet" href="/assets/motion-lab.css" />
+    <script src="/assets/site.js" defer></script>
+    <script src="/assets/motion-lab.js" defer></script>
+  </head>
+  <body class="motion-lab-page">
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="site-header" data-header>
+      <div class="shell nav-shell">
+        <a class="brand" href="/" aria-label="Beelzebub home">
+          <span class="brand-mark"><img src="/assets/bz-logo.svg" alt="" /></span>
+          <span class="brand-name">beelzebub</span>
+          <span class="version-pill">2.0</span>
+        </a>
+
+        <button
+          class="nav-toggle"
+          type="button"
+          aria-expanded="false"
+          aria-controls="primary-nav"
+          data-nav-toggle
+        >
+          <span class="nav-toggle-line"></span>
+          <span class="nav-toggle-line"></span>
+          <span class="sr-only">Toggle navigation</span>
+        </button>
+
+        <nav class="primary-nav" id="primary-nav" aria-label="Primary" data-nav>
+          <a href="/">Overview</a>
+          <a href="/examples/">Examples</a>
+          <a href="/api/">API</a>
+          <a href="/migrate/">Migrate with AI</a>
+          <a class="nav-github" href="https://github.com/jstty/beelzebub">GitHub</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main">
+      <section class="motion-lab-hero">
+        <div class="shell motion-lab-heading">
+          <div>
+            <span class="eyebrow eyebrow-bright">BACKGROUND MOTION STUDIES</span>
+            <h1>Five ways to make the task graph <span>feel alive.</span></h1>
+            <p>
+              These are deliberately small and stripped back. Pick the motion language—not the card
+              layout—and the strongest idea can become the site’s full background system.
+            </p>
+          </div>
+          <button class="motion-toggle" type="button" data-motion-toggle aria-pressed="false">
+            <span class="motion-toggle-dot" aria-hidden="true"></span>
+            <span data-motion-toggle-label>Pause motion</span>
+          </button>
+        </div>
+      </section>
+
+      <section class="motion-lab-content" aria-label="Animated background concepts">
+        <div class="shell motion-sample-grid">
+          <article class="motion-sample motion-sample-trace">
+            <div class="motion-sample-copy">
+              <span>01</span>
+              <div>
+                <h2>Trace River</h2>
+                <p>Execution packets branch, race in parallel, then merge into one release.</p>
+              </div>
+            </div>
+            <canvas data-motion="trace" aria-label="Animated task traces branching and merging"
+              >Animated task traces branching and merging.</canvas
+            >
+            <div class="motion-legend" aria-hidden="true">
+              <span><i class="legend-red"></i>branch</span>
+              <span><i class="legend-violet"></i>merge</span>
+              <span><i class="legend-mint"></i>complete</span>
+            </div>
+          </article>
+
+          <article class="motion-sample motion-sample-topology">
+            <div class="motion-sample-copy">
+              <span>02</span>
+              <div>
+                <h2>Topology Field</h2>
+                <p>A dependency field wakes up one node at a time and broadcasts completion.</p>
+              </div>
+            </div>
+            <canvas data-motion="topology" aria-label="Animated dependency topology field"
+              >Animated dependency topology field.</canvas
+            >
+            <div class="motion-legend" aria-hidden="true">
+              <span><i class="legend-red"></i>active</span>
+              <span><i class="legend-violet"></i>waiting</span>
+              <span><i class="legend-mint"></i>success</span>
+            </div>
+          </article>
+
+          <article class="motion-sample motion-sample-ribbons">
+            <div class="motion-sample-copy">
+              <span>03</span>
+              <div>
+                <h2>Woven Pipelines</h2>
+                <p>Wide execution lanes cross, hand work off, and converge like a transit map.</p>
+              </div>
+            </div>
+            <canvas data-motion="ribbons" aria-label="Animated woven task pipeline ribbons"
+              >Animated woven task pipeline ribbons.</canvas
+            >
+            <div class="motion-legend" aria-hidden="true">
+              <span><i class="legend-red"></i>build</span>
+              <span><i class="legend-violet"></i>test</span>
+              <span><i class="legend-mint"></i>bundle</span>
+            </div>
+          </article>
+
+          <article class="motion-sample motion-sample-grid">
+            <div class="motion-sample-copy">
+              <span>04</span>
+              <div>
+                <h2>Living Grid</h2>
+                <p>Task events bend the data plane and send controlled ripples through the grid.</p>
+              </div>
+            </div>
+            <canvas data-motion="grid" aria-label="Animated grid reacting to task events"
+              >Animated grid reacting to task events.</canvas
+            >
+            <div class="motion-legend" aria-hidden="true">
+              <span><i class="legend-red"></i>event</span>
+              <span><i class="legend-violet"></i>ripple</span>
+              <span><i class="legend-mint"></i>settled</span>
+            </div>
+          </article>
+
+          <article class="motion-sample motion-sample-particles">
+            <div class="motion-sample-copy">
+              <span>05</span>
+              <div>
+                <h2>Particle Compiler</h2>
+                <p>Raw command particles organize into a task graph, execute, then stream out.</p>
+              </div>
+            </div>
+            <canvas data-motion="particles" aria-label="Particles assembling into a task graph"
+              >Particles assembling into a task graph.</canvas
+            >
+            <div class="motion-legend" aria-hidden="true">
+              <span><i class="legend-red"></i>input</span>
+              <span><i class="legend-violet"></i>compile</span>
+              <span><i class="legend-mint"></i>output</span>
+            </div>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="motion-lab-footer">
+      <div class="shell">
+        <strong>Pick 01–05.</strong>
+        <span>Then we’ll scale that motion language across the hero and section backgrounds.</span>
+      </div>
+    </footer>
+  </body>
+</html>

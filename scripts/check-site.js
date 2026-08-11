@@ -7,8 +7,11 @@ const firebaseConfig = JSON.parse(readFileSync(path.join(projectRoot, 'firebase.
 const requiredFiles = [
   'index.html',
   'examples/index.html',
+  'motion-lab/index.html',
   'migrate/index.html',
   'migrate/agent-guide.md',
+  'assets/motion-lab.css',
+  'assets/motion-lab.js',
   'assets/site.css',
   'assets/site.js',
   'assets/bz-logo.svg',
@@ -81,6 +84,7 @@ for (const htmlFile of productHtmlFiles) {
 const homeHtml = readFileSync(path.join(outputRoot, 'index.html'), 'utf8');
 const apiHtml = readFileSync(path.join(outputRoot, 'api', 'index.html'), 'utf8');
 const migrationHtml = readFileSync(path.join(outputRoot, 'migrate', 'index.html'), 'utf8');
+const motionLabHtml = readFileSync(path.join(outputRoot, 'motion-lab', 'index.html'), 'utf8');
 const agentGuide = readFileSync(path.join(outputRoot, 'migrate', 'agent-guide.md'), 'utf8');
 const siteCss = readFileSync(path.join(outputRoot, 'assets', 'site.css'), 'utf8');
 if (homeHtml.includes('forged for Node 24') || homeHtml.includes('class="release-kicker"')) {
@@ -118,6 +122,13 @@ if (siteCss.includes('min-width: 560px')) {
 }
 if (!siteCss.includes('@keyframes hero-color-drift')) {
   failures.push('assets/site.css is missing the animated hero color fields');
+}
+const motionSamples = ['trace', 'topology', 'ribbons', 'grid', 'particles'];
+if (
+  motionSamples.some((sample) => !motionLabHtml.includes(`data-motion="${sample}"`)) ||
+  !motionLabHtml.includes('data-motion-toggle')
+) {
+  failures.push('motion-lab/index.html is missing one or more live motion studies');
 }
 const migrationSectionIds = ['scope', 'plan', 'example', 'packages', 'agent', 'verify'];
 if (
