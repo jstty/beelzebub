@@ -2,9 +2,9 @@
   min-height: 100vh;
   color: var(--white);
   background:
-    radial-gradient(circle at 72% 38%, rgba(87, 26, 148, 0.21), transparent 31%),
-    radial-gradient(circle at 26% 70%, rgba(146, 12, 27, 0.24), transparent 34%),
-    linear-gradient(145deg, #080309, #100412 48%, #07030c);
+    radial-gradient(circle at 72% 38%, rgba(64, 15, 112, 0.16), transparent 31%),
+    radial-gradient(circle at 26% 70%, rgba(112, 8, 20, 0.18), transparent 34%),
+    linear-gradient(145deg, #030104, #070208 48%, #020103);
 }
 
 .trace-river-canvas {
@@ -23,15 +23,16 @@
   inset: 0;
   pointer-events: none;
   background:
+    radial-gradient(ellipse at center, transparent 25%, rgba(2, 0, 4, 0.32) 100%),
     linear-gradient(
       90deg,
-      rgba(6, 2, 8, 0.28),
+      rgba(3, 1, 5, 0.42),
       transparent 26%,
       transparent 74%,
-      rgba(6, 2, 8, 0.18)
+      rgba(3, 1, 5, 0.34)
     ),
     repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.012) 0 1px, transparent 1px 4px);
-  opacity: 0.72;
+  opacity: 0.82;
 }
 
 .trace-site-header {
@@ -119,14 +120,14 @@
   border: 1px solid rgba(255, 91, 73, 0.19);
   background: linear-gradient(
     145deg,
-    rgba(48, 5, 16, 0.88),
-    rgba(12, 2, 9, 0.93) 54%,
-    rgba(25, 3, 17, 0.88)
+    rgba(19, 2, 8, 0.96),
+    rgba(4, 1, 6, 0.98) 54%,
+    rgba(10, 2, 12, 0.96)
   );
   box-shadow:
     inset 0 1px 0 rgba(255, 185, 170, 0.055),
-    inset 0 0 60px rgba(92, 5, 25, 0.12),
-    0 26px 90px rgba(3, 1, 7, 0.42);
+    inset 0 0 70px rgba(68, 3, 19, 0.1),
+    0 28px 96px rgba(0, 0, 2, 0.64);
   contain: paint;
 }
 

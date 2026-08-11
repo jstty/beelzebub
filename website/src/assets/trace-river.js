@@ -331,8 +331,8 @@ function draw(timestamp) {
   const seconds = (timestamp - pausedDuration) / 1000;
   pointerX += (pointerTargetX - pointerX) * 0.06;
   pointerY += (pointerTargetY - pointerY) * 0.06;
-  const riverDriftX = Math.sin(seconds * 0.12) * 7;
-  const riverDriftY = Math.cos(seconds * 0.09) * 5;
+  const riverDriftX = Math.sin(seconds * 0.085) * 18 + Math.sin(seconds * 0.031) * 7;
+  const riverDriftY = Math.cos(seconds * 0.07) * 12 + Math.sin(seconds * 0.027) * 5;
   const sceneOffsetX = pointerX + riverDriftX;
   const sceneOffsetY = pointerY + riverDriftY;
   const prepared = prepareCanvas(sceneOffsetX, sceneOffsetY);
