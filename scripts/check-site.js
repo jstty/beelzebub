@@ -120,14 +120,14 @@ if (
   !migrationHtml.includes('href="/migrate/agent-guide.md"') ||
   !migrationHtml.includes('data-copy-panel')
 ) {
-  failures.push('migrate/index.html is missing the copyable coding-agent migration guide');
+  failures.push('migrate/index.html is missing the copyable coding-agent adoption guide');
 }
 if (
-  !agentGuide.startsWith('# Beelzebub 2.0 migration guide for coding agents') ||
-  !agentGuide.includes('## 7. Verify the migration') ||
+  !agentGuide.startsWith('# Beelzebub 2.0 adoption guide for coding agents') ||
+  !agentGuide.includes('## 7. Verify the adoption') ||
   !agentGuide.includes('## Copyable agent prompt')
 ) {
-  failures.push('migrate/agent-guide.md is missing required agent migration instructions');
+  failures.push('migrate/agent-guide.md is missing required agent adoption instructions');
 }
 
 const defaultHostingHeaders = firebaseConfig.hosting?.headers?.find(

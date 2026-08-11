@@ -1,33 +1,47 @@
-# Beelzebub 2.0 migration guide for coding agents
+# Beelzebub 2.0 adoption guide for coding agents
 
-Use this document as the migration contract when updating an existing project from Beelzebub 1.x to 2.0. Preserve the project's behavior and conventions. Keep changes focused on the migration, do not discard unrelated work, and do not use destructive Git commands.
+Use this document as the implementation contract when introducing Beelzebub 2.0 to a project. The current automation may live in npm scripts, shell scripts, another task runner, application code, or an existing Beelzebub integration. Preserve the project's behavior and conventions, keep changes focused on task automation, do not discard unrelated work, and do not use destructive Git commands.
 
 ## Objective
 
-Upgrade the project to Beelzebub 2.0 and Node.js 24.15 or newer, migrate affected APIs and task-loading behavior, update project documentation, and leave the project with its full validation suite passing.
+Adopt Beelzebub 2.0 as a maintainable task layer for the project's selected workflows. Replace difficult-to-maintain command chains with named and composable tasks, keep package scripts short, update relevant documentation, and leave the project with its full validation suite passing.
 
-The migration is not complete merely because the dependency installs. Representative Beelzebub tasks must run successfully through every interface the project uses.
+The work is not complete merely because the dependency installs. Representative Beelzebub tasks must run successfully through every interface the project uses.
 
-## 1. Discover the existing integration
+## 1. Discover the current automation
 
 Before editing files, inspect and record:
 
 - The package manager and lockfile.
-- The current Beelzebub version and every dependency declaration that references it.
+- npm scripts and every script they call transitively.
+- Shell scripts, JavaScript or TypeScript automation, Makefiles, CI-only commands, and other task runners.
+- Which commands are developer entry points and which are private implementation details.
 - Node.js versions in `package.json`, version-manager files, CI workflows, containers, deployment configuration, and contributor documentation.
 - Whether the project uses ESM, CommonJS, or both.
-- Every Beelzebub task file and how each file is loaded.
-- npm scripts, shell scripts, CI steps, and application code that invoke `bz`, `beelzebub`, or `Beelzebub.cli()`.
-- Task base classes, singleton usage, isolated instances, hooks, streams, generators, variables, aliases, and decorators.
-- Custom decorators that use the legacy `(target, property, descriptor)` signature.
-- The project's format, lint, typecheck, test, build, packaging, and end-to-end commands.
+- Repeated command chains, duplicated flags, implicit ordering, parallel work, cleanup behavior, environment variables, and secret-dependent steps.
+- Existing task packages or task classes that can be reused, extended, or grouped as subtasks.
+- The project's format, lint, typecheck, test, build, packaging, release, and end-to-end commands.
 
-Run the existing validation before migration when practical. Record failures that already exist; do not attribute them to the upgrade.
+Run the existing validation before making changes when practical. Record failures that already exist so they are not attributed to the Beelzebub work.
 
-## 2. Upgrade the runtime and package
+## 2. Design the task surface
+
+Create a small task map before writing code:
+
+1. Group commands by domain, such as `Verify`, `Build`, `Release`, `Database`, or `Deploy`.
+2. Give public workflows stable task names that explain intent rather than implementation.
+3. Represent ordered work with `$sequence()` and independent work with `$parallel()`.
+4. Use subtasks to keep related task groups together.
+5. Keep implementation details in code instead of copying long shell fragments into task methods.
+6. Identify reusable task classes that belong in a shared package and project-specific classes that should stay local.
+7. Preserve familiar npm script names as short Beelzebub entry points when developers or CI already depend on them.
+
+Do not convert unrelated tooling or redesign application code as part of task adoption.
+
+## 3. Add the runtime and package
 
 1. Set the Node.js baseline to **24.15.0 or newer** everywhere the project declares or provisions Node.
-2. Update Beelzebub with the project's package manager. For a published release, use `beelzebub@^2`.
+2. Install Beelzebub with the project's package manager. For a published release, use `beelzebub@^2`.
 3. Update and retain the project's lockfile.
 4. Do not copy Beelzebub source into the consuming project. The package ships JavaScript, source maps, declarations, and declaration maps.
 
@@ -43,9 +57,9 @@ For a temporary evaluation of the unreleased development branch, npm projects ca
 
 Replace that Git reference with `beelzebub@^2` when 2.0 is published.
 
-## 3. Choose the matching module entry point
+## 4. Choose the matching module entry point
 
-Keep the project's existing module format unless the migration explicitly includes a module conversion.
+Keep the project's existing module format unless a module conversion is explicitly part of the request.
 
 CommonJS:
 
@@ -61,113 +75,155 @@ import bz from 'beelzebub';
 
 Both forms resolve to the callable singleton facade. Named exports are available in ESM, and the CommonJS facade exposes exports such as `bz.BzTasks` and `bz.BzCLI` as properties.
 
-## 4. Apply the 2.0 API changes
+## 5. Implement composable tasks
 
-- Replace removed `Beelzebub.cli()` calls with the `bz` binary or `new BzCLI().run(options)`.
-- Existing singleton-oriented task code can use the default `bz` facade.
-- Use `bz.create(config)` only when the project needs an independent Beelzebub instance.
-- Tests that mutate the singleton can call `bz.delete()` between cases.
-- Keep existing task names, dependency order, hooks, variable behavior, and externally consumed commands stable unless a breaking project change is explicitly requested.
-
-Example:
+Create focused task classes and move orchestration out of long package or shell command chains.
 
 ```ts
 import bz from 'beelzebub';
 
-class BuildTasks extends bz.Tasks {
+class ProjectTasks extends bz.Tasks {
+  verify() {
+    return this.$parallel('.lint', '.test', '.typecheck');
+  }
+
+  release() {
+    return this.$sequence('.clean', '.verify', '.build', '.package');
+  }
+
+  async clean(): Promise<void> {
+    await cleanOutput();
+  }
+
+  async lint(): Promise<void> {
+    await lintProject();
+  }
+
+  async test(): Promise<void> {
+    await testProject();
+  }
+
+  async typecheck(): Promise<void> {
+    await typecheckProject();
+  }
+
   async build(): Promise<void> {
-    await compile();
+    await buildProject();
+  }
+
+  async package(): Promise<void> {
+    await packageProject();
   }
 }
 
-bz.add(BuildTasks);
-await bz.run('BuildTasks.build');
+bz.add(ProjectTasks);
 ```
 
-## 5. Migrate decorators and TypeScript configuration
+Prefer `async`/`await` for asynchronous implementation code. Promises, generators, and Node streams are also supported.
 
-Built-in `@defaultTask`, `@help`, and `@vars` usage remains familiar, but Beelzebub 2.0 uses TC39 standard decorators.
+### Reuse task packages
 
-- Do not enable `experimentalDecorators` for Beelzebub 2.0.
-- Rewrite custom legacy decorators from `(target, property, descriptor)` to the standard `(value, context)` API.
-- Preserve each decorator's observable behavior and add or update focused tests for custom decorators.
+Beelzebub task classes can come from local files or installed packages. A project can load multiple task classes together:
 
-A compatible baseline configuration is:
+```ts
+import SharedReleaseTasks from '@acme/beelzebub-release-tasks';
+import ProjectTasks from './tasks/project.js';
 
-```json
-{
-  "compilerOptions": {
-    "target": "ES2024",
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
-    "strict": true,
-    "verbatimModuleSyntax": true
+export default [SharedReleaseTasks, ProjectTasks];
+```
+
+When a project needs to customize shared behavior, extend the imported task class and override only the project-specific methods:
+
+```ts
+import SharedReleaseTasks from '@acme/beelzebub-release-tasks';
+
+export default class ProjectReleaseTasks extends SharedReleaseTasks {
+  async publish(): Promise<void> {
+    await publishToProjectRegistry();
   }
 }
 ```
 
-Adapt this to the project's build system rather than replacing a working configuration wholesale.
+Keep shared packages generic, keep credentials and environment-specific behavior in the consuming project, and verify the final composed task paths.
 
-## 6. Update task control flow and CLI loading
+## 6. Add concise entry points
 
-Promises, async functions, generators, and Node streams are supported. Existing generator tasks can remain during migration, but prefer `async`/`await` for new or substantially edited task code.
+JavaScript task files load through Node's module system. A JavaScript task file can be invoked with:
 
-JavaScript task files load through Node's module system. If a CLI task file contains TypeScript syntax or decorators, install `tsx` in the consuming project and register it with Node:
+```sh
+bz --file ./beelzebub.js ProjectTasks.release
+```
+
+If a CLI task file contains TypeScript syntax or decorators, install `tsx` in the consuming project and register it with Node:
 
 ```sh
 node --import tsx ./node_modules/beelzebub/dist/bin/beelzebub.js \
-  --file ./beelzebub.ts BuildTasks.build
+  --file ./beelzebub.ts ProjectTasks.release
 ```
 
-Update every npm script, shell script, CI job, and document that invokes the old task-file command.
+Replace long package scripts with short, stable entry points while preserving any script names developers and CI already use:
 
-## 7. Verify the migration
+```json
+{
+  "scripts": {
+    "verify": "bz --file ./beelzebub.js ProjectTasks.verify",
+    "release": "bz --file ./beelzebub.js ProjectTasks.release"
+  }
+}
+```
+
+Update every npm script, shell script, CI job, and document that should use the new task entry points.
+
+## 7. Verify the adoption
 
 Use the project's own commands and package manager. At minimum:
 
 1. Perform a clean dependency install from the lockfile.
 2. Run formatting checks, linting, typechecking, unit tests, integration tests, build, and package validation when those commands exist.
-3. Run representative programmatic tasks and confirm task order, hooks, variables, streams, and error handling.
-4. Exercise the CLI with the syntax the project documents. Test both spaced and short file options when the project exposes them:
+3. Compare each converted workflow with its previous behavior, including order, concurrency, exit codes, cleanup, environment variables, and failure handling.
+4. Run representative programmatic tasks and confirm task paths, subtasks, hooks, variables, streams, and errors.
+5. Exercise the CLI with the syntax the project documents. Test both spaced and short file options when the project exposes them:
 
    ```sh
-   bz --file ./beelzebub.js BuildTasks.build
-   bz -f ./beelzebub.js BuildTasks.build
+   bz --file ./beelzebub.js ProjectTasks.release
+   bz -f ./beelzebub.js ProjectTasks.release
    ```
 
-5. If the project supports both ESM and CommonJS consumers, test both entry points.
-6. If TypeScript task files are used, test the actual loader-backed command rather than only compiling the file.
-7. Check documentation examples and package scripts for obsolete 1.x commands.
+6. If the project supports both ESM and CommonJS consumers, test both entry points.
+7. If TypeScript task files are used, test the actual loader-backed command rather than only compiling the file.
+8. Confirm npm scripts and CI now call the intended Beelzebub tasks without duplicating their orchestration logic.
 
-Do not weaken tests, coverage thresholds, compiler settings, or lint rules to make the migration pass. Fix migration regressions at their source.
+Do not weaken tests, coverage thresholds, compiler settings, or lint rules to make the adoption pass. Fix regressions at their source.
 
 ## 8. Report the result
 
 Finish with a concise report containing:
 
 - Files changed and why.
-- Dependency and runtime versions before and after.
+- The workflows converted to Beelzebub tasks.
+- Runtime and dependency versions used.
 - Commands run and whether each passed.
 - Representative tasks and CLI forms exercised.
+- Reusable task packages imported, extended, or created.
 - Any pre-existing failures, remaining risks, or manual follow-up.
-- Any intentional behavior change that could affect users or CI.
+- Any intentional behavior change that could affect developers or CI.
 
 Do not commit, push, publish, or deploy unless the user or repository workflow explicitly authorizes it.
 
 ## Copyable agent prompt
 
 ```text
-Update this project from Beelzebub 1.x to Beelzebub 2.0.
+Update this project to use Beelzebub 2.0 for its task automation.
 
-Follow https://beelzebub.io/migrate/agent-guide.md as the migration contract.
+Follow https://beelzebub.io/migrate/agent-guide.md as the implementation contract.
 
-First inspect the current Node, package manager, module, TypeScript, task-file, CLI,
-decorator, CI, and test setup. Preserve existing behavior and avoid unrelated rewrites.
-Upgrade the runtime and dependency, migrate changed APIs and decorators, update task-file
-loading, and run the full project validation plus representative Beelzebub tasks.
+First inspect the current npm scripts, shell automation, task runners, Node, package manager,
+module format, CI, and test setup. Preserve existing behavior and avoid unrelated rewrites.
+Replace complex command chains with named, composable Beelzebub tasks; reuse shared task
+packages where useful; and keep package.json scripts as short entry points.
 
-Finish with a concise report of changed files, commands run, results, remaining risks,
-and any manual follow-up.
+Run the full project validation and representative Beelzebub tasks. Finish with a concise
+report of changed files, commands run, results, remaining risks, and manual follow-up.
 ```
 
-For human-oriented explanations and examples, see the [Beelzebub 2.0 migration page](https://beelzebub.io/migrate/), [examples](https://beelzebub.io/examples/), and [API reference](https://beelzebub.io/api/).
+For human-oriented explanations and examples, see the [Beelzebub website](https://beelzebub.io/), [examples](https://beelzebub.io/examples/), and [API reference](https://beelzebub.io/api/).
