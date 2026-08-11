@@ -287,7 +287,7 @@ function renderPage(project) {
           <a href="/">Overview</a>
           <a href="/examples/">Examples</a>
           <a href="/api/" aria-current="page">API</a>
-          <a href="/migrate/">Migrate to 2.0</a>
+          <a href="/migrate/">Migrate with AI</a>
           <a class="nav-github" href="https://github.com/jstty/beelzebub">GitHub</a>
         </nav>
       </div>
@@ -358,7 +358,7 @@ await bz.run('Build.compile');</code></pre>
           <p>Modular, observable task orchestration for modern Node.js.</p>
           <span class="footer-license">MIT licensed · Built with fire resistance</span>
         </div>
-        <div class="footer-column"><strong>Learn</strong><a href="/examples/">Examples</a><a href="/api/">API reference</a><a href="/migrate/">Migration guide</a></div>
+        <div class="footer-column"><strong>Learn</strong><a href="/examples/">Examples</a><a href="/api/">API reference</a><a href="/migrate/">Migrate with AI</a></div>
         <div class="footer-column"><strong>Project</strong><a href="https://github.com/jstty/beelzebub">GitHub</a><a href="https://www.npmjs.com/package/beelzebub">npm</a><a href="https://github.com/jstty/beelzebub/issues">Issues</a></div>
         <div class="footer-column"><strong>Version</strong><span>2.0.0</span><span>Node 24+</span><span>ESM + CommonJS</span></div>
       </div>

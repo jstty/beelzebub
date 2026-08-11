@@ -1,10 +1,10 @@
-# Beelzebub 2.0 adoption guide for coding agents
+# Migrate project scripts to Beelzebub 2.0 — AI agent guide
 
-Use this document as the implementation contract when introducing Beelzebub 2.0 to a project. The current automation may live in npm scripts, shell scripts, another task runner, application code, or an existing Beelzebub integration. Preserve the project's behavior and conventions, keep changes focused on task automation, do not discard unrelated work, and do not use destructive Git commands.
+Use this document as the implementation contract when migrating an existing project's task automation to Beelzebub 2.0. The current automation may live in package scripts, shell scripts, Makefiles, CI-only commands, another task runner, or application code. Preserve the project's behavior and conventions, keep changes focused on task automation, do not discard unrelated work, and do not use destructive Git commands.
 
 ## Objective
 
-Adopt Beelzebub 2.0 as a maintainable task layer for the project's selected workflows. Replace difficult-to-maintain command chains with named and composable tasks, keep package scripts short, update relevant documentation, and leave the project with its full validation suite passing.
+Migrate the project's selected workflows to Beelzebub 2.0 as a maintainable task layer. Replace difficult-to-maintain command chains with named and composable tasks, keep package scripts and CI commands short, update relevant documentation, and leave the project with its full validation suite passing.
 
 The work is not complete merely because the dependency installs. Representative Beelzebub tasks must run successfully through every interface the project uses.
 
@@ -36,7 +36,7 @@ Create a small task map before writing code:
 6. Identify reusable task classes that belong in a shared package and project-specific classes that should stay local.
 7. Preserve familiar npm script names as short Beelzebub entry points when developers or CI already depend on them.
 
-Do not convert unrelated tooling or redesign application code as part of task adoption.
+Do not convert unrelated tooling or redesign application code as part of the script migration.
 
 ## 3. Add the runtime and package
 
@@ -172,9 +172,11 @@ Replace long package scripts with short, stable entry points while preserving an
 }
 ```
 
+Keep a dependency bootstrap such as `npm ci` before the Beelzebub command when that step must install Beelzebub itself. Do not hide or drop bootstrap behavior while shortening the rest of the workflow.
+
 Update every npm script, shell script, CI job, and document that should use the new task entry points.
 
-## 7. Verify the adoption
+## 7. Verify the migration
 
 Use the project's own commands and package manager. At minimum:
 
@@ -193,7 +195,7 @@ Use the project's own commands and package manager. At minimum:
 7. If TypeScript task files are used, test the actual loader-backed command rather than only compiling the file.
 8. Confirm npm scripts and CI now call the intended Beelzebub tasks without duplicating their orchestration logic.
 
-Do not weaken tests, coverage thresholds, compiler settings, or lint rules to make the adoption pass. Fix regressions at their source.
+Do not weaken tests, coverage thresholds, compiler settings, or lint rules to make the migration pass. Fix regressions at their source.
 
 ## 8. Report the result
 
@@ -213,17 +215,21 @@ Do not commit, push, publish, or deploy unless the user or repository workflow e
 ## Copyable agent prompt
 
 ```text
-Update this project to use Beelzebub 2.0 for its task automation.
+Migrate this project's task automation from package.json scripts, shell scripts,
+CI-only commands, and other task runners to Beelzebub 2.0.
 
 Follow https://beelzebub.io/migrate/agent-guide.md as the implementation contract.
 
-First inspect the current npm scripts, shell automation, task runners, Node, package manager,
-module format, CI, and test setup. Preserve existing behavior and avoid unrelated rewrites.
-Replace complex command chains with named, composable Beelzebub tasks; reuse shared task
-packages where useful; and keep package.json scripts as short entry points.
+First inventory every public and private automation entry point and run the existing
+validation. Preserve command names and behavior. Replace complex command chains with
+named, composable Beelzebub tasks; model ordering with $sequence(), independent work
+with $parallel(), and reuse or extend shared task packages where useful. Keep package.json
+scripts and CI steps as short wrappers around the same task graph.
 
-Run the full project validation and representative Beelzebub tasks. Finish with a concise
-report of changed files, commands run, results, remaining risks, and manual follow-up.
+Use Node 24.15 or newer, choose the project's existing ESM or CommonJS format, and
+configure TypeScript task-file loading when needed. Run the full project validation and
+representative Beelzebub CLI tasks. Report changed files, commands run, results, risks,
+and manual follow-up. Do not commit, push, publish, or deploy unless explicitly authorized.
 ```
 
 For human-oriented explanations and examples, see the [Beelzebub website](https://beelzebub.io/), [examples](https://beelzebub.io/examples/), and [API reference](https://beelzebub.io/api/).

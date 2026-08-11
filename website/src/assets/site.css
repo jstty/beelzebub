@@ -2369,6 +2369,11 @@ pre {
   max-height: none;
 }
 
+.migration-code-stack {
+  display: grid;
+  gap: 18px;
+}
+
 .diff-remove,
 .diff-add {
   display: inline-block;

@@ -119,19 +119,40 @@ if (siteCss.includes('min-width: 560px')) {
 if (!siteCss.includes('@keyframes hero-color-drift')) {
   failures.push('assets/site.css is missing the animated hero color fields');
 }
+const migrationSectionIds = ['scope', 'plan', 'example', 'packages', 'agent', 'verify'];
 if (
-  !migrationHtml.includes('id="agent"') ||
+  migrationSectionIds.some((sectionId) => !migrationHtml.includes(`id="${sectionId}"`)) ||
   !migrationHtml.includes('href="/migrate/agent-guide.md"') ||
+  !migrationHtml.includes('package.json') ||
+  !migrationHtml.includes('shell') ||
+  !migrationHtml.includes('$sequence()') ||
+  !migrationHtml.includes('$parallel()') ||
   !migrationHtml.includes('data-copy-panel')
 ) {
-  failures.push('migrate/index.html is missing the copyable coding-agent adoption guide');
+  failures.push('migrate/index.html is missing the AI-agent script-migration playbook');
 }
 if (
-  !agentGuide.startsWith('# Beelzebub 2.0 adoption guide for coding agents') ||
-  !agentGuide.includes('## 7. Verify the adoption') ||
-  !agentGuide.includes('## Copyable agent prompt')
+  migrationHtml.includes('Beelzebub 1.x') ||
+  migrationHtml.includes('1.x → 2.0') ||
+  migrationHtml.includes('<th scope="col">1.x</th>') ||
+  migrationHtml.includes('Beelzebub.cli()')
 ) {
-  failures.push('migrate/agent-guide.md is missing required agent adoption instructions');
+  failures.push('migrate/index.html still contains the removed 1.x upgrade framing');
+}
+if (
+  !agentGuide.startsWith('# Migrate project scripts to Beelzebub 2.0 — AI agent guide') ||
+  !agentGuide.includes('## 7. Verify the migration') ||
+  !agentGuide.includes('## Copyable agent prompt') ||
+  !agentGuide.includes('package.json scripts, shell scripts') ||
+  agentGuide.includes('Beelzebub 1.x')
+) {
+  failures.push('migrate/agent-guide.md is missing required AI-agent migration instructions');
+}
+for (const htmlFile of productHtmlFiles) {
+  const html = readFileSync(htmlFile, 'utf8');
+  if (!html.includes('Migrate with AI')) {
+    failures.push(`${path.relative(outputRoot, htmlFile)} is missing the AI migration navigation`);
+  }
 }
 
 const defaultHostingHeaders = firebaseConfig.hosting?.headers?.find(
