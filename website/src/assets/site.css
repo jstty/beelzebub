@@ -342,30 +342,6 @@ pre {
   padding-bottom: 70px;
 }
 
-.release-kicker {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  margin-bottom: 26px;
-  color: rgba(var(--light-rgb), 0.76);
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-}
-
-.release-kicker:hover {
-  color: var(--white);
-}
-
-.release-dot {
-  width: 7px;
-  height: 7px;
-  background: var(--coral);
-  border-radius: 50%;
-  box-shadow: 0 0 0 5px rgba(255, 107, 74, 0.12);
-}
-
 .hero h1 {
   max-width: 680px;
   margin: 0;
@@ -3563,10 +3539,6 @@ pre {
   .hero {
     min-height: auto;
     padding-top: 38px;
-  }
-
-  .release-kicker {
-    font-size: 9px;
   }
 
   .hero h1 {

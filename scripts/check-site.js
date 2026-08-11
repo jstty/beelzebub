@@ -78,10 +78,14 @@ for (const htmlFile of productHtmlFiles) {
   }
 }
 
+const homeHtml = readFileSync(path.join(outputRoot, 'index.html'), 'utf8');
 const apiHtml = readFileSync(path.join(outputRoot, 'api', 'index.html'), 'utf8');
 const migrationHtml = readFileSync(path.join(outputRoot, 'migrate', 'index.html'), 'utf8');
 const agentGuide = readFileSync(path.join(outputRoot, 'migrate', 'agent-guide.md'), 'utf8');
 const siteCss = readFileSync(path.join(outputRoot, 'assets', 'site.css'), 'utf8');
+if (homeHtml.includes('forged for Node 24') || homeHtml.includes('class="release-kicker"')) {
+  failures.push('index.html still includes the removed Node 24 release kicker');
+}
 if (!apiHtml.includes('data-api-symbol')) {
   failures.push('api/index.html is missing generated API symbols');
 }
