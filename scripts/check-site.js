@@ -99,6 +99,14 @@ const traceRiverJs = readFileSync(path.join(outputRoot, 'assets', 'trace-river.j
 if (homeHtml.includes('forged for Node 24') || homeHtml.includes('class="release-kicker"')) {
   failures.push('index.html still includes the removed Node 24 release kicker');
 }
+if (
+  !homeHtml.includes('Stop writing shell scripts.') ||
+  !homeHtml.includes('Build workflows you can test.') ||
+  !homeHtml.includes('Compose workflow components') ||
+  !homeHtml.includes('Readable to people and agents')
+) {
+  failures.push('index.html is missing the testable workflow component positioning');
+}
 if (!apiHtml.includes('data-api-symbol')) {
   failures.push('api/index.html is missing generated API symbols');
 }

@@ -6,8 +6,10 @@
 [![Node.js Version](https://img.shields.io/node/v/beelzebub.svg)](https://nodejs.org)
 
 ## Description
-A modern, fully-typed task runner pipeline framework.
-Tasks are **Modular, Extendable, Flexible, Manageable, and Fire Resistant!**
+A modern, fully-typed framework for replacing shell-script and package.json orchestration with
+workflow components you can compose, reuse, observe, and test like application code.
+
+Tasks are **Modular, Extendable, Testable, Manageable, and Fire Resistant!**
 
 > **v2.0** is a ground-up TypeScript rewrite for Node.js 24+, with ESM and CommonJS entry points and TC39 standard decorators.
 
@@ -31,26 +33,27 @@ Tasks are **Modular, Extendable, Flexible, Manageable, and Fire Resistant!**
 
 ## Features
 
-1. **Promise-based tasks**, supporting:
+1. **Testable workflow components** — create isolated instances with `bz.create()`, inject configuration and logging, run named tasks through the public API, and assert behavior in your existing test runner
+2. **Promise-based tasks**, supporting:
     * `async`/`await` ([example](./examples/api/async.ts))
     * Generators ([example](./examples/api/async.ts))
     * Streams ([example](./examples/api/stream.ts)) — compatible with existing `gulp` tasks
-2. **ES Class** base — extend other task classes ([example](./examples/api/extend.ts))
-3. **Sub-tasks**
+3. **ES Class** base — extend other task classes ([example](./examples/api/extend.ts))
+4. **Sub-tasks**
     * Static — add a task class as a sub-task ([example](./examples/api/subTasksSimple.ts))
     * Dynamic — created from configuration ([example](./examples/api/subTasksAdvanced.ts))
-4. **Compose tasks**
+5. **Compose tasks**
     * Parallel ([example](./examples/api/parallel.ts))
     * Sequence ([example](./examples/api/sequence.ts))
-5. **Before/After hooks** — per-task and all-tasks ([simple](./examples/api/beforeAfter.ts), [advanced](./examples/api/beforeAfterAdvanced.ts))
-6. **Decorators** (TC39 standard)
+6. **Before/After hooks** — per-task and all-tasks ([simple](./examples/api/beforeAfter.ts), [advanced](./examples/api/beforeAfterAdvanced.ts))
+7. **Decorators** (TC39 standard)
     * `@defaultTask` ([example](./examples/api/decoratorHelp.ts))
     * `@help('...')` ([example](./examples/api/decoratorHelp.ts))
     * `@vars({ ... })` ([example](./examples/api/decoratorVars.ts))
-7. **Auto-generated help docs** ([API](./examples/api/helpDocs.ts), [CLI](./examples/cli/helpDocs.ts))
-8. **Variables / options** — pass per-task or globally ([API](./examples/api/passingVars.ts), [CLI](./examples/cli/defineVars.ts))
-9. **CLI** ([examples](./examples/cli/helloworld.ts)) and **Programmatic API** ([examples](./examples/api/helloworld.ts))
-10. **Totally bad-ass logo!**
+8. **Auto-generated help docs** ([API](./examples/api/helpDocs.ts), [CLI](./examples/cli/helpDocs.ts))
+9. **Variables / options** — pass per-task or globally ([API](./examples/api/passingVars.ts), [CLI](./examples/cli/defineVars.ts))
+10. **CLI** ([examples](./examples/cli/helloworld.ts)) and **Programmatic API** ([examples](./examples/api/helloworld.ts))
+11. **Totally bad-ass logo!**
 
 ---
 

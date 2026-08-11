@@ -14,8 +14,9 @@
 <a href="https://www.npmjs.com/package/beelzebub"><img src="https://img.shields.io/npm/v/beelzebub.svg" alt="npm version"></a>
 <a href="https://nodejs.org"><img src="https://img.shields.io/node/v/beelzebub.svg" alt="Node.js Version"></a></p>
 <h2 id="description" class="tsd-anchor-link">Description<a href="#description" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
-<p>A modern, fully-typed task runner pipeline framework.
-Tasks are <strong>Modular, Extendable, Flexible, Manageable, and Fire Resistant!</strong></p>
+<p>A modern, fully-typed framework for replacing shell-script and package.json orchestration with
+workflow components you can compose, reuse, observe, and test like application code.</p>
+<p>Tasks are <strong>Modular, Extendable, Testable, Manageable, and Fire Resistant!</strong></p>
 <blockquote>
 <p><strong>v2.0</strong> is a ground-up TypeScript rewrite for Node.js 24+, with ESM and CommonJS entry points and TC39 standard decorators.</p>
 </blockquote>
@@ -40,6 +41,7 @@ Tasks are <strong>Modular, Extendable, Flexible, Manageable, and Fire Resistant!
 </ul>
 <h2 id="features" class="tsd-anchor-link">Features<a href="#features" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h2>
 <ol>
+<li><strong>Testable workflow components</strong> — create isolated instances with <code>bz.create()</code>, inject configuration and logging, run named tasks through the public API, and assert behavior in your existing test runner</li>
 <li><strong>Promise-based tasks</strong>, supporting:
 <ul>
 <li><code>async</code>/<code>await</code> (<a href="media/async.ts">example</a>)</li>

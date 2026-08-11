@@ -4,7 +4,7 @@ Use this document as the implementation contract when migrating an existing proj
 
 ## Objective
 
-Migrate the project's selected workflows to Beelzebub 2.0 as a maintainable task layer. Replace difficult-to-maintain command chains with named and composable tasks, keep package scripts and CI commands short, update relevant documentation, and leave the project with its full validation suite passing.
+Migrate the project's selected workflows to Beelzebub 2.0 as a maintainable task layer. Replace difficult-to-maintain command chains with named, composable, and testable workflow components; keep package scripts and CI commands short; update relevant documentation; and leave the project with its full validation suite passing.
 
 The work is not complete merely because the dependency installs. Representative Beelzebub tasks must run successfully through every interface the project uses.
 
@@ -35,6 +35,7 @@ Create a small task map before writing code:
 5. Keep implementation details in code instead of copying long shell fragments into task methods.
 6. Identify reusable task classes that belong in a shared package and project-specific classes that should stay local.
 7. Preserve familiar npm script names as short Beelzebub entry points when developers or CI already depend on them.
+8. Define at least one focused behavioral test for every public workflow being converted.
 
 Do not convert unrelated tooling or redesign application code as part of the script migration.
 

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta
       name="description"
-      content="An AI-agent playbook for migrating package scripts, shell automation, CI commands, and other task runners to Beelzebub 2.0."
+      content="An AI-agent playbook for replacing shell and package-script sprawl with testable Beelzebub workflow components."
     />
     <meta name="theme-color" content="#140d20" />
     <title>Migrate with AI — Beelzebub</title>
@@ -51,16 +51,16 @@
         <div class="shell examples-hero-inner">
           <div>
             <span class="eyebrow eyebrow-bright">PROJECT AUTOMATION → BEELZEBUB 2.0</span>
-            <h1>Let an AI agent turn script sprawl into <span>composable tasks.</span></h1>
+            <h1>Let an AI agent turn script sprawl into <span>testable components.</span></h1>
             <p>
               Give an agent this playbook. It will audit package scripts, shell files, CI commands,
-              and other task runners; map them into named Beelzebub tasks; preserve the commands
-              people already use; and prove the migrated workflows still work.
+              and other task runners; map them into named Beelzebub components; add focused tests;
+              preserve the commands people already use; and prove the migrated workflows still work.
             </p>
           </div>
           <div class="migration-badge">
             <span>Agent-ready playbook</span>
-            <strong>Scripts → Tasks</strong>
+            <strong>Shell → Tested code</strong>
             <small>package.json · shell · CI · task runners</small>
           </div>
         </div>
@@ -81,7 +81,7 @@
           <div class="migration-main">
             <section class="migration-section" id="scope">
               <span class="eyebrow">START WITH THE PROJECT</span>
-              <h2>Migrate the automation you already have.</h2>
+              <h2>Move shell logic into workflow code you can test.</h2>
               <p>
                 The goal is not a dependency swap. It is to move scattered orchestration into one
                 readable task graph without changing the public commands, inputs, or behavior that
@@ -117,7 +117,8 @@
               <h2>Preserve the commands. Replace the sprawl.</h2>
               <p>
                 An agent should inventory every entry point before editing, then translate how the
-                work behaves—not merely copy shell strings into task methods.
+                work behaves—not merely copy shell strings into task methods. Each public workflow
+                should end with a focused behavioral test.
               </p>
               <div class="migration-table-wrap">
                 <table class="migration-table">

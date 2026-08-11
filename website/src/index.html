@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta
       name="description"
-      content="Beelzebub is a TypeScript-first task orchestration framework for composable, observable build pipelines."
+      content="Replace shell-script sprawl with typed, testable workflow components for Node.js."
     />
     <meta name="theme-color" content="#140d20" />
     <meta property="og:type" content="website" />
@@ -13,14 +13,14 @@
     <meta property="og:title" content="Beelzebub — One Hell of a Task Master" />
     <meta
       property="og:description"
-      content="Compose tasks, observe every lifecycle event, and ship typed automation with confidence."
+      content="Build typed workflow components you can compose, reuse, observe, and test like application code."
     />
     <meta property="og:image" content="https://beelzebub.io/assets/og.png" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Beelzebub — One Hell of a Task Master" />
     <meta
       name="twitter:description"
-      content="Task orchestration for TypeScript teams who want control without ceremony."
+      content="Stop maintaining shell glue. Build typed, testable workflow components instead."
     />
     <meta name="twitter:image" content="https://beelzebub.io/assets/og.png" />
     <title>Beelzebub — TypeScript task orchestration</title>
@@ -69,10 +69,10 @@
 
         <div class="shell hero-layout">
           <div class="hero-copy">
-            <h1>Orchestrate every task.<br /><span>See every move.</span></h1>
+            <h1>Stop writing shell scripts.<br /><span>Build workflows you can test.</span></h1>
             <p class="hero-lede">
-              A TypeScript-first task runner for pipelines that need to stay modular, observable,
-              and under control as they grow.
+              Beelzebub turns project automation into typed workflow components you can compose,
+              reuse, observe, and test like application code.
             </p>
 
             <div class="hero-actions">
@@ -211,12 +211,12 @@
         </div>
 
         <div class="shell signal-strip">
-          <span>Built for modern automation</span>
+          <span>Workflow code you can trust</span>
           <ul>
-            <li>Node.js 24+</li>
-            <li>TypeScript 7</li>
-            <li>TC39 decorators</li>
-            <li>Promises &amp; streams</li>
+            <li>Testable TypeScript</li>
+            <li>Reusable components</li>
+            <li>Sequence + parallel</li>
+            <li>Lifecycle events</li>
             <li>CLI + API</li>
           </ul>
         </div>
@@ -226,12 +226,12 @@
         <div class="shell">
           <div class="section-heading">
             <div>
-              <span class="eyebrow">CONTROL WITHOUT CEREMONY</span>
-              <h2>Pipeline power that stays understandable.</h2>
+              <span class="eyebrow">WORKFLOW CODE, NOT SHELL GLUE</span>
+              <h2>Automation should be as testable as your application.</h2>
             </div>
             <p>
-              Beelzebub gives every task a namespace, lifecycle, and observable result—without
-              turning your automation into a platform project.
+              Shell strings hide order, inputs, and failure behavior. Beelzebub gives every step a
+              name, contract, lifecycle, and testable API.
             </p>
           </div>
 
@@ -241,10 +241,10 @@
               <div class="feature-icon compose-icon" aria-hidden="true">
                 <span></span><span></span><span></span>
               </div>
-              <h3>Compose work your way</h3>
+              <h3>Compose workflow components</h3>
               <p>
-                Run ordered sequences, fan work out in parallel, nest task groups, or mix all three
-                in the same release flow.
+                Combine small task classes in sequences, parallel groups, and nested workflows
+                instead of growing another shell script.
               </p>
               <div class="mini-code">
                 <code><span>return</span> this.$sequence(</code>
@@ -258,25 +258,25 @@
               <div class="feature-icon trace-icon" aria-hidden="true">
                 <span></span><span></span><span></span><span></span>
               </div>
-              <h3>Trace the lifecycle</h3>
+              <h3>Test the behavior</h3>
               <p>
-                Hook into before/after events, emit domain signals, and inspect task timing when a
-                pipeline behaves unexpectedly.
+                Create an isolated Beelzebub instance, inject configuration and logging, run a named
+                task, and assert the result with your existing test runner.
               </p>
               <div class="trace-list" aria-hidden="true">
-                <span><i></i>$before</span>
-                <span><i></i>Build.compile</span>
-                <span><i></i>$after</span>
+                <span><i></i>arrange component</span>
+                <span><i></i>run Release.verify</span>
+                <span><i></i>assert behavior</span>
               </div>
             </article>
 
             <article class="feature-card feature-card-dark">
               <div class="feature-number">03</div>
               <div class="feature-icon type-icon" aria-hidden="true">T</div>
-              <h3>Typed from config to task</h3>
+              <h3>Give tasks explicit contracts</h3>
               <p>
-                Ship declarations, validate task variables, and use standard decorators without a
-                legacy transform pipeline.
+                Describe inputs, validate variables, and ship declarations so workflow behavior is
+                discoverable before a command runs.
               </p>
               <ul class="check-list">
                 <li>Strict declarations</li>
@@ -290,12 +290,12 @@
               <div class="feature-icon module-icon" aria-hidden="true">
                 <span>BZ</span>
               </div>
-              <h3>Turn repeatable work into modules</h3>
+              <h3>Readable to people and agents</h3>
               <p>
-                Extend task classes, swap implementations through interfaces, and share automation
-                across repositories without copying scripts.
+                Named methods, explicit graphs, typed inputs, and packaged components are easier to
+                inspect, extend, and change safely than opaque command strings.
               </p>
-              <a class="text-link" href="/examples/#advanced">See advanced patterns →</a>
+              <a class="text-link" href="/migrate/">Give an agent the playbook →</a>
             </article>
           </div>
         </div>
@@ -305,12 +305,11 @@
         <div class="shell">
           <div class="code-layout">
             <div class="code-copy">
-              <span class="eyebrow eyebrow-bright">FROM ZERO TO ORCHESTRATED</span>
-              <h2>Readable enough for day one. Capable enough for release day.</h2>
+              <span class="eyebrow eyebrow-bright">TESTABLE WORKFLOW CODE</span>
+              <h2>Readable on day one. Testable on every change.</h2>
               <p>
-                Define public methods as tasks, register the class, then run fully-qualified task
-                paths. Beelzebub handles initialization, composition, variables, lifecycle hooks,
-                and completion.
+                Define reusable components as task classes, then run the same named workflow from
+                tests, local development, package scripts, and CI.
               </p>
 
               <div class="code-tabs" role="tablist" aria-label="Quick start examples">
@@ -349,8 +348,11 @@
               <div class="code-benefit">
                 <span class="benefit-icon">↳</span>
                 <div>
-                  <strong>One mental model</strong>
-                  <p>The same task classes power the JavaScript API and the <code>bz</code> CLI.</p>
+                  <strong>Designed for tests</strong>
+                  <p>
+                    Use <code>bz.create()</code> for isolation, inject configuration, and assert
+                    workflow behavior through the same public API used in production.
+                  </p>
                 </div>
               </div>
             </div>
@@ -538,8 +540,8 @@ bz.add(BuildTasks);
         <div class="shell">
           <div class="section-heading compact-heading">
             <div>
-              <span class="eyebrow">PATTERNS, NOT PSEUDOCODE</span>
-              <h2>Start from a working example.</h2>
+              <span class="eyebrow">WORKFLOW COMPONENT PATTERNS</span>
+              <h2>Compose, test, and reuse the pieces.</h2>
             </div>
             <a class="button button-ink" href="/examples/">Browse every example →</a>
           </div>
@@ -610,7 +612,7 @@ bz.add(BuildTasks);
         <div class="shell final-cta-inner">
           <img src="/assets/bz-logo.svg" alt="" />
           <span class="eyebrow">ONE HELL OF A TASK MASTER</span>
-          <h2>Give your automation<br />a better command center.</h2>
+          <h2>Stop maintaining shell glue.<br />Start testing your workflows.</h2>
           <div class="hero-actions">
             <a class="button button-primary" href="#quickstart">Get started</a>
             <a class="button button-secondary" href="https://github.com/jstty/beelzebub">
@@ -628,7 +630,7 @@ bz.add(BuildTasks);
             <span class="brand-mark"><img src="/assets/bz-logo.svg" alt="" /></span>
             <span class="brand-name">beelzebub</span>
           </a>
-          <p>Modular, observable task orchestration for modern Node.js.</p>
+          <p>Typed, testable workflow components for modern Node.js.</p>
           <span class="footer-license">MIT licensed · Built with fire resistance</span>
         </div>
         <div class="footer-column">
