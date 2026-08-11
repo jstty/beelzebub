@@ -4,6 +4,12 @@ const toggleLabel = document.querySelector('[data-trace-toggle-label]');
 const elapsed = document.querySelector('[data-trace-elapsed]');
 const timing = document.querySelector('[data-trace-timing]');
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+const compactViewport = window.matchMedia('(max-width: 700px)');
+const staticLayer = document.createElement('canvas');
+
+const STATIC_LAYER_SCALE = compactViewport.matches ? 0.5 : 0.68;
+const TARGET_FRAME_MS = 1000 / (compactViewport.matches ? 30 : 45);
+const SAMPLE_COUNT = compactViewport.matches ? 80 : 110;
 
 const COLORS = {
   red: '#ff321f',
@@ -111,6 +117,8 @@ let pointerY = 0;
 let cachedWidth = 0;
 let cachedHeight = 0;
 let cachedBeams = [];
+let lastFrame = 0;
+let lastTelemetry = -1;
 
 function hexToRgba(hex, alpha) {
   const value = Number.parseInt(hex.slice(1), 16);
@@ -126,47 +134,36 @@ function catmullRomPoint(points, amount) {
   const second = points[index];
   const third = points[Math.min(points.length - 1, index + 1)];
   const fourth = points[Math.min(points.length - 1, index + 2)];
-  const localSquared = local * local;
-  const localCubed = localSquared * local;
+  const squared = local * local;
+  const cubed = squared * local;
 
   return [0, 1].map(
     (axis) =>
       0.5 *
       (2 * second[axis] +
         (-first[axis] + third[axis]) * local +
-        (2 * first[axis] - 5 * second[axis] + 4 * third[axis] - fourth[axis]) * localSquared +
-        (-first[axis] + 3 * second[axis] - 3 * third[axis] + fourth[axis]) * localCubed)
+        (2 * first[axis] - 5 * second[axis] + 4 * third[axis] - fourth[axis]) * squared +
+        (-first[axis] + 3 * second[axis] - 3 * third[axis] + fourth[axis]) * cubed)
   );
 }
 
 function sampleBeam(template, width, height) {
   const scaledPoints = template.points.map(([x, y]) => [x * width, y * height]);
-  return Array.from({ length: 181 }, (_, index) => catmullRomPoint(scaledPoints, index / 180));
+  return Array.from({ length: SAMPLE_COUNT + 1 }, (_, index) =>
+    catmullRomPoint(scaledPoints, index / SAMPLE_COUNT)
+  );
 }
 
-function resizeCanvas() {
-  if (!(canvas instanceof HTMLCanvasElement)) return null;
-  const width = window.innerWidth;
-  const height = window.innerHeight;
-  const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
-  const targetWidth = Math.round(width * pixelRatio);
-  const targetHeight = Math.round(height * pixelRatio);
-
-  if (canvas.width !== targetWidth || canvas.height !== targetHeight) {
-    canvas.width = targetWidth;
-    canvas.height = targetHeight;
-    cachedWidth = width;
-    cachedHeight = height;
-    cachedBeams = beamTemplates.map((beam) => sampleBeam(beam, width, height));
-  }
-
-  const context = canvas.getContext('2d');
-  context.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
-  context.clearRect(0, 0, width, height);
-  return { context, width, height };
+function configureContext(layer, width, height) {
+  layer.width = Math.max(1, Math.round(width * STATIC_LAYER_SCALE));
+  layer.height = Math.max(1, Math.round(height * STATIC_LAYER_SCALE));
+  const context = layer.getContext('2d', { alpha: true });
+  context.setTransform(STATIC_LAYER_SCALE, 0, 0, STATIC_LAYER_SCALE, 0, 0);
+  return context;
 }
 
-function strokePoints(context, points, color, width, alpha, blur = 0) {
+function strokePoints(context, points, color, width, alpha, blur = 0, offsetX = 0, offsetY = 0) {
+  if (points.length < 2) return;
   context.save();
   context.strokeStyle = hexToRgba(color, alpha);
   context.lineWidth = width;
@@ -175,120 +172,149 @@ function strokePoints(context, points, color, width, alpha, blur = 0) {
   context.shadowColor = color;
   context.shadowBlur = blur;
   context.beginPath();
-  context.moveTo(points[0][0] + pointerX, points[0][1] + pointerY);
+  context.moveTo(points[0][0] + offsetX, points[0][1] + offsetY);
   for (let index = 1; index < points.length; index += 1) {
-    context.lineTo(points[index][0] + pointerX, points[index][1] + pointerY);
+    context.lineTo(points[index][0] + offsetX, points[index][1] + offsetY);
   }
   context.stroke();
   context.restore();
 }
 
-function drawBackgroundParticles(context, width, height, seconds) {
+function drawStaticParticles(context, width, height) {
   context.save();
   context.globalCompositeOperation = 'lighter';
-  for (let index = 0; index < 80; index += 1) {
-    const seedX = (Math.sin(index * 82.17) * 0.5 + 0.5) * width;
-    const seedY = (Math.sin(index * 19.41 + 2) * 0.5 + 0.5) * height;
-    const drift = Math.sin(seconds * 0.25 + index) * 5;
+  for (let index = 0; index < 58; index += 1) {
+    const x = (Math.sin(index * 82.17) * 0.5 + 0.5) * width;
+    const y = (Math.sin(index * 19.41 + 2) * 0.5 + 0.5) * height;
     const alpha = 0.05 + ((index * 17) % 10) / 180;
     context.fillStyle =
       index % 5 === 0 ? hexToRgba(COLORS.red, alpha) : hexToRgba(COLORS.violet, alpha);
     context.beginPath();
-    context.arc(seedX + drift, seedY - drift * 0.5, index % 9 === 0 ? 1.4 : 0.7, 0, Math.PI * 2);
+    context.arc(x, y, index % 9 === 0 ? 1.4 : 0.7, 0, Math.PI * 2);
     context.fill();
   }
   context.restore();
 }
 
-function drawBeam(context, points, beam, seconds, index) {
-  context.save();
-  context.globalCompositeOperation = 'lighter';
-  strokePoints(context, points, beam.color, 46, 0.018, 28);
-  strokePoints(context, points, beam.color, 24, 0.035, 24);
-  strokePoints(context, points, beam.color, 10, 0.075, 18);
-  strokePoints(context, points, beam.color, 2.2, 0.58, 10);
-  strokePoints(context, points, COLORS.white, 0.65, 0.66, 4);
+function drawStaticJunction(context, junction, width, height) {
+  const x = junction.x * width;
+  const y = junction.y * height;
+  const bloom = context.createRadialGradient(x, y, 0, x, y, 54);
+  bloom.addColorStop(0, hexToRgba(COLORS.white, 0.82));
+  bloom.addColorStop(0.08, hexToRgba(junction.color, 0.72));
+  bloom.addColorStop(0.42, hexToRgba(junction.color, 0.12));
+  bloom.addColorStop(1, hexToRgba(junction.color, 0));
+  context.fillStyle = bloom;
+  context.beginPath();
+  context.arc(x, y, 54, 0, Math.PI * 2);
+  context.fill();
+  context.fillStyle = hexToRgba(COLORS.white, 0.46);
+  context.font = '8px SFMono-Regular, Consolas, monospace';
+  context.fillText(junction.label, x + 13, y - 13);
+}
 
+function rebuildStaticLayer(width, height) {
+  const context = configureContext(staticLayer, width, height);
+  context.clearRect(0, 0, width, height);
+  context.globalCompositeOperation = 'lighter';
+  drawStaticParticles(context, width, height);
+
+  for (const [index, beam] of beamTemplates.entries()) {
+    const points = cachedBeams[index];
+    strokePoints(context, points, beam.color, 42, 0.02, 22);
+    strokePoints(context, points, beam.color, 19, 0.04, 18);
+    strokePoints(context, points, beam.color, 7, 0.08, 12);
+    strokePoints(context, points, beam.color, 2, 0.56, 7);
+    strokePoints(context, points, COLORS.white, 0.55, 0.62, 2);
+  }
+  for (const junction of junctions) drawStaticJunction(context, junction, width, height);
+}
+
+function prepareCanvas() {
+  if (!(canvas instanceof HTMLCanvasElement)) return null;
+  const width = window.innerWidth;
+  const height = window.innerHeight;
+
+  if (cachedWidth !== width || cachedHeight !== height) {
+    cachedWidth = width;
+    cachedHeight = height;
+    cachedBeams = beamTemplates.map((beam) => sampleBeam(beam, width, height));
+    configureContext(canvas, width, height);
+    rebuildStaticLayer(width, height);
+  }
+
+  const context = canvas.getContext('2d', { alpha: true });
+  context.setTransform(STATIC_LAYER_SCALE, 0, 0, STATIC_LAYER_SCALE, 0, 0);
+  context.clearRect(0, 0, width, height);
+  context.drawImage(staticLayer, pointerX, pointerY, width, height);
+  return { context, width, height };
+}
+
+function drawMovingBeam(context, points, beam, seconds, index) {
   const progress = (seconds * beam.speed + beam.offset) % 1;
   const headIndex = Math.floor(progress * (points.length - 1));
   const trail = [];
-  for (let offset = 24; offset >= 0; offset -= 1) {
+  for (let offset = 18; offset >= 0; offset -= 1) {
     const pointIndex = headIndex - offset;
     if (pointIndex >= 0) trail.push(points[pointIndex]);
   }
-  strokePoints(context, trail, beam.color, 13, 0.18, 28);
-  strokePoints(context, trail, beam.color, 4.5, 0.78, 22);
-  strokePoints(context, trail, COLORS.white, 1.4, 0.96, 12);
+
+  context.save();
+  context.globalCompositeOperation = 'lighter';
+  strokePoints(context, trail, beam.color, 11, 0.18, 18, pointerX, pointerY);
+  strokePoints(context, trail, beam.color, 3.8, 0.8, 15, pointerX, pointerY);
+  strokePoints(context, trail, COLORS.white, 1.15, 0.96, 7, pointerX, pointerY);
 
   const [headX, headY] = points[headIndex];
-  const flare = context.createRadialGradient(
-    headX + pointerX,
-    headY + pointerY,
-    0,
-    headX + pointerX,
-    headY + pointerY,
-    26
-  );
+  const x = headX + pointerX;
+  const y = headY + pointerY;
+  const flare = context.createRadialGradient(x, y, 0, x, y, 23);
   flare.addColorStop(0, hexToRgba(COLORS.white, 0.96));
   flare.addColorStop(0.12, hexToRgba(beam.color, 0.85));
   flare.addColorStop(1, hexToRgba(beam.color, 0));
   context.fillStyle = flare;
   context.beginPath();
-  context.arc(headX + pointerX, headY + pointerY, 26, 0, Math.PI * 2);
+  context.arc(x, y, 23, 0, Math.PI * 2);
   context.fill();
 
   if (index < 3) {
-    for (let spark = 0; spark < 6; spark += 1) {
-      const [sparkX, sparkY] = points[Math.max(0, headIndex - spark * 4)];
-      context.fillStyle = hexToRgba(beam.color, 0.42 - spark * 0.05);
+    for (let spark = 0; spark < 4; spark += 1) {
+      const [sparkX, sparkY] = points[Math.max(0, headIndex - spark * 3)];
+      context.fillStyle = hexToRgba(beam.color, 0.38 - spark * 0.07);
       context.fillRect(
         sparkX + pointerX - spark * 2,
-        sparkY + pointerY + Math.sin(spark + seconds) * 3,
-        1.3,
-        1.3
+        sparkY + pointerY + Math.sin(spark + seconds) * 2,
+        1.2,
+        1.2
       );
     }
   }
   context.restore();
 }
 
-function drawJunction(context, junction, width, height, seconds, index) {
+function drawJunctionPulse(context, junction, width, height, seconds, index) {
   const x = junction.x * width + pointerX;
   const y = junction.y * height + pointerY;
-  const pulse = (seconds * 18 + index * 13) % 28;
-
+  const pulse = (seconds * 17 + index * 13) % 27;
   context.save();
   context.globalCompositeOperation = 'lighter';
-  const bloom = context.createRadialGradient(x, y, 0, x, y, 54);
-  bloom.addColorStop(0, hexToRgba(COLORS.white, 0.9));
-  bloom.addColorStop(0.08, hexToRgba(junction.color, 0.82));
-  bloom.addColorStop(0.42, hexToRgba(junction.color, 0.13));
-  bloom.addColorStop(1, hexToRgba(junction.color, 0));
-  context.fillStyle = bloom;
-  context.beginPath();
-  context.arc(x, y, 54, 0, Math.PI * 2);
-  context.fill();
-  context.strokeStyle = hexToRgba(junction.color, Math.max(0, 0.48 - pulse / 70));
+  context.strokeStyle = hexToRgba(junction.color, Math.max(0, 0.44 - pulse / 70));
   context.lineWidth = 1;
   context.beginPath();
   context.arc(x, y, 10 + pulse, 0, Math.PI * 2);
   context.stroke();
   context.fillStyle = COLORS.white;
   context.shadowColor = junction.color;
-  context.shadowBlur = 22;
+  context.shadowBlur = 15;
   context.beginPath();
-  context.arc(x, y, 3.2, 0, Math.PI * 2);
+  context.arc(x, y, 2.8, 0, Math.PI * 2);
   context.fill();
-  context.restore();
-
-  context.save();
-  context.fillStyle = hexToRgba(COLORS.white, 0.46);
-  context.font = '8px SFMono-Regular, Consolas, monospace';
-  context.fillText(junction.label, x + 13, y - 13);
   context.restore();
 }
 
 function updateTelemetry(seconds) {
+  if (seconds - lastTelemetry < 0.2) return;
+  lastTelemetry = seconds;
   if (elapsed) {
     const milliseconds = Math.floor((seconds * 1000) % 1000)
       .toString()
@@ -302,19 +328,18 @@ function updateTelemetry(seconds) {
 }
 
 function draw(timestamp) {
-  const prepared = resizeCanvas();
-  if (!prepared || cachedWidth === 0 || cachedHeight === 0) return;
+  const prepared = prepareCanvas();
+  if (!prepared) return;
   const { context, width, height } = prepared;
   const seconds = (timestamp - pausedDuration) / 1000;
-  pointerX += (pointerTargetX - pointerX) * 0.035;
-  pointerY += (pointerTargetY - pointerY) * 0.035;
+  pointerX += (pointerTargetX - pointerX) * 0.06;
+  pointerY += (pointerTargetY - pointerY) * 0.06;
 
-  drawBackgroundParticles(context, width, height, seconds);
   for (const [index, beam] of beamTemplates.entries()) {
-    drawBeam(context, cachedBeams[index], beam, seconds, index);
+    drawMovingBeam(context, cachedBeams[index], beam, seconds, index);
   }
   for (const [index, junction] of junctions.entries()) {
-    drawJunction(context, junction, width, height, seconds, index);
+    drawJunctionPulse(context, junction, width, height, seconds, index);
   }
   updateTelemetry(seconds);
 }
@@ -326,7 +351,14 @@ function updateToggle() {
 }
 
 function animate(timestamp) {
-  if (!paused && document.visibilityState === 'visible') draw(timestamp);
+  if (
+    !paused &&
+    document.visibilityState === 'visible' &&
+    timestamp - lastFrame >= TARGET_FRAME_MS
+  ) {
+    lastFrame = timestamp - ((timestamp - lastFrame) % TARGET_FRAME_MS);
+    draw(timestamp);
+  }
   window.requestAnimationFrame(animate);
 }
 
@@ -341,8 +373,8 @@ toggle?.addEventListener('click', () => {
 });
 
 window.addEventListener('pointermove', (event) => {
-  pointerTargetX = (event.clientX / window.innerWidth - 0.5) * 12;
-  pointerTargetY = (event.clientY / window.innerHeight - 0.5) * 8;
+  pointerTargetX = (event.clientX / window.innerWidth - 0.5) * 8;
+  pointerTargetY = (event.clientY / window.innerHeight - 0.5) * 5;
 });
 
 window.addEventListener('resize', () => {

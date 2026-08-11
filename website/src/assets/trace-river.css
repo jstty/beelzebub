@@ -13,6 +13,7 @@
   inset: 0;
   width: 100%;
   height: 100%;
+  image-rendering: auto;
   pointer-events: none;
 }
 
@@ -30,16 +31,16 @@
       rgba(6, 2, 8, 0.18)
     ),
     repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.012) 0 1px, transparent 1px 4px);
-  mix-blend-mode: screen;
+  opacity: 0.72;
 }
 
 .trace-site-header {
   z-index: 100;
   border-bottom-color: rgba(255, 71, 57, 0.14);
-  background: rgba(19, 3, 10, 0.58);
+  background: rgba(19, 3, 10, 0.82);
   box-shadow: 0 16px 60px rgba(4, 1, 7, 0.34);
-  backdrop-filter: blur(24px) saturate(145%);
-  -webkit-backdrop-filter: blur(24px) saturate(145%);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 .trace-site-header.is-scrolled {
@@ -113,19 +114,19 @@
 
 .trace-glass-panel {
   position: relative;
+  isolation: isolate;
   overflow: hidden;
   border: 1px solid rgba(255, 91, 73, 0.19);
   background: linear-gradient(
     145deg,
-    rgba(73, 8, 22, 0.61),
-    rgba(24, 3, 13, 0.7) 54%,
-    rgba(35, 5, 22, 0.58)
+    rgba(78, 9, 24, 0.78),
+    rgba(25, 3, 14, 0.84) 54%,
+    rgba(38, 5, 23, 0.76)
   );
   box-shadow:
     inset 0 1px 0 rgba(255, 185, 170, 0.055),
     0 26px 90px rgba(3, 1, 7, 0.42);
-  backdrop-filter: blur(24px) saturate(142%);
-  -webkit-backdrop-filter: blur(24px) saturate(142%);
+  contain: paint;
 }
 
 .trace-glass-panel::after {
@@ -135,7 +136,8 @@
   pointer-events: none;
   background:
     linear-gradient(115deg, rgba(255, 145, 125, 0.055), transparent 26%),
-    radial-gradient(circle at 92% 4%, rgba(150, 73, 255, 0.1), transparent 28%);
+    radial-gradient(circle at 92% 4%, rgba(150, 73, 255, 0.1), transparent 28%),
+    repeating-linear-gradient(105deg, rgba(255, 226, 218, 0.012) 0 1px, transparent 1px 5px);
 }
 
 .trace-hero-panel {
@@ -201,10 +203,9 @@
   padding: 0 11px 0 18px;
   margin-top: 34px;
   border: 1px solid rgba(255, 112, 93, 0.2);
-  background: rgba(7, 2, 8, 0.54);
+  background: rgba(7, 2, 8, 0.72);
   border-radius: 12px;
   box-shadow: inset 0 0 32px rgba(74, 7, 23, 0.2);
-  backdrop-filter: blur(18px);
 }
 
 .trace-install > span {

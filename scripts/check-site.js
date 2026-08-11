@@ -94,6 +94,8 @@ const traceRiverHtml = readFileSync(
 );
 const agentGuide = readFileSync(path.join(outputRoot, 'migrate', 'agent-guide.md'), 'utf8');
 const siteCss = readFileSync(path.join(outputRoot, 'assets', 'site.css'), 'utf8');
+const traceRiverCss = readFileSync(path.join(outputRoot, 'assets', 'trace-river.css'), 'utf8');
+const traceRiverJs = readFileSync(path.join(outputRoot, 'assets', 'trace-river.js'), 'utf8');
 if (homeHtml.includes('forged for Node 24') || homeHtml.includes('class="release-kicker"')) {
   failures.push('index.html still includes the removed Node 24 release kicker');
 }
@@ -145,6 +147,16 @@ if (
   !motionLabHtml.includes('href="/motion-lab/trace-river/"')
 ) {
   failures.push('motion-lab/trace-river/index.html is missing the full background prototype');
+}
+if (
+  !traceRiverJs.includes('STATIC_LAYER_SCALE') ||
+  !traceRiverJs.includes('TARGET_FRAME_MS') ||
+  !traceRiverJs.includes('rebuildStaticLayer')
+) {
+  failures.push('assets/trace-river.js is missing its cached, frame-budgeted renderer');
+}
+if (/\.trace-glass-panel\s*\{[^}]*backdrop-filter:\s*blur/s.test(traceRiverCss)) {
+  failures.push('assets/trace-river.css uses live blur over the animated canvas');
 }
 const migrationSectionIds = ['scope', 'plan', 'example', 'packages', 'agent', 'verify'];
 if (
