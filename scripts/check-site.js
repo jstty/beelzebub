@@ -151,9 +151,11 @@ if (
 if (
   !traceRiverJs.includes('STATIC_LAYER_SCALE') ||
   !traceRiverJs.includes('TARGET_FRAME_MS') ||
-  !traceRiverJs.includes('rebuildStaticLayer')
+  !traceRiverJs.includes('rebuildStaticLayer') ||
+  !traceRiverJs.includes('riverDriftX') ||
+  !traceRiverJs.includes('riverDriftY')
 ) {
-  failures.push('assets/trace-river.js is missing its cached, frame-budgeted renderer');
+  failures.push('assets/trace-river.js is missing its cached, frame-budgeted drifting renderer');
 }
 if (/\.trace-glass-panel\s*\{[^}]*backdrop-filter:\s*blur/s.test(traceRiverCss)) {
   failures.push('assets/trace-river.css uses live blur over the animated canvas');

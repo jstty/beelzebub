@@ -37,14 +37,14 @@
 .trace-site-header {
   z-index: 100;
   border-bottom-color: rgba(255, 71, 57, 0.14);
-  background: rgba(19, 3, 10, 0.82);
+  background: rgba(13, 2, 8, 0.9);
   box-shadow: 0 16px 60px rgba(4, 1, 7, 0.34);
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
 }
 
 .trace-site-header.is-scrolled {
-  background: rgba(18, 3, 10, 0.74);
+  background: rgba(12, 2, 7, 0.94);
 }
 
 .trace-prototype-main {
@@ -119,12 +119,13 @@
   border: 1px solid rgba(255, 91, 73, 0.19);
   background: linear-gradient(
     145deg,
-    rgba(78, 9, 24, 0.78),
-    rgba(25, 3, 14, 0.84) 54%,
-    rgba(38, 5, 23, 0.76)
+    rgba(48, 5, 16, 0.88),
+    rgba(12, 2, 9, 0.93) 54%,
+    rgba(25, 3, 17, 0.88)
   );
   box-shadow:
     inset 0 1px 0 rgba(255, 185, 170, 0.055),
+    inset 0 0 60px rgba(92, 5, 25, 0.12),
     0 26px 90px rgba(3, 1, 7, 0.42);
   contain: paint;
 }
@@ -203,7 +204,7 @@
   padding: 0 11px 0 18px;
   margin-top: 34px;
   border: 1px solid rgba(255, 112, 93, 0.2);
-  background: rgba(7, 2, 8, 0.72);
+  background: rgba(5, 1, 7, 0.84);
   border-radius: 12px;
   box-shadow: inset 0 0 32px rgba(74, 7, 23, 0.2);
 }

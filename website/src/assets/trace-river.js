@@ -230,7 +230,7 @@ function rebuildStaticLayer(width, height) {
   for (const junction of junctions) drawStaticJunction(context, junction, width, height);
 }
 
-function prepareCanvas() {
+function prepareCanvas(offsetX, offsetY) {
   if (!(canvas instanceof HTMLCanvasElement)) return null;
   const width = window.innerWidth;
   const height = window.innerHeight;
@@ -246,11 +246,11 @@ function prepareCanvas() {
   const context = canvas.getContext('2d', { alpha: true });
   context.setTransform(STATIC_LAYER_SCALE, 0, 0, STATIC_LAYER_SCALE, 0, 0);
   context.clearRect(0, 0, width, height);
-  context.drawImage(staticLayer, pointerX, pointerY, width, height);
+  context.drawImage(staticLayer, offsetX, offsetY, width, height);
   return { context, width, height };
 }
 
-function drawMovingBeam(context, points, beam, seconds, index) {
+function drawMovingBeam(context, points, beam, seconds, index, offsetX, offsetY) {
   const progress = (seconds * beam.speed + beam.offset) % 1;
   const headIndex = Math.floor(progress * (points.length - 1));
   const trail = [];
@@ -261,13 +261,13 @@ function drawMovingBeam(context, points, beam, seconds, index) {
 
   context.save();
   context.globalCompositeOperation = 'lighter';
-  strokePoints(context, trail, beam.color, 11, 0.18, 18, pointerX, pointerY);
-  strokePoints(context, trail, beam.color, 3.8, 0.8, 15, pointerX, pointerY);
-  strokePoints(context, trail, COLORS.white, 1.15, 0.96, 7, pointerX, pointerY);
+  strokePoints(context, trail, beam.color, 11, 0.18, 18, offsetX, offsetY);
+  strokePoints(context, trail, beam.color, 3.8, 0.8, 15, offsetX, offsetY);
+  strokePoints(context, trail, COLORS.white, 1.15, 0.96, 7, offsetX, offsetY);
 
   const [headX, headY] = points[headIndex];
-  const x = headX + pointerX;
-  const y = headY + pointerY;
+  const x = headX + offsetX;
+  const y = headY + offsetY;
   const flare = context.createRadialGradient(x, y, 0, x, y, 23);
   flare.addColorStop(0, hexToRgba(COLORS.white, 0.96));
   flare.addColorStop(0.12, hexToRgba(beam.color, 0.85));
@@ -282,8 +282,8 @@ function drawMovingBeam(context, points, beam, seconds, index) {
       const [sparkX, sparkY] = points[Math.max(0, headIndex - spark * 3)];
       context.fillStyle = hexToRgba(beam.color, 0.38 - spark * 0.07);
       context.fillRect(
-        sparkX + pointerX - spark * 2,
-        sparkY + pointerY + Math.sin(spark + seconds) * 2,
+        sparkX + offsetX - spark * 2,
+        sparkY + offsetY + Math.sin(spark + seconds) * 2,
         1.2,
         1.2
       );
@@ -292,9 +292,9 @@ function drawMovingBeam(context, points, beam, seconds, index) {
   context.restore();
 }
 
-function drawJunctionPulse(context, junction, width, height, seconds, index) {
-  const x = junction.x * width + pointerX;
-  const y = junction.y * height + pointerY;
+function drawJunctionPulse(context, junction, width, height, seconds, index, offsetX, offsetY) {
+  const x = junction.x * width + offsetX;
+  const y = junction.y * height + offsetY;
   const pulse = (seconds * 17 + index * 13) % 27;
   context.save();
   context.globalCompositeOperation = 'lighter';
@@ -328,18 +328,22 @@ function updateTelemetry(seconds) {
 }
 
 function draw(timestamp) {
-  const prepared = prepareCanvas();
-  if (!prepared) return;
-  const { context, width, height } = prepared;
   const seconds = (timestamp - pausedDuration) / 1000;
   pointerX += (pointerTargetX - pointerX) * 0.06;
   pointerY += (pointerTargetY - pointerY) * 0.06;
+  const riverDriftX = Math.sin(seconds * 0.12) * 7;
+  const riverDriftY = Math.cos(seconds * 0.09) * 5;
+  const sceneOffsetX = pointerX + riverDriftX;
+  const sceneOffsetY = pointerY + riverDriftY;
+  const prepared = prepareCanvas(sceneOffsetX, sceneOffsetY);
+  if (!prepared) return;
+  const { context, width, height } = prepared;
 
   for (const [index, beam] of beamTemplates.entries()) {
-    drawMovingBeam(context, cachedBeams[index], beam, seconds, index);
+    drawMovingBeam(context, cachedBeams[index], beam, seconds, index, sceneOffsetX, sceneOffsetY);
   }
   for (const [index, junction] of junctions.entries()) {
-    drawJunctionPulse(context, junction, width, height, seconds, index);
+    drawJunctionPulse(context, junction, width, height, seconds, index, sceneOffsetX, sceneOffsetY);
   }
   updateTelemetry(seconds);
 }
