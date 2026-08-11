@@ -2533,6 +2533,83 @@ pre {
   gap: 10px;
 }
 
+.agent-workflow {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 9px;
+  margin: 34px 0 20px;
+}
+
+.agent-workflow article {
+  min-height: 176px;
+  padding: 20px;
+  border: 1px solid var(--border-light);
+  background: rgba(var(--light-rgb), 0.56);
+  border-radius: 12px;
+}
+
+.agent-workflow article > span {
+  color: var(--red-deep);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.agent-workflow strong {
+  display: block;
+  margin-top: 24px;
+  font-family: var(--font-display);
+  font-size: 19px;
+  letter-spacing: -0.03em;
+}
+
+.agent-workflow p {
+  margin: 7px 0 0;
+  color: var(--ink-soft);
+  font-size: 11px;
+  line-height: 1.55;
+}
+
+.agent-prompt-window {
+  overflow: hidden;
+  color: var(--white);
+  border: 1px solid rgba(143, 102, 255, 0.3);
+  background:
+    radial-gradient(circle at 92% 8%, rgba(143, 102, 255, 0.14), transparent 30%), var(--night);
+  border-radius: 14px;
+  box-shadow: var(--shadow-dark);
+}
+
+.agent-prompt-window .example-code {
+  max-height: none;
+  padding-bottom: 24px;
+  color: rgba(var(--light-rgb), 0.76);
+  font-size: 11px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+
+.agent-guide-footer {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 24px;
+  border-top: 1px solid var(--border-dark);
+  background: rgba(var(--light-rgb), 0.035);
+}
+
+.agent-guide-footer p {
+  max-width: 440px;
+  margin: 0;
+  color: rgba(var(--light-rgb), 0.54);
+  font-size: 11px;
+}
+
+.agent-guide-footer .button {
+  flex: 0 0 auto;
+}
+
 /* API reference */
 
 .api-page {
@@ -3408,6 +3485,10 @@ pre {
     border-left: 0;
   }
 
+  .agent-workflow {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
   .api-layout {
     grid-template-columns: 1fr;
   }
@@ -3747,6 +3828,23 @@ pre {
   }
 
   .migration-actions .button {
+    width: 100%;
+  }
+
+  .agent-workflow {
+    grid-template-columns: 1fr;
+  }
+
+  .agent-workflow article {
+    min-height: 0;
+  }
+
+  .agent-guide-footer {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .agent-guide-footer .button {
     width: 100%;
   }
 

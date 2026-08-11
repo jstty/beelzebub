@@ -72,7 +72,9 @@ for (const button of document.querySelectorAll('[data-copy]')) {
 
 for (const button of document.querySelectorAll('[data-copy-panel]')) {
   button.addEventListener('click', () => {
-    const scope = button.closest('.code-window, .example-code-wrap');
+    const scope = button.closest(
+      '.code-window, .example-code-wrap, .diff-window, .agent-prompt-window'
+    );
     const code = scope?.querySelector('pre:not([hidden]) code, pre code');
     if (code) copyText(button, code.textContent ?? '');
   });

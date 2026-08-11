@@ -76,6 +76,7 @@
             <a href="#decorators">Decorators</a>
             <a href="#async">Async behavior</a>
             <a href="#cli">CLI task files</a>
+            <a href="#agent">Agent migration</a>
             <a href="#checklist">Checklist</a>
           </aside>
 
@@ -234,6 +235,70 @@ void bz.run('BuildTasks.build');</code></pre>
                 >
                   <span data-copy-label>Copy</span>
                 </button>
+              </div>
+            </section>
+
+            <section class="migration-section agent-migration" id="agent">
+              <span class="eyebrow">MIGRATE WITH AN AGENT</span>
+              <h2>Give your coding agent a migration contract.</h2>
+              <p>
+                The agent guide turns this page into an executable plan. It tells an agent what to
+                inspect, which 2.0 changes to apply, how to avoid unrelated rewrites, and what must
+                pass before the migration is considered complete.
+              </p>
+
+              <div class="agent-workflow" aria-label="Agent migration workflow">
+                <article>
+                  <span>01</span>
+                  <strong>Discover</strong>
+                  <p>Map the runtime, modules, task files, decorators, scripts, CI, and tests.</p>
+                </article>
+                <article>
+                  <span>02</span>
+                  <strong>Migrate</strong>
+                  <p>Apply only the runtime, dependency, API, loader, and documentation changes.</p>
+                </article>
+                <article>
+                  <span>03</span>
+                  <strong>Verify</strong>
+                  <p>Run the project’s checks plus representative Beelzebub tasks and CLI forms.</p>
+                </article>
+                <article>
+                  <span>04</span>
+                  <strong>Report</strong>
+                  <p>List changed files, commands, results, remaining risks, and follow-up work.</p>
+                </article>
+              </div>
+
+              <div class="agent-prompt-window" aria-label="Prompt for a coding agent">
+                <div class="example-code-bar">
+                  <span>Agent prompt</span>
+                  <button type="button" data-copy-panel>
+                    <span data-copy-label>Copy prompt</span>
+                  </button>
+                </div>
+                <pre
+                  class="example-code"
+                ><code>Update this project from Beelzebub 1.x to Beelzebub 2.0.
+
+Follow https://beelzebub.io/migrate/agent-guide.md as the migration contract.
+
+First inspect the current Node, package manager, module, TypeScript, task-file, CLI,
+decorator, CI, and test setup. Preserve existing behavior and avoid unrelated rewrites.
+Upgrade the runtime and dependency, migrate changed APIs and decorators, update task-file
+loading, and run the full project validation plus representative Beelzebub tasks.
+
+Finish with a concise report of changed files, commands run, results, remaining risks,
+and any manual follow-up.</code></pre>
+                <div class="agent-guide-footer">
+                  <p>
+                    Need the complete checklist? Give the Markdown guide directly to your agent or
+                    commit it alongside the project’s migration issue.
+                  </p>
+                  <a class="button button-primary" href="/migrate/agent-guide.md"
+                    >Open agent guide <span aria-hidden="true">↗</span></a
+                  >
+                </div>
               </div>
             </section>
 

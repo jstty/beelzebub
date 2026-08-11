@@ -8,6 +8,7 @@ const requiredFiles = [
   'index.html',
   'examples/index.html',
   'migrate/index.html',
+  'migrate/agent-guide.md',
   'assets/site.css',
   'assets/site.js',
   'assets/bz-logo.svg',
@@ -78,6 +79,8 @@ for (const htmlFile of productHtmlFiles) {
 }
 
 const apiHtml = readFileSync(path.join(outputRoot, 'api', 'index.html'), 'utf8');
+const migrationHtml = readFileSync(path.join(outputRoot, 'migrate', 'index.html'), 'utf8');
+const agentGuide = readFileSync(path.join(outputRoot, 'migrate', 'agent-guide.md'), 'utf8');
 const siteCss = readFileSync(path.join(outputRoot, 'assets', 'site.css'), 'utf8');
 if (!apiHtml.includes('data-api-symbol')) {
   failures.push('api/index.html is missing generated API symbols');
@@ -112,6 +115,20 @@ if (siteCss.includes('min-width: 560px')) {
 if (!siteCss.includes('@keyframes hero-color-drift')) {
   failures.push('assets/site.css is missing the animated hero color fields');
 }
+if (
+  !migrationHtml.includes('id="agent"') ||
+  !migrationHtml.includes('href="/migrate/agent-guide.md"') ||
+  !migrationHtml.includes('data-copy-panel')
+) {
+  failures.push('migrate/index.html is missing the copyable coding-agent migration guide');
+}
+if (
+  !agentGuide.startsWith('# Beelzebub 2.0 migration guide for coding agents') ||
+  !agentGuide.includes('## 7. Verify the migration') ||
+  !agentGuide.includes('## Copyable agent prompt')
+) {
+  failures.push('migrate/agent-guide.md is missing required agent migration instructions');
+}
 
 const defaultHostingHeaders = firebaseConfig.hosting?.headers?.find(
   (entry) => entry.source === '**'
@@ -121,6 +138,16 @@ const defaultCacheControl = defaultHostingHeaders?.find(
 )?.value;
 if (defaultCacheControl !== 'public,max-age=0,must-revalidate') {
   failures.push('firebase.json must revalidate unversioned site files immediately');
+}
+
+const markdownHostingHeaders = firebaseConfig.hosting?.headers?.find(
+  (entry) => entry.source === '**/*.md'
+)?.headers;
+const markdownContentType = markdownHostingHeaders?.find(
+  (header) => header.key.toLowerCase() === 'content-type'
+)?.value;
+if (markdownContentType !== 'text/markdown; charset=utf-8') {
+  failures.push('firebase.json must serve coding-agent guides as Markdown');
 }
 
 if (failures.length > 0) {
