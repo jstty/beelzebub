@@ -152,6 +152,22 @@
   line-height: 1.5;
 }
 
+.motion-sample-link {
+  display: inline-block;
+  margin-top: 10px;
+  color: var(--red);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.motion-sample-link:hover,
+.motion-sample-link:focus-visible {
+  color: var(--coral);
+}
+
 .motion-sample canvas {
   display: block;
   width: 100%;

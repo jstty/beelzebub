@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="A full-page Beelzebub Trace River prototype with blooming task beams and dark red frosted-glass UI."
+    />
+    <meta name="theme-color" content="#080309" />
+    <title>Trace River Prototype — Beelzebub</title>
+    <link rel="icon" href="/assets/bz-logo.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/assets/site.css" />
+    <link rel="stylesheet" href="/assets/trace-river.css" />
+    <script src="/assets/site.js" defer></script>
+    <script src="/assets/trace-river.js" defer></script>
+  </head>
+  <body class="trace-prototype-page">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <canvas
+      class="trace-river-canvas"
+      data-trace-river
+      aria-label="Bright task execution beams splitting and merging behind the page"
+      >Animated task execution beams splitting and merging.</canvas
+    >
+    <div class="trace-river-atmosphere" aria-hidden="true"></div>
+
+    <header class="site-header trace-site-header" data-header>
+      <div class="shell nav-shell">
+        <a class="brand" href="/" aria-label="Beelzebub home">
+          <span class="brand-mark"><img src="/assets/bz-logo.svg" alt="" /></span>
+          <span class="brand-name">beelzebub</span>
+          <span class="version-pill">2.0</span>
+        </a>
+        <button
+          class="nav-toggle"
+          type="button"
+          aria-expanded="false"
+          aria-controls="primary-nav"
+          data-nav-toggle
+        >
+          <span class="nav-toggle-line"></span>
+          <span class="nav-toggle-line"></span>
+          <span class="sr-only">Toggle navigation</span>
+        </button>
+        <nav class="primary-nav" id="primary-nav" aria-label="Primary" data-nav>
+          <a href="/">Overview</a>
+          <a href="/examples/">Examples</a>
+          <a href="/api/">API</a>
+          <a href="/migrate/">Migrate with AI</a>
+          <a class="nav-github" href="https://github.com/jstty/beelzebub">GitHub</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main" class="trace-prototype-main">
+      <div class="shell trace-prototype-toolbar">
+        <a href="/motion-lab/">← All motion studies</a>
+        <div>
+          <span class="trace-live-dot" aria-hidden="true"></span>
+          <span>Trace River prototype</span>
+          <button type="button" data-trace-toggle aria-pressed="false">
+            <span data-trace-toggle-label>Pause motion</span>
+          </button>
+        </div>
+      </div>
+
+      <section class="shell trace-prototype-stage" aria-labelledby="trace-title">
+        <div class="trace-hero-panel trace-glass-panel">
+          <span class="trace-eyebrow"><i aria-hidden="true"></i> TASK ORCHESTRATION / LIVE</span>
+          <h1 id="trace-title">Orchestrate every task.<br /><span>See every move.</span></h1>
+          <p>
+            A TypeScript-first task runner for pipelines that need to stay composable, observable,
+            and under control as they grow.
+          </p>
+
+          <div class="trace-install" data-copy-wrap>
+            <span aria-hidden="true">$</span>
+            <code>npm install beelzebub</code>
+            <button type="button" data-copy="npm install beelzebub">
+              <span data-copy-label>Copy</span>
+            </button>
+          </div>
+          <div class="trace-actions">
+            <a class="trace-button trace-button-primary" href="/examples/">Explore examples</a>
+            <a class="trace-button trace-button-ghost" href="/api/">Read the API</a>
+          </div>
+          <ul class="trace-proof" aria-label="Beelzebub compatibility">
+            <li><span>✓</span> ESM + CommonJS</li>
+            <li><span>✓</span> Strict TypeScript</li>
+            <li><span>✓</span> Composable task packages</li>
+          </ul>
+        </div>
+
+        <aside class="trace-run-panel trace-glass-panel" aria-label="Live pipeline example">
+          <div class="trace-run-heading">
+            <div><span>LIVE PIPELINE</span><strong>release.pipeline</strong></div>
+            <span class="trace-status">RUNNING</span>
+          </div>
+          <div class="trace-run-time">
+            <span>elapsed</span>
+            <strong data-trace-elapsed>00:04.218</strong>
+          </div>
+          <ol class="trace-task-list">
+            <li class="is-complete">
+              <i></i>
+              <div><strong>clean</strong><span>output directory</span></div>
+              <code>184ms</code>
+            </li>
+            <li class="is-complete">
+              <i></i>
+              <div><strong>verify</strong><span>lint · test · types</span></div>
+              <code>1.42s</code>
+            </li>
+            <li class="is-active">
+              <i></i>
+              <div><strong>build</strong><span>compile packages</span></div>
+              <code data-trace-timing>2.61s</code>
+            </li>
+            <li>
+              <i></i>
+              <div><strong>publish</strong><span>waiting to merge</span></div>
+              <code>—</code>
+            </li>
+          </ol>
+          <div class="trace-run-footer">
+            <span><i></i> 3 branches</span>
+            <span><i></i> 1 merge</span>
+            <span><i></i> 0 errors</span>
+          </div>
+        </aside>
+
+        <div class="trace-benefit-grid">
+          <article class="trace-glass-panel">
+            <span>01 / COMPOSE</span><strong>Branch without script sprawl.</strong>
+            <p>Sequences and parallel work stay readable as the pipeline grows.</p>
+          </article>
+          <article class="trace-glass-panel">
+            <span>02 / OBSERVE</span><strong>Every handoff stays visible.</strong>
+            <p>Lifecycle events and timings expose the entire execution path.</p>
+          </article>
+          <article class="trace-glass-panel">
+            <span>03 / EXTEND</span><strong>Mix in tasks from packages.</strong>
+            <p>Import shared task classes and override only what your project needs.</p>
+          </article>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

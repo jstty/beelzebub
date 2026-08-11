@@ -8,10 +8,13 @@ const requiredFiles = [
   'index.html',
   'examples/index.html',
   'motion-lab/index.html',
+  'motion-lab/trace-river/index.html',
   'migrate/index.html',
   'migrate/agent-guide.md',
   'assets/motion-lab.css',
   'assets/motion-lab.js',
+  'assets/trace-river.css',
+  'assets/trace-river.js',
   'assets/site.css',
   'assets/site.js',
   'assets/bz-logo.svg',
@@ -60,7 +63,7 @@ for (const htmlFile of productHtmlFiles) {
   if (!html.includes('class="skip-link"')) {
     failures.push(`${relativeHtml} is missing a skip link`);
   }
-  if (!html.includes('class="site-header"')) {
+  if (!/class="[^"]*\bsite-header\b/.test(html)) {
     failures.push(`${relativeHtml} is missing the shared site header`);
   }
   if (!/href="\/assets\/site\.css\?v=[a-f0-9]{12}"/.test(html)) {
@@ -85,6 +88,10 @@ const homeHtml = readFileSync(path.join(outputRoot, 'index.html'), 'utf8');
 const apiHtml = readFileSync(path.join(outputRoot, 'api', 'index.html'), 'utf8');
 const migrationHtml = readFileSync(path.join(outputRoot, 'migrate', 'index.html'), 'utf8');
 const motionLabHtml = readFileSync(path.join(outputRoot, 'motion-lab', 'index.html'), 'utf8');
+const traceRiverHtml = readFileSync(
+  path.join(outputRoot, 'motion-lab', 'trace-river', 'index.html'),
+  'utf8'
+);
 const agentGuide = readFileSync(path.join(outputRoot, 'migrate', 'agent-guide.md'), 'utf8');
 const siteCss = readFileSync(path.join(outputRoot, 'assets', 'site.css'), 'utf8');
 if (homeHtml.includes('forged for Node 24') || homeHtml.includes('class="release-kicker"')) {
@@ -129,6 +136,15 @@ if (
   !motionLabHtml.includes('data-motion-toggle')
 ) {
   failures.push('motion-lab/index.html is missing one or more live motion studies');
+}
+if (
+  !traceRiverHtml.includes('data-trace-river') ||
+  !traceRiverHtml.includes('data-trace-toggle') ||
+  !traceRiverHtml.includes('trace-glass-panel') ||
+  !traceRiverHtml.includes('npm install beelzebub') ||
+  !motionLabHtml.includes('href="/motion-lab/trace-river/"')
+) {
+  failures.push('motion-lab/trace-river/index.html is missing the full background prototype');
 }
 const migrationSectionIds = ['scope', 'plan', 'example', 'packages', 'agent', 'verify'];
 if (
