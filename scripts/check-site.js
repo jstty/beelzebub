@@ -164,6 +164,10 @@ const traceHeader = traceRiverHtml.match(
 if (
   !traceRiverHtml.includes('Agent first.') ||
   !traceRiverHtml.includes('Build testable workflows.') ||
+  !traceRiverHtml.includes('Have your agent do the work.') ||
+  !traceRiverHtml.includes('beelzebub@^2') ||
+  !traceRiverHtml.includes('AGENTS.md, CLAUDE.md') ||
+  !traceRiverHtml.includes('data-copy-panel') ||
   !traceHeader ||
   traceHeader[0].includes('class="brand"')
 ) {

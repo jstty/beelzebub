@@ -107,7 +107,7 @@
 .trace-cinematic-stage {
   position: relative;
   width: min(calc(100% - 56px), 1680px);
-  min-height: max(760px, calc(100svh - var(--header-height)));
+  min-height: max(800px, calc(100svh - var(--header-height)));
   margin-inline: auto;
   overflow: hidden;
 }
@@ -142,38 +142,55 @@
 .trace-cinematic-copy h1 {
   display: grid;
   justify-items: start;
-  gap: 8px;
+  gap: 9px;
   margin: clamp(30px, 4vh, 48px) 0 28px;
   color: #e1d3bd;
-  font-family: var(--font-display);
-  font-size: clamp(34px, 2.5vw, 42px);
-  font-weight: 800;
-  letter-spacing: -0.045em;
-  line-height: 1.05;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(35px, 2.7vw, 46px);
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  line-height: 1.02;
 }
 
 .trace-cinematic-copy h1 span {
+  position: relative;
   display: block;
   width: fit-content;
   max-width: 100%;
-  padding: 10px 15px 12px;
-  border: 1px solid rgba(216, 190, 166, 0.2);
-  border-left: 3px solid rgba(255, 59, 36, 0.82);
-  background: rgba(4, 1, 7, 0.82);
+  padding: 12px 19px 14px;
+  border: 1px solid rgba(225, 211, 189, 0.19);
+  background:
+    linear-gradient(100deg, rgba(225, 211, 189, 0.035), transparent 48%),
+    rgba(3, 1, 6, 0.86);
   box-shadow:
-    inset 0 0 38px rgba(70, 5, 24, 0.12),
-    0 14px 42px rgba(0, 0, 2, 0.3);
+    inset 0 1px rgba(255, 246, 230, 0.025),
+    0 14px 42px rgba(0, 0, 2, 0.34);
   text-shadow: 0 0 28px rgba(255, 224, 183, 0.06);
 }
 
+.trace-cinematic-copy h1 span::before {
+  position: absolute;
+  top: -1px;
+  left: 18px;
+  width: 46px;
+  height: 1px;
+  content: '';
+  background: rgba(225, 211, 189, 0.6);
+  box-shadow: 0 0 16px rgba(225, 211, 189, 0.14);
+}
+
 .trace-cinematic-copy h1 span:last-child {
-  color: var(--red);
-  border-color: rgba(255, 59, 36, 0.26);
-  border-left-color: var(--red);
+  margin-left: clamp(12px, 2vw, 34px);
+  color: #eadcc7;
+  border-color: rgba(225, 211, 189, 0.14);
+  background:
+    linear-gradient(100deg, rgba(143, 102, 255, 0.045), transparent 52%),
+    rgba(3, 1, 6, 0.82);
 }
 
 .trace-cinematic-copy h1 b {
-  color: var(--red);
+  color: #f04a3a;
+  font-weight: inherit;
 }
 
 .trace-install {
@@ -230,6 +247,91 @@
   flex-wrap: wrap;
   gap: 14px;
   margin-top: 26px;
+}
+
+.trace-agent-handoff {
+  display: grid;
+  width: min(650px, 100%);
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 22px;
+  align-items: center;
+  padding: 15px 16px 15px 18px;
+  margin-top: 18px;
+  border-color: rgba(225, 211, 189, 0.18);
+  background:
+    linear-gradient(110deg, rgba(225, 211, 189, 0.04), transparent 48%),
+    rgba(3, 1, 7, 0.86);
+  border-radius: 5px;
+  box-shadow:
+    inset 0 1px rgba(255, 246, 230, 0.025),
+    0 16px 42px rgba(0, 0, 2, 0.32);
+}
+
+.trace-agent-handoff-copy > span {
+  color: #caaedc;
+  font-family: var(--font-mono);
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.trace-agent-handoff h2 {
+  margin: 3px 0 0;
+  color: #eadcc7;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 19px;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+}
+
+.trace-agent-handoff p {
+  max-width: 410px;
+  margin: 5px 0 0;
+  color: rgba(var(--light-rgb), 0.55);
+  font-size: 9px;
+  line-height: 1.45;
+}
+
+.trace-agent-handoff-action {
+  display: grid;
+  justify-items: end;
+  gap: 7px;
+}
+
+.trace-agent-handoff-action small {
+  color: rgba(var(--light-rgb), 0.34);
+  font-family: var(--font-mono);
+  font-size: 7px;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.trace-agent-handoff-action button {
+  display: inline-flex;
+  min-height: 38px;
+  align-items: center;
+  gap: 8px;
+  padding: 0 13px;
+  color: #e5d8c5;
+  border: 1px solid rgba(202, 174, 220, 0.36);
+  background: rgba(35, 17, 47, 0.52);
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.trace-agent-handoff-action button:hover,
+.trace-agent-handoff-action button:focus-visible {
+  color: var(--white);
+  border-color: rgba(202, 174, 220, 0.72);
+  background: rgba(55, 25, 73, 0.7);
+  outline: none;
 }
 
 .trace-button {
@@ -524,7 +626,7 @@
 
   .trace-cinematic-stage {
     width: min(calc(100% - 32px), 680px);
-    min-height: 1080px;
+    min-height: 1240px;
     overflow: visible;
   }
 
@@ -547,6 +649,17 @@
   .trace-cinematic-copy h1 {
     margin-top: 38px;
     font-size: clamp(30px, 8vw, 40px);
+  }
+
+  .trace-agent-handoff {
+    grid-template-columns: 1fr;
+    gap: 13px;
+  }
+
+  .trace-agent-handoff-action {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
   }
 
   .trace-install {
@@ -615,7 +728,20 @@
   }
 
   .trace-cinematic-copy h1 {
-    font-size: 40px;
+    font-size: clamp(30px, 10vw, 40px);
+  }
+
+  .trace-cinematic-copy h1 span:last-child {
+    margin-left: 0;
+  }
+
+  .trace-agent-handoff-action {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .trace-agent-handoff-action button {
+    justify-content: center;
   }
 
   .trace-install {

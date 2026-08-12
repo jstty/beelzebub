@@ -85,6 +85,62 @@
               <span aria-hidden="true">▣</span> Documentation
             </a>
           </div>
+
+          <section class="trace-agent-handoff agent-prompt-window" aria-labelledby="agent-handoff-title">
+            <div class="trace-agent-handoff-copy">
+              <span>Agent handoff</span>
+              <h2 id="agent-handoff-title">Have your agent do the work.</h2>
+              <p>Copy a complete brief to install Beelzebub, migrate scripts, and teach future agents the new commands.</p>
+            </div>
+            <div class="trace-agent-handoff-action">
+              <small>Install · Migrate · Document · Verify</small>
+              <button type="button" data-copy-panel>
+                <span aria-hidden="true">⌘</span>
+                <span data-copy-label>Copy agent brief</span>
+              </button>
+            </div>
+            <pre hidden><code>Migrate this project's automation to Beelzebub 2.0.
+
+Follow https://beelzebub.io/migrate/agent-guide.md as the implementation contract.
+
+1. Inspect the repository before editing:
+   - Identify the package manager and lockfile.
+   - Inventory package.json scripts, shell scripts, Makefiles, task-runner files, CI commands, and every command they call.
+   - Record public command names, environment variables, ordering, parallel work, cleanup, and current validation results.
+   - Read AGENTS.md, CLAUDE.md, or the repository's equivalent agent instructions.
+
+2. Install and configure Beelzebub:
+   - Use Node.js 24.15.0 or newer.
+   - Install beelzebub@^2 with the existing package manager.
+   - Keep the project's current ESM or CommonJS module format.
+   - Add a Beelzebub task file and any TypeScript loading configuration required by the project.
+
+3. Replace shell and package-script orchestration with testable workflow components:
+   - Group related behavior into focused BzTasks classes.
+   - Use named tasks rather than copying long shell strings into methods.
+   - Use $sequence() for ordered work and $parallel() for independent work.
+   - Preserve existing inputs, exit behavior, cleanup, and environment handling.
+   - Import, extend, or compose reusable Beelzebub task packages where appropriate.
+   - Add focused behavioral tests for every public workflow.
+
+4. Keep entry points short:
+   - Replace complex package.json scripts with short `bz --file &lt;task-file&gt; &lt;Task.name&gt;` wrappers.
+   - Update local, CI, and documentation commands to call the same BZ task graph.
+   - Preserve familiar npm script aliases when people or CI depend on them.
+
+5. Update repository agent instructions:
+   - Update AGENTS.md, CLAUDE.md, or the repository's equivalent agent file.
+   - Tell future agents to use the project's `bz` tasks for build, lint, typecheck, test, packaging, release, and other automated workflows instead of reconstructing shell commands.
+   - Document the task file, canonical BZ commands, required variables, and when a new reusable workflow component should be added.
+   - Keep all safety rules and authorization boundaries already present in those files.
+
+6. Verify the migration:
+   - Run formatting, linting, typechecking, tests, build, package validation, and representative BZ CLI workflows.
+   - Compare results with the pre-migration baseline.
+   - Update relevant contributor documentation.
+   - Report changed files, commands run, results, risks, and manual follow-up.
+   - Do not commit, push, publish, deploy, or change unrelated code unless explicitly authorized.</code></pre>
+          </section>
         </div>
 
         <div class="trace-task-callouts" aria-label="Live task status">
