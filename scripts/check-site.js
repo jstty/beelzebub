@@ -150,7 +150,9 @@ if (
 if (
   !traceRiverHtml.includes('data-trace-river') ||
   !traceRiverHtml.includes('data-trace-toggle') ||
-  !traceRiverHtml.includes('trace-glass-panel') ||
+  !traceRiverHtml.includes('trace-cinematic-stage') ||
+  !traceRiverHtml.includes('trace-task-callouts') ||
+  !traceRiverHtml.includes('trace-timeline') ||
   !traceRiverHtml.includes('npm install beelzebub') ||
   !motionLabHtml.includes('href="/motion-lab/trace-river/"')
 ) {

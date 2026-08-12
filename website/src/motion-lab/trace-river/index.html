@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta
       name="description"
-      content="A full-page Beelzebub Trace River prototype with blooming task beams and dark red frosted-glass UI."
+      content="A cinematic Beelzebub Trace River prototype with branching task beams, live task callouts, and an execution timeline."
     />
     <meta name="theme-color" content="#080309" />
     <title>Trace River Prototype — Beelzebub</title>
@@ -54,95 +54,80 @@
     </header>
 
     <main id="main" class="trace-prototype-main">
-      <div class="shell trace-prototype-toolbar">
-        <a href="/motion-lab/">← All motion studies</a>
-        <div>
+      <div class="trace-prototype-controls">
+        <a href="/motion-lab/">← Motion lab</a>
+        <button type="button" data-trace-toggle aria-pressed="false">
           <span class="trace-live-dot" aria-hidden="true"></span>
-          <span>Trace River prototype</span>
-          <button type="button" data-trace-toggle aria-pressed="false">
-            <span data-trace-toggle-label>Pause motion</span>
-          </button>
-        </div>
+          <span data-trace-toggle-label>Pause motion</span>
+        </button>
       </div>
 
-      <section class="shell trace-prototype-stage" aria-labelledby="trace-title">
-        <div class="trace-hero-panel trace-glass-panel">
-          <span class="trace-eyebrow"><i aria-hidden="true"></i> TASK ORCHESTRATION / LIVE</span>
+      <section class="trace-cinematic-stage" aria-labelledby="trace-title">
+        <div class="trace-cinematic-copy">
+          <a class="trace-brand-lockup" href="/" aria-label="Beelzebub home">
+            <img src="/assets/bz-logo.svg" alt="" />
+            <span>beelzebub</span>
+          </a>
+
           <h1 id="trace-title">Orchestrate every task.<br /><span>See every move.</span></h1>
-          <p>
-            A TypeScript-first task runner for pipelines that need to stay composable, observable,
-            and under control as they grow.
-          </p>
 
           <div class="trace-install" data-copy-wrap>
-            <span aria-hidden="true">$</span>
+            <span aria-hidden="true">&gt;_</span>
             <code>npm install beelzebub</code>
             <button type="button" data-copy="npm install beelzebub">
               <span data-copy-label>Copy</span>
             </button>
           </div>
+
           <div class="trace-actions">
-            <a class="trace-button trace-button-primary" href="/examples/">Explore examples</a>
-            <a class="trace-button trace-button-ghost" href="/api/">Read the API</a>
+            <a class="trace-button trace-button-primary" href="/examples/">
+              <span aria-hidden="true">&gt;_</span> Get started
+            </a>
+            <a class="trace-button trace-button-ghost" href="/api/">
+              <span aria-hidden="true">▣</span> Documentation
+            </a>
           </div>
-          <ul class="trace-proof" aria-label="Beelzebub compatibility">
-            <li><span>✓</span> ESM + CommonJS</li>
-            <li><span>✓</span> Strict TypeScript</li>
-            <li><span>✓</span> Composable task packages</li>
-          </ul>
         </div>
 
-        <aside class="trace-run-panel trace-glass-panel" aria-label="Live pipeline example">
-          <div class="trace-run-heading">
-            <div><span>LIVE PIPELINE</span><strong>release.pipeline</strong></div>
-            <span class="trace-status">RUNNING</span>
-          </div>
-          <div class="trace-run-time">
-            <span>elapsed</span>
-            <strong data-trace-elapsed>00:04.218</strong>
-          </div>
-          <ol class="trace-task-list">
-            <li class="is-complete">
-              <i></i>
-              <div><strong>clean</strong><span>output directory</span></div>
-              <code>184ms</code>
-            </li>
-            <li class="is-complete">
-              <i></i>
-              <div><strong>verify</strong><span>lint · test · types</span></div>
-              <code>1.42s</code>
-            </li>
-            <li class="is-active">
-              <i></i>
-              <div><strong>build</strong><span>compile packages</span></div>
-              <code data-trace-timing>2.61s</code>
-            </li>
-            <li>
-              <i></i>
-              <div><strong>publish</strong><span>waiting to merge</span></div>
-              <code>—</code>
-            </li>
-          </ol>
-          <div class="trace-run-footer">
-            <span><i></i> 3 branches</span>
-            <span><i></i> 1 merge</span>
-            <span><i></i> 0 errors</span>
-          </div>
-        </aside>
+        <div class="trace-task-callouts" aria-label="Live task status">
+          <article class="trace-task-callout trace-task-callout-compile">
+            <span class="trace-node-symbol" aria-hidden="true">◇</span>
+            <div><strong>compile</strong><code>812ms</code></div>
+          </article>
+          <article class="trace-task-callout trace-task-callout-test">
+            <span class="trace-node-symbol" aria-hidden="true">△</span>
+            <div><strong>test</strong><code>1.42s</code></div>
+          </article>
+          <article class="trace-task-callout trace-task-callout-lint">
+            <span class="trace-node-symbol" aria-hidden="true">✦</span>
+            <div><strong>lint</strong><code>623ms</code></div>
+          </article>
+          <article class="trace-task-callout trace-task-callout-release">
+            <span class="trace-node-symbol" aria-hidden="true"></span>
+            <div><strong>release</strong><code>2.17s</code><em>success</em></div>
+          </article>
+        </div>
 
-        <div class="trace-benefit-grid">
-          <article class="trace-glass-panel">
-            <span>01 / COMPOSE</span><strong>Branch without script sprawl.</strong>
-            <p>Sequences and parallel work stay readable as the pipeline grows.</p>
-          </article>
-          <article class="trace-glass-panel">
-            <span>02 / OBSERVE</span><strong>Every handoff stays visible.</strong>
-            <p>Lifecycle events and timings expose the entire execution path.</p>
-          </article>
-          <article class="trace-glass-panel">
-            <span>03 / EXTEND</span><strong>Mix in tasks from packages.</strong>
-            <p>Import shared task classes and override only what your project needs.</p>
-          </article>
+        <div class="trace-timeline" aria-label="Execution timeline from start to completion">
+          <div class="trace-timeline-ruler" aria-hidden="true"></div>
+          <ol class="trace-timeline-times" aria-hidden="true">
+            <li>00:00</li>
+            <li>00:01</li>
+            <li>00:02</li>
+            <li>00:03</li>
+            <li>00:04</li>
+            <li>00:05</li>
+            <li>00:06</li>
+          </ol>
+          <div class="trace-timeline-event trace-timeline-branch">
+            <i aria-hidden="true"></i><strong>branch</strong><code>00:01.024</code>
+          </div>
+          <div class="trace-timeline-event trace-timeline-merge">
+            <i aria-hidden="true"></i><strong>merge</strong><code>00:03.896</code>
+          </div>
+          <div class="trace-timeline-event trace-timeline-complete">
+            <i aria-hidden="true"></i><strong>complete</strong><code>00:06.217</code>
+          </div>
         </div>
       </section>
     </main>

@@ -1,8 +1,6 @@
 const canvas = document.querySelector('[data-trace-river]');
 const toggle = document.querySelector('[data-trace-toggle]');
 const toggleLabel = document.querySelector('[data-trace-toggle-label]');
-const elapsed = document.querySelector('[data-trace-elapsed]');
-const timing = document.querySelector('[data-trace-timing]');
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 const compactViewport = window.matchMedia('(max-width: 700px)');
 const staticLayer = document.createElement('canvas');
@@ -101,10 +99,11 @@ const beamTemplates = [
 ];
 
 const junctions = [
+  { x: 0.05, y: 0.83, color: COLORS.red },
   { x: 0.32, y: 0.62, color: COLORS.red, label: 'BRANCH' },
   { x: 0.48, y: 0.22, color: COLORS.pink, label: 'PARALLEL' },
   { x: 0.72, y: 0.4, color: COLORS.violet, label: 'MERGE' },
-  { x: 0.9, y: 0.26, color: COLORS.mint, label: 'COMPLETE' }
+  { x: 0.96, y: 0.58, color: COLORS.violet, label: 'COMPLETE' }
 ];
 
 let paused = reducedMotion.matches;
@@ -118,7 +117,6 @@ let cachedWidth = 0;
 let cachedHeight = 0;
 let cachedBeams = [];
 let lastFrame = 0;
-let lastTelemetry = -1;
 
 function hexToRgba(hex, alpha) {
   const value = Number.parseInt(hex.slice(1), 16);
@@ -183,7 +181,7 @@ function strokePoints(context, points, color, width, alpha, blur = 0, offsetX = 
 function drawStaticParticles(context, width, height) {
   context.save();
   context.globalCompositeOperation = 'lighter';
-  for (let index = 0; index < 58; index += 1) {
+  for (let index = 0; index < 96; index += 1) {
     const x = (Math.sin(index * 82.17) * 0.5 + 0.5) * width;
     const y = (Math.sin(index * 19.41 + 2) * 0.5 + 0.5) * height;
     const alpha = 0.05 + ((index * 17) % 10) / 180;
@@ -208,9 +206,6 @@ function drawStaticJunction(context, junction, width, height) {
   context.beginPath();
   context.arc(x, y, 54, 0, Math.PI * 2);
   context.fill();
-  context.fillStyle = hexToRgba(COLORS.white, 0.46);
-  context.font = '8px SFMono-Regular, Consolas, monospace';
-  context.fillText(junction.label, x + 13, y - 13);
 }
 
 function rebuildStaticLayer(width, height) {
@@ -221,6 +216,10 @@ function rebuildStaticLayer(width, height) {
 
   for (const [index, beam] of beamTemplates.entries()) {
     const points = cachedBeams[index];
+    for (let rail = -4; rail <= 4; rail += 1) {
+      if (rail === 0) continue;
+      strokePoints(context, points, beam.color, 0.6, 0.09, 3, 0, rail * 4.5);
+    }
     strokePoints(context, points, beam.color, 42, 0.02, 22);
     strokePoints(context, points, beam.color, 19, 0.04, 18);
     strokePoints(context, points, beam.color, 7, 0.08, 12);
@@ -277,6 +276,22 @@ function drawMovingBeam(context, points, beam, seconds, index, offsetX, offsetY)
   context.arc(x, y, 23, 0, Math.PI * 2);
   context.fill();
 
+  for (let packet = 1; packet <= 4; packet += 1) {
+    const packetProgress = (progress + packet * 0.19 + index * 0.025) % 1;
+    const packetIndex = Math.floor(packetProgress * (points.length - 1));
+    const nextIndex = Math.min(points.length - 1, packetIndex + 1);
+    const [packetX, packetY] = points[packetIndex];
+    const [nextX, nextY] = points[nextIndex];
+    context.save();
+    context.translate(packetX + offsetX, packetY + offsetY);
+    context.rotate(Math.atan2(nextY - packetY, nextX - packetX));
+    context.fillStyle = hexToRgba(beam.color, 0.72);
+    context.shadowColor = beam.color;
+    context.shadowBlur = 10;
+    context.fillRect(-4.5, -2.2, 9, 4.4);
+    context.restore();
+  }
+
   if (index < 3) {
     for (let spark = 0; spark < 4; spark += 1) {
       const [sparkX, sparkY] = points[Math.max(0, headIndex - spark * 3)];
@@ -312,21 +327,6 @@ function drawJunctionPulse(context, junction, width, height, seconds, index, off
   context.restore();
 }
 
-function updateTelemetry(seconds) {
-  if (seconds - lastTelemetry < 0.2) return;
-  lastTelemetry = seconds;
-  if (elapsed) {
-    const milliseconds = Math.floor((seconds * 1000) % 1000)
-      .toString()
-      .padStart(3, '0');
-    const wholeSeconds = Math.floor(seconds % 10)
-      .toString()
-      .padStart(2, '0');
-    elapsed.textContent = `00:${wholeSeconds}.${milliseconds}`;
-  }
-  if (timing) timing.textContent = `${(2.2 + (seconds % 1.8)).toFixed(2)}s`;
-}
-
 function draw(timestamp) {
   const seconds = (timestamp - pausedDuration) / 1000;
   pointerX += (pointerTargetX - pointerX) * 0.06;
@@ -345,7 +345,6 @@ function draw(timestamp) {
   for (const [index, junction] of junctions.entries()) {
     drawJunctionPulse(context, junction, width, height, seconds, index, sceneOffsetX, sceneOffsetY);
   }
-  updateTelemetry(seconds);
 }
 
 function updateToggle() {
