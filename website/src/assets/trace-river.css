@@ -140,50 +140,61 @@
 }
 
 .trace-cinematic-copy h1 {
+  position: relative;
   display: grid;
   justify-items: start;
-  gap: 9px;
-  margin: clamp(30px, 4vh, 48px) 0 28px;
+  width: min(650px, 100%);
+  gap: 5px;
+  padding: 19px 23px 23px;
+  margin: clamp(30px, 4vh, 48px) 0 20px;
   color: #e1d3bd;
+  border: 1px solid rgba(225, 211, 189, 0.17);
+  border-left: 2px solid rgba(225, 211, 189, 0.54);
+  background:
+    linear-gradient(112deg, rgba(225, 211, 189, 0.045), transparent 48%), rgba(3, 1, 6, 0.84);
+  box-shadow:
+    inset 0 1px rgba(255, 246, 230, 0.025),
+    0 16px 44px rgba(0, 0, 2, 0.32);
   font-family: Georgia, 'Times New Roman', serif;
-  font-size: clamp(35px, 2.7vw, 46px);
+  font-size: clamp(37px, 2.8vw, 48px);
   font-weight: 600;
   letter-spacing: -0.04em;
   line-height: 1.02;
-}
-
-.trace-cinematic-copy h1 span {
-  position: relative;
-  display: block;
-  width: fit-content;
-  max-width: 100%;
-  padding: 12px 19px 14px;
-  border: 1px solid rgba(225, 211, 189, 0.19);
-  background:
-    linear-gradient(100deg, rgba(225, 211, 189, 0.035), transparent 48%), rgba(3, 1, 6, 0.86);
-  box-shadow:
-    inset 0 1px rgba(255, 246, 230, 0.025),
-    0 14px 42px rgba(0, 0, 2, 0.34);
   text-shadow: 0 0 28px rgba(255, 224, 183, 0.06);
 }
 
-.trace-cinematic-copy h1 span::before {
+.trace-cinematic-copy h1::before,
+.trace-cinematic-copy h1::after {
   position: absolute;
-  top: -1px;
-  left: 18px;
+  left: -2px;
   width: 46px;
   height: 1px;
   content: '';
-  background: rgba(225, 211, 189, 0.6);
+  background: rgba(225, 211, 189, 0.72);
   box-shadow: 0 0 16px rgba(225, 211, 189, 0.14);
 }
 
+.trace-cinematic-copy h1::before {
+  top: -1px;
+}
+
+.trace-cinematic-copy h1::after {
+  bottom: -1px;
+}
+
+.trace-cinematic-copy h1 span {
+  display: block;
+  max-width: 100%;
+  color: rgba(234, 220, 199, 0.7);
+  font-size: 0.66em;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+}
+
 .trace-cinematic-copy h1 span:last-child {
-  margin-left: clamp(12px, 2vw, 34px);
   color: #eadcc7;
-  border-color: rgba(225, 211, 189, 0.14);
-  background:
-    linear-gradient(100deg, rgba(143, 102, 255, 0.045), transparent 52%), rgba(3, 1, 6, 0.82);
+  font-size: 1em;
+  letter-spacing: -0.045em;
 }
 
 .trace-cinematic-copy h1 b {
@@ -204,9 +215,16 @@
   background: rgba(4, 1, 7, 0.7);
   border-radius: 4px;
   box-shadow: inset 0 0 30px rgba(45, 5, 20, 0.16);
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+  transition:
+    border-color 160ms ease,
+    background 160ms ease,
+    transform 160ms ease;
 }
 
-.trace-install > span {
+.trace-install > span:first-child {
   color: var(--red);
   font-family: var(--font-mono);
   font-size: 17px;
@@ -221,23 +239,26 @@
   white-space: nowrap;
 }
 
-.trace-install button {
-  min-height: 34px;
+.trace-install-label {
   padding: 0 10px;
   color: rgba(var(--light-rgb), 0.48);
-  border: 0;
-  background: transparent;
-  cursor: pointer;
   font-family: var(--font-mono);
   font-size: 8px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
-.trace-install button:hover,
-.trace-install button:focus-visible {
+.trace-install:hover,
+.trace-install:focus-visible {
+  border-color: rgba(255, 59, 36, 0.58);
+  background: rgba(18, 3, 12, 0.84);
+  outline: none;
+  transform: translateY(-1px);
+}
+
+.trace-install:hover .trace-install-label,
+.trace-install:focus-visible .trace-install-label {
   color: var(--white);
-  outline: 1px solid rgba(255, 59, 36, 0.42);
 }
 
 .trace-actions {
@@ -248,74 +269,62 @@
 }
 
 .trace-agent-handoff {
-  display: grid;
   width: min(650px, 100%);
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 22px;
-  align-items: center;
-  padding: 15px 16px 15px 18px;
-  margin-top: 18px;
-  border-color: rgba(225, 211, 189, 0.18);
-  background:
-    linear-gradient(110deg, rgba(225, 211, 189, 0.04), transparent 48%), rgba(3, 1, 7, 0.86);
-  border-radius: 5px;
-  box-shadow:
-    inset 0 1px rgba(255, 246, 230, 0.025),
-    0 16px 42px rgba(0, 0, 2, 0.32);
+  margin-bottom: 12px;
+  overflow: visible;
+  border: 0;
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
 }
 
-.trace-agent-handoff-copy > span {
-  color: #caaedc;
-  font-family: var(--font-mono);
-  font-size: 8px;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
-.trace-agent-handoff h2 {
-  margin: 3px 0 0;
-  color: #eadcc7;
-  font-family: Georgia, 'Times New Roman', serif;
-  font-size: 19px;
-  font-weight: 600;
-  letter-spacing: -0.025em;
-  line-height: 1.1;
-}
-
-.trace-agent-handoff p {
-  max-width: 410px;
-  margin: 5px 0 0;
-  color: rgba(var(--light-rgb), 0.55);
-  font-size: 9px;
-  line-height: 1.45;
-}
-
-.trace-agent-handoff-action {
-  display: grid;
-  justify-items: end;
-  gap: 7px;
-}
-
-.trace-agent-handoff-action small {
-  color: rgba(var(--light-rgb), 0.34);
-  font-family: var(--font-mono);
-  font-size: 7px;
-  letter-spacing: 0.05em;
-  white-space: nowrap;
-}
-
-.trace-agent-handoff-action button {
+.trace-agent-handoff > button {
   display: inline-flex;
-  min-height: 38px;
+  width: 100%;
+  min-height: 58px;
   align-items: center;
-  gap: 8px;
-  padding: 0 13px;
+  gap: 12px;
+  padding: 0 16px;
   color: #e5d8c5;
   border: 1px solid rgba(202, 174, 220, 0.36);
-  background: rgba(35, 17, 47, 0.52);
+  background:
+    linear-gradient(100deg, rgba(143, 102, 255, 0.1), transparent 58%), rgba(10, 3, 15, 0.88);
   border-radius: 4px;
   cursor: pointer;
+  text-align: left;
+  transition:
+    border-color 160ms ease,
+    background 160ms ease,
+    transform 160ms ease;
+}
+
+.trace-agent-handoff > button:hover,
+.trace-agent-handoff > button:focus-visible {
+  color: var(--white);
+  border-color: rgba(202, 174, 220, 0.72);
+  background:
+    linear-gradient(100deg, rgba(143, 102, 255, 0.17), transparent 62%), rgba(20, 6, 28, 0.94);
+  outline: none;
+  transform: translateY(-1px);
+}
+
+.trace-agent-handoff-mark {
+  color: #b386e4;
+  font-family: var(--font-mono);
+  font-size: 17px;
+}
+
+.trace-agent-handoff-title {
+  min-width: 0;
+  flex: 1;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+
+.trace-agent-handoff-label {
+  color: rgba(var(--light-rgb), 0.48);
   font-family: var(--font-mono);
   font-size: 8px;
   font-weight: 800;
@@ -323,12 +332,9 @@
   text-transform: uppercase;
 }
 
-.trace-agent-handoff-action button:hover,
-.trace-agent-handoff-action button:focus-visible {
-  color: var(--white);
-  border-color: rgba(202, 174, 220, 0.72);
-  background: rgba(55, 25, 73, 0.7);
-  outline: none;
+.trace-agent-handoff > button:hover .trace-agent-handoff-label,
+.trace-agent-handoff > button:focus-visible .trace-agent-handoff-label {
+  color: #d7bdf1;
 }
 
 .trace-button {
@@ -648,17 +654,6 @@
     font-size: clamp(30px, 8vw, 40px);
   }
 
-  .trace-agent-handoff {
-    grid-template-columns: 1fr;
-    gap: 13px;
-  }
-
-  .trace-agent-handoff-action {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
   .trace-install {
     width: 100%;
   }
@@ -728,25 +723,21 @@
     font-size: clamp(30px, 10vw, 40px);
   }
 
-  .trace-cinematic-copy h1 span:last-child {
-    margin-left: 0;
-  }
-
-  .trace-agent-handoff-action {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
-  .trace-agent-handoff-action button {
-    justify-content: center;
-  }
-
   .trace-install {
     grid-template-columns: auto minmax(0, 1fr);
   }
 
-  .trace-install button {
+  .trace-install-label {
     display: none;
+  }
+
+  .trace-agent-handoff-label {
+    font-size: 0;
+  }
+
+  .trace-agent-handoff-label::after {
+    content: 'Copy →';
+    font-size: 8px;
   }
 
   .trace-task-callouts {

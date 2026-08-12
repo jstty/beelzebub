@@ -69,42 +69,15 @@
             <span>Build testable workflows.</span>
           </h1>
 
-          <div class="trace-install" data-copy-wrap>
-            <span aria-hidden="true">&gt;_</span>
-            <code>npm install beelzebub</code>
-            <button type="button" data-copy="npm install beelzebub">
-              <span data-copy-label>Copy</span>
-            </button>
-          </div>
-
-          <div class="trace-actions">
-            <a class="trace-button trace-button-primary" href="/examples/">
-              <span aria-hidden="true">&gt;_</span> Get started
-            </a>
-            <a class="trace-button trace-button-ghost" href="/api/">
-              <span aria-hidden="true">▣</span> Documentation
-            </a>
-          </div>
-
           <section
             class="trace-agent-handoff agent-prompt-window"
-            aria-labelledby="agent-handoff-title"
+            aria-label="Agent migration prompt"
           >
-            <div class="trace-agent-handoff-copy">
-              <span>Agent handoff</span>
-              <h2 id="agent-handoff-title">Have your agent do the work.</h2>
-              <p>
-                Copy a complete brief to install Beelzebub, migrate scripts, and teach future agents
-                the new commands.
-              </p>
-            </div>
-            <div class="trace-agent-handoff-action">
-              <small>Install · Migrate · Document · Verify</small>
-              <button type="button" data-copy-panel>
-                <span aria-hidden="true">⌘</span>
-                <span data-copy-label>Copy agent brief</span>
-              </button>
-            </div>
+            <button type="button" data-copy-panel>
+              <span class="trace-agent-handoff-mark" aria-hidden="true">⌘</span>
+              <span class="trace-agent-handoff-title">Have your agent do the work.</span>
+              <span class="trace-agent-handoff-label" data-copy-label>Copy agent brief →</span>
+            </button>
             <pre hidden><code>Migrate this project's automation to Beelzebub 2.0.
 
 Follow https://beelzebub.io/migrate/agent-guide.md as the implementation contract.
@@ -147,6 +120,26 @@ Follow https://beelzebub.io/migrate/agent-guide.md as the implementation contrac
    - Report changed files, commands run, results, risks, and manual follow-up.
    - Do not commit, push, publish, deploy, or change unrelated code unless explicitly authorized.</code></pre>
           </section>
+
+          <button
+            class="trace-install"
+            type="button"
+            data-copy="npm install beelzebub"
+            aria-label="Copy npm install beelzebub"
+          >
+            <span aria-hidden="true">&gt;_</span>
+            <code>npm install beelzebub</code>
+            <span class="trace-install-label" data-copy-label>Copy</span>
+          </button>
+
+          <div class="trace-actions">
+            <a class="trace-button trace-button-primary" href="/examples/">
+              <span aria-hidden="true">&gt;_</span> Get started
+            </a>
+            <a class="trace-button trace-button-ghost" href="/api/">
+              <span aria-hidden="true">▣</span> Documentation
+            </a>
+          </div>
         </div>
 
         <div class="trace-task-callouts" aria-label="Live task status">

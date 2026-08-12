@@ -168,6 +168,12 @@ if (
   !traceRiverHtml.includes('beelzebub@^2') ||
   !traceRiverHtml.includes('AGENTS.md, CLAUDE.md') ||
   !traceRiverHtml.includes('data-copy-panel') ||
+  !traceRiverHtml.includes('class="trace-install"') ||
+  traceRiverHtml.indexOf('Have your agent do the work.') >
+    traceRiverHtml.indexOf('npm install beelzebub') ||
+  traceRiverHtml.includes('Agent handoff') ||
+  traceRiverHtml.includes('Install · Migrate · Document · Verify') ||
+  traceRiverHtml.includes('Copy a complete brief to install Beelzebub') ||
   !traceHeader ||
   traceHeader[0].includes('class="brand"')
 ) {
