@@ -12,6 +12,8 @@ const STATIC_LAYER_SCALE = compactViewport.matches
   : Math.min(Math.max(devicePixelRatio, 1), 1.35);
 const TARGET_FRAME_MS = 1000 / (compactViewport.matches ? 30 : 45);
 const SAMPLE_COUNT = compactViewport.matches ? 105 : 160;
+const RIVER_WAVE_PRIMARY_AMPLITUDE = 14;
+const RIVER_WAVE_SECONDARY_AMPLITUDE = 5;
 
 const COLORS = {
   red: '#ff321f',
@@ -170,8 +172,8 @@ function configureContext(layer, width, height) {
 function riverWaveOffset(x, width, seconds) {
   const position = x / Math.max(1, width);
   return (
-    Math.sin(seconds * 0.29 + position * Math.PI * 3.2) * 4.2 +
-    Math.sin(seconds * 0.13 - position * Math.PI * 1.8) * 2
+    Math.sin(seconds * 0.44 + position * Math.PI * 3.2) * RIVER_WAVE_PRIMARY_AMPLITUDE +
+    Math.sin(seconds * 0.19 - position * Math.PI * 1.8) * RIVER_WAVE_SECONDARY_AMPLITUDE
   );
 }
 
@@ -245,7 +247,7 @@ function rebuildStaticLayer(width, height) {
 }
 
 function drawWavedStaticLayer(context, width, height, offsetX, offsetY, seconds) {
-  const sliceWidth = compactViewport.matches ? 36 : 24;
+  const sliceWidth = compactViewport.matches ? 24 : 14;
   for (let x = 0; x < width; x += sliceWidth) {
     const logicalWidth = Math.min(sliceWidth, width - x);
     const sourceX = Math.floor(x * STATIC_LAYER_SCALE);

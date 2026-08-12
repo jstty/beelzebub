@@ -191,6 +191,8 @@ if (
   !traceRiverJs.includes('TARGET_FRAME_MS') ||
   !traceRiverJs.includes('rebuildStaticLayer') ||
   !traceRiverJs.includes('riverWaveOffset') ||
+  !traceRiverJs.includes('RIVER_WAVE_PRIMARY_AMPLITUDE = 14') ||
+  !traceRiverJs.includes('RIVER_WAVE_SECONDARY_AMPLITUDE = 5') ||
   !traceRiverJs.includes("imageSmoothingQuality = 'high'") ||
   !traceRiverJs.includes('riverDriftX') ||
   !traceRiverJs.includes('riverDriftY') ||
