@@ -3,7 +3,10 @@ const toggle = document.querySelector('[data-trace-toggle]');
 const toggleLabel = document.querySelector('[data-trace-toggle-label]');
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 const compactViewport = window.matchMedia('(max-width: 700px)');
+const stackedMarkerViewport = window.matchMedia('(max-width: 760px)');
 const staticLayer = document.createElement('canvas');
+const traceStage = document.querySelector('.trace-cinematic-stage');
+const taskMarkers = [...document.querySelectorAll('.trace-task-callout')];
 
 const devicePixelRatio = window.devicePixelRatio || 1;
 const STATIC_LAYER_SCALE = compactViewport.matches
@@ -120,6 +123,9 @@ let cachedWidth = 0;
 let cachedHeight = 0;
 let cachedBeams = [];
 let lastFrame = 0;
+let lastMarkerSeconds = 0;
+let lastSceneOffsetX = 0;
+let lastSceneOffsetY = 0;
 
 function hexToRgba(hex, alpha) {
   const value = Number.parseInt(hex.slice(1), 16);
@@ -368,6 +374,49 @@ function drawJunctionPulse(context, junction, width, height, seconds, index, off
   context.restore();
 }
 
+function clearTaskMarkerPositions() {
+  for (const marker of taskMarkers) {
+    marker.classList.remove('is-river-anchored');
+    marker.style.removeProperty('--trace-marker-x');
+    marker.style.removeProperty('--trace-marker-y');
+  }
+}
+
+function positionTaskMarkers(width, height, seconds, offsetX, offsetY) {
+  if (!(traceStage instanceof HTMLElement) || stackedMarkerViewport.matches) {
+    clearTaskMarkerPositions();
+    return;
+  }
+
+  const stageRect = traceStage.getBoundingClientRect();
+  for (const marker of taskMarkers) {
+    let anchor;
+    const junctionIndex = Number.parseInt(marker.dataset.traceJunctionMarker ?? '', 10);
+    const beamIndex = Number.parseInt(marker.dataset.traceBeamMarker ?? '', 10);
+
+    if (Number.isInteger(junctionIndex) && junctions[junctionIndex]) {
+      const junction = junctions[junctionIndex];
+      anchor = [junction.x * width, junction.y * height];
+    } else if (Number.isInteger(beamIndex) && cachedBeams[beamIndex]) {
+      const progress = Math.max(0, Math.min(1, Number(marker.dataset.traceProgress) || 0));
+      const points = cachedBeams[beamIndex];
+      anchor = points[Math.round(progress * (points.length - 1))];
+    }
+
+    if (!anchor) continue;
+    const [anchorX, anchorY] = anchor;
+    const markerOffsetY = Number(marker.dataset.traceOffsetY) || 0;
+    marker.style.setProperty('--trace-marker-x', `${anchorX + offsetX - stageRect.left}px`);
+    marker.style.setProperty(
+      '--trace-marker-y',
+      `${
+        anchorY + offsetY + riverWaveOffset(anchorX, width, seconds) + markerOffsetY - stageRect.top
+      }px`
+    );
+    marker.classList.add('is-river-anchored');
+  }
+}
+
 function draw(timestamp) {
   const seconds = (timestamp - pausedDuration) / 1000;
   pointerX += (pointerTargetX - pointerX) * 0.06;
@@ -376,6 +425,9 @@ function draw(timestamp) {
   const riverDriftY = Math.cos(seconds * 0.05) * 4 + Math.sin(seconds * 0.021) * 2;
   const sceneOffsetX = pointerX + riverDriftX;
   const sceneOffsetY = pointerY + riverDriftY;
+  lastMarkerSeconds = seconds;
+  lastSceneOffsetX = sceneOffsetX;
+  lastSceneOffsetY = sceneOffsetY;
   const prepared = prepareCanvas(sceneOffsetX, sceneOffsetY, seconds);
   if (!prepared) return;
   const { context, width, height } = prepared;
@@ -395,6 +447,7 @@ function draw(timestamp) {
   for (const [index, junction] of junctions.entries()) {
     drawJunctionPulse(context, junction, width, height, seconds, index, sceneOffsetX, sceneOffsetY);
   }
+  positionTaskMarkers(width, height, seconds, sceneOffsetX, sceneOffsetY);
 }
 
 function updateToggle() {
@@ -435,6 +488,16 @@ window.addEventListener('resize', () => {
   cachedHeight = 0;
   draw(performance.now());
 });
+
+window.addEventListener('scroll', () =>
+  positionTaskMarkers(
+    cachedWidth,
+    cachedHeight,
+    lastMarkerSeconds,
+    lastSceneOffsetX,
+    lastSceneOffsetY
+  )
+);
 
 reducedMotion.addEventListener('change', (event) => {
   paused = event.matches;

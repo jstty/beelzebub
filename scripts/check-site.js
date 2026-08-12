@@ -186,7 +186,10 @@ if (
   !traceRiverJs.includes('riverWaveOffset') ||
   !traceRiverJs.includes("imageSmoothingQuality = 'high'") ||
   !traceRiverJs.includes('riverDriftX') ||
-  !traceRiverJs.includes('riverDriftY')
+  !traceRiverJs.includes('riverDriftY') ||
+  !traceRiverJs.includes('positionTaskMarkers') ||
+  !traceRiverHtml.includes('data-trace-junction-marker="3"') ||
+  !traceRiverHtml.includes('data-trace-beam-marker="0"')
 ) {
   failures.push('assets/trace-river.js is missing its cached, frame-budgeted drifting renderer');
 }

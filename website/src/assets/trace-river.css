@@ -391,6 +391,15 @@
   pointer-events: none;
   filter: saturate(0.8);
   text-shadow: 0 0 18px rgba(0, 0, 0, 0.9);
+  transform: translate(-23px, -50%);
+}
+
+.trace-task-callout.is-river-anchored {
+  top: 0;
+  right: auto;
+  left: 0;
+  transform: translate3d(calc(var(--trace-marker-x) - 23px), calc(var(--trace-marker-y) - 50%), 0);
+  will-change: transform;
 }
 
 .trace-task-callout-compile {
@@ -413,8 +422,15 @@
 
 .trace-task-callout-release {
   --node-color: #9d68ff;
-  top: 57%;
-  right: 2.5%;
+  top: 34%;
+  right: auto;
+  left: 74%;
+  opacity: 0.66;
+  transform: translate(-21px, -50%);
+}
+
+.trace-task-callout-release.is-river-anchored {
+  transform: translate3d(calc(var(--trace-marker-x) - 21px), calc(var(--trace-marker-y) - 50%), 0);
 }
 
 .trace-node-symbol {
@@ -683,6 +699,8 @@
     top: auto;
     right: auto;
     left: auto;
+    transform: none;
+    will-change: auto;
   }
 
   .trace-node-symbol {
