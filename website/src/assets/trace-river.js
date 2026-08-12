@@ -5,9 +5,12 @@ const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 const compactViewport = window.matchMedia('(max-width: 700px)');
 const staticLayer = document.createElement('canvas');
 
-const STATIC_LAYER_SCALE = compactViewport.matches ? 0.5 : 0.68;
+const devicePixelRatio = window.devicePixelRatio || 1;
+const STATIC_LAYER_SCALE = compactViewport.matches
+  ? Math.min(Math.max(devicePixelRatio * 0.8, 0.85), 1.1)
+  : Math.min(Math.max(devicePixelRatio, 1), 1.35);
 const TARGET_FRAME_MS = 1000 / (compactViewport.matches ? 30 : 45);
-const SAMPLE_COUNT = compactViewport.matches ? 80 : 110;
+const SAMPLE_COUNT = compactViewport.matches ? 105 : 160;
 
 const COLORS = {
   red: '#ff321f',
@@ -157,7 +160,17 @@ function configureContext(layer, width, height) {
   layer.height = Math.max(1, Math.round(height * STATIC_LAYER_SCALE));
   const context = layer.getContext('2d', { alpha: true });
   context.setTransform(STATIC_LAYER_SCALE, 0, 0, STATIC_LAYER_SCALE, 0, 0);
+  context.imageSmoothingEnabled = true;
+  context.imageSmoothingQuality = 'high';
   return context;
+}
+
+function riverWaveOffset(x, width, seconds) {
+  const position = x / Math.max(1, width);
+  return (
+    Math.sin(seconds * 0.29 + position * Math.PI * 3.2) * 4.2 +
+    Math.sin(seconds * 0.13 - position * Math.PI * 1.8) * 2
+  );
 }
 
 function strokePoints(context, points, color, width, alpha, blur = 0, offsetX = 0, offsetY = 0) {
@@ -229,7 +242,28 @@ function rebuildStaticLayer(width, height) {
   for (const junction of junctions) drawStaticJunction(context, junction, width, height);
 }
 
-function prepareCanvas(offsetX, offsetY) {
+function drawWavedStaticLayer(context, width, height, offsetX, offsetY, seconds) {
+  const sliceWidth = compactViewport.matches ? 36 : 24;
+  for (let x = 0; x < width; x += sliceWidth) {
+    const logicalWidth = Math.min(sliceWidth, width - x);
+    const sourceX = Math.floor(x * STATIC_LAYER_SCALE);
+    const sourceWidth = Math.ceil(logicalWidth * STATIC_LAYER_SCALE);
+    const waveY = riverWaveOffset(x + logicalWidth / 2, width, seconds);
+    context.drawImage(
+      staticLayer,
+      sourceX,
+      0,
+      sourceWidth,
+      staticLayer.height,
+      x + offsetX - 1,
+      offsetY + waveY,
+      logicalWidth + 2,
+      height
+    );
+  }
+}
+
+function prepareCanvas(offsetX, offsetY, seconds) {
   if (!(canvas instanceof HTMLCanvasElement)) return null;
   const width = window.innerWidth;
   const height = window.innerHeight;
@@ -244,29 +278,34 @@ function prepareCanvas(offsetX, offsetY) {
 
   const context = canvas.getContext('2d', { alpha: true });
   context.setTransform(STATIC_LAYER_SCALE, 0, 0, STATIC_LAYER_SCALE, 0, 0);
+  context.imageSmoothingEnabled = true;
+  context.imageSmoothingQuality = 'high';
   context.clearRect(0, 0, width, height);
-  context.drawImage(staticLayer, offsetX, offsetY, width, height);
+  drawWavedStaticLayer(context, width, height, offsetX, offsetY, seconds);
   return { context, width, height };
 }
 
-function drawMovingBeam(context, points, beam, seconds, index, offsetX, offsetY) {
+function drawMovingBeam(context, points, beam, seconds, index, offsetX, offsetY, width) {
   const progress = (seconds * beam.speed + beam.offset) % 1;
   const headIndex = Math.floor(progress * (points.length - 1));
   const trail = [];
   for (let offset = 18; offset >= 0; offset -= 1) {
     const pointIndex = headIndex - offset;
-    if (pointIndex >= 0) trail.push(points[pointIndex]);
+    if (pointIndex >= 0) {
+      const [trailX, trailY] = points[pointIndex];
+      trail.push([trailX + offsetX, trailY + offsetY + riverWaveOffset(trailX, width, seconds)]);
+    }
   }
 
   context.save();
   context.globalCompositeOperation = 'lighter';
-  strokePoints(context, trail, beam.color, 11, 0.18, 18, offsetX, offsetY);
-  strokePoints(context, trail, beam.color, 3.8, 0.8, 15, offsetX, offsetY);
-  strokePoints(context, trail, COLORS.white, 1.15, 0.96, 7, offsetX, offsetY);
+  strokePoints(context, trail, beam.color, 11, 0.18, 18);
+  strokePoints(context, trail, beam.color, 3.8, 0.8, 15);
+  strokePoints(context, trail, COLORS.white, 1.15, 0.96, 7);
 
   const [headX, headY] = points[headIndex];
   const x = headX + offsetX;
-  const y = headY + offsetY;
+  const y = headY + offsetY + riverWaveOffset(headX, width, seconds);
   const flare = context.createRadialGradient(x, y, 0, x, y, 23);
   flare.addColorStop(0, hexToRgba(COLORS.white, 0.96));
   flare.addColorStop(0.12, hexToRgba(beam.color, 0.85));
@@ -282,9 +321,11 @@ function drawMovingBeam(context, points, beam, seconds, index, offsetX, offsetY)
     const nextIndex = Math.min(points.length - 1, packetIndex + 1);
     const [packetX, packetY] = points[packetIndex];
     const [nextX, nextY] = points[nextIndex];
+    const packetWaveY = riverWaveOffset(packetX, width, seconds);
+    const nextWaveY = riverWaveOffset(nextX, width, seconds);
     context.save();
-    context.translate(packetX + offsetX, packetY + offsetY);
-    context.rotate(Math.atan2(nextY - packetY, nextX - packetX));
+    context.translate(packetX + offsetX, packetY + offsetY + packetWaveY);
+    context.rotate(Math.atan2(nextY + nextWaveY - packetY - packetWaveY, nextX - packetX));
     context.fillStyle = hexToRgba(beam.color, 0.72);
     context.shadowColor = beam.color;
     context.shadowBlur = 10;
@@ -298,7 +339,7 @@ function drawMovingBeam(context, points, beam, seconds, index, offsetX, offsetY)
       context.fillStyle = hexToRgba(beam.color, 0.38 - spark * 0.07);
       context.fillRect(
         sparkX + offsetX - spark * 2,
-        sparkY + offsetY + Math.sin(spark + seconds) * 2,
+        sparkY + offsetY + riverWaveOffset(sparkX, width, seconds) + Math.sin(spark + seconds) * 2,
         1.2,
         1.2
       );
@@ -309,7 +350,7 @@ function drawMovingBeam(context, points, beam, seconds, index, offsetX, offsetY)
 
 function drawJunctionPulse(context, junction, width, height, seconds, index, offsetX, offsetY) {
   const x = junction.x * width + offsetX;
-  const y = junction.y * height + offsetY;
+  const y = junction.y * height + offsetY + riverWaveOffset(junction.x * width, width, seconds);
   const pulse = (seconds * 17 + index * 13) % 27;
   context.save();
   context.globalCompositeOperation = 'lighter';
@@ -332,15 +373,24 @@ function draw(timestamp) {
   pointerX += (pointerTargetX - pointerX) * 0.06;
   pointerY += (pointerTargetY - pointerY) * 0.06;
   const riverDriftX = Math.sin(seconds * 0.085) * 18 + Math.sin(seconds * 0.031) * 7;
-  const riverDriftY = Math.cos(seconds * 0.07) * 12 + Math.sin(seconds * 0.027) * 5;
+  const riverDriftY = Math.cos(seconds * 0.05) * 4 + Math.sin(seconds * 0.021) * 2;
   const sceneOffsetX = pointerX + riverDriftX;
   const sceneOffsetY = pointerY + riverDriftY;
-  const prepared = prepareCanvas(sceneOffsetX, sceneOffsetY);
+  const prepared = prepareCanvas(sceneOffsetX, sceneOffsetY, seconds);
   if (!prepared) return;
   const { context, width, height } = prepared;
 
   for (const [index, beam] of beamTemplates.entries()) {
-    drawMovingBeam(context, cachedBeams[index], beam, seconds, index, sceneOffsetX, sceneOffsetY);
+    drawMovingBeam(
+      context,
+      cachedBeams[index],
+      beam,
+      seconds,
+      index,
+      sceneOffsetX,
+      sceneOffsetY,
+      width
+    );
   }
   for (const [index, junction] of junctions.entries()) {
     drawJunctionPulse(context, junction, width, height, seconds, index, sceneOffsetX, sceneOffsetY);

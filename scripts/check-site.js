@@ -173,6 +173,8 @@ if (
   !traceRiverJs.includes('STATIC_LAYER_SCALE') ||
   !traceRiverJs.includes('TARGET_FRAME_MS') ||
   !traceRiverJs.includes('rebuildStaticLayer') ||
+  !traceRiverJs.includes('riverWaveOffset') ||
+  !traceRiverJs.includes("imageSmoothingQuality = 'high'") ||
   !traceRiverJs.includes('riverDriftX') ||
   !traceRiverJs.includes('riverDriftY')
 ) {
