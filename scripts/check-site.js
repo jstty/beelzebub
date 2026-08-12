@@ -249,6 +249,12 @@ if (/\.trace-glass-panel\s*\{[^}]*backdrop-filter:\s*blur/s.test(traceRiverCss))
 if (!traceRiverCss.includes('.trace-task-callout-release > div')) {
   failures.push('assets/trace-river.css does not offset the release label below the river rail');
 }
+if (
+  !traceRiverCss.includes('.trace-home-page .trace-brand-lockup span') ||
+  !traceRiverCss.includes('-webkit-text-stroke: clamp(1.5px, 0.16vw, 2.5px) #000')
+) {
+  failures.push('assets/trace-river.css does not outline the overview wordmark');
+}
 const migrationSectionIds = ['scope', 'plan', 'example', 'packages', 'agent', 'verify'];
 if (
   migrationSectionIds.some((sectionId) => !migrationHtml.includes(`id="${sectionId}"`)) ||
