@@ -105,7 +105,9 @@ if (homeHtml.includes('forged for Node 24') || homeHtml.includes('class="release
 if (
   !homeHtml.includes('data-trace-river') ||
   !homeHtml.includes('trace-cinematic-stage') ||
-  !homeHtml.includes('One hell</b> of a taskmaster.') ||
+  !homeHtml.includes('trace-tagline-primary">One <b>hell</b> of a taskmaster.') ||
+  !homeHtml.includes('class="trace-tagline-secondary">Whip your agents into shape.') ||
+  !homeHtml.includes('class="trace-tagline-tertiary">Build testable workflows.') ||
   !homeHtml.includes('Whip your agents into shape.') ||
   !homeHtml.includes('Build testable workflows.') ||
   !homeHtml.includes('Have your agent do the work.') ||
@@ -113,6 +115,13 @@ if (
   !/src="\/assets\/trace-river\.js\?v=[a-f0-9]{12}"/.test(homeHtml)
 ) {
   failures.push('index.html is missing the production Trace River homepage');
+}
+if (
+  !traceRiverCss.includes('.trace-tagline-primary') ||
+  !traceRiverCss.includes('.trace-tagline-secondary') ||
+  !traceRiverCss.includes('.trace-tagline-tertiary')
+) {
+  failures.push('index.html is missing the overview tagline hierarchy');
 }
 const homeHeader = homeHtml.match(
   /<header class="site-header trace-site-header"[\s\S]*?<\/header>/

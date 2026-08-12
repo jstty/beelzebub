@@ -162,6 +162,26 @@
   font-weight: inherit;
 }
 
+.trace-home-page .trace-cinematic-copy h1 .trace-tagline-primary,
+.trace-home-page .trace-cinematic-copy h1 .trace-tagline-secondary {
+  color: #f2e8dc;
+  font-size: 0.8em;
+  letter-spacing: -0.035em;
+  line-height: 1.08;
+}
+
+.trace-home-page .trace-cinematic-copy h1 .trace-tagline-secondary {
+  color: rgba(208, 194, 182, 0.58);
+}
+
+.trace-home-page .trace-cinematic-copy h1 .trace-tagline-tertiary {
+  margin-top: 4px;
+  color: #eadcc7;
+  font-size: 0.58em;
+  letter-spacing: -0.02em;
+  line-height: 1.12;
+}
+
 .trace-install {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
