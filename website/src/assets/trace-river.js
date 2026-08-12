@@ -14,6 +14,8 @@ const TARGET_FRAME_MS = 1000 / (compactViewport.matches ? 30 : 45);
 const SAMPLE_COUNT = compactViewport.matches ? 105 : 160;
 const RIVER_WAVE_PRIMARY_AMPLITUDE = 14;
 const RIVER_WAVE_SECONDARY_AMPLITUDE = 5;
+const PULSE_RIBBON_RADIUS = compactViewport.matches ? 10 : 14;
+const PULSE_RIBBON_MAX_WIDTH = compactViewport.matches ? 12 : 16;
 
 const COLORS = {
   red: '#ff321f',
@@ -289,6 +291,63 @@ function prepareCanvas(offsetX, offsetY, seconds) {
   return { context, width, height };
 }
 
+function getPulseRibbon(points, headIndex, seconds, offsetX, offsetY, width) {
+  const startIndex = Math.max(0, headIndex - PULSE_RIBBON_RADIUS);
+  const endIndex = Math.min(points.length - 1, headIndex + PULSE_RIBBON_RADIUS);
+  const ribbon = [];
+
+  for (let pointIndex = startIndex; pointIndex <= endIndex; pointIndex += 1) {
+    const [pointX, pointY] = points[pointIndex];
+    const distance = Math.abs(pointIndex - headIndex) / PULSE_RIBBON_RADIUS;
+    const strength = Math.cos(Math.min(1, distance) * (Math.PI / 2)) ** 2;
+    ribbon.push({
+      x: pointX + offsetX,
+      y: pointY + offsetY + riverWaveOffset(pointX, width, seconds),
+      strength
+    });
+  }
+
+  return ribbon;
+}
+
+function fillPulseRibbon(context, ribbon, color, maxWidth, alpha, blur) {
+  if (ribbon.length < 2) return;
+  const leftEdge = [];
+  const rightEdge = [];
+
+  for (let index = 0; index < ribbon.length; index += 1) {
+    const point = ribbon[index];
+    const previous = ribbon[Math.max(0, index - 1)];
+    const next = ribbon[Math.min(ribbon.length - 1, index + 1)];
+    const deltaX = next.x - previous.x;
+    const deltaY = next.y - previous.y;
+    const segmentLength = Math.hypot(deltaX, deltaY) || 1;
+    const halfWidth = Math.max(0.15, (point.strength * maxWidth) / 2);
+    const normalX = -deltaY / segmentLength;
+    const normalY = deltaX / segmentLength;
+
+    leftEdge.push([point.x + normalX * halfWidth, point.y + normalY * halfWidth]);
+    rightEdge.push([point.x - normalX * halfWidth, point.y - normalY * halfWidth]);
+  }
+
+  context.save();
+  context.globalCompositeOperation = 'lighter';
+  context.fillStyle = hexToRgba(color, alpha);
+  context.shadowColor = color;
+  context.shadowBlur = blur;
+  context.beginPath();
+  context.moveTo(leftEdge[0][0], leftEdge[0][1]);
+  for (let index = 1; index < leftEdge.length; index += 1) {
+    context.lineTo(leftEdge[index][0], leftEdge[index][1]);
+  }
+  for (let index = rightEdge.length - 1; index >= 0; index -= 1) {
+    context.lineTo(rightEdge[index][0], rightEdge[index][1]);
+  }
+  context.closePath();
+  context.fill();
+  context.restore();
+}
+
 function drawMovingBeam(context, points, beam, seconds, index, offsetX, offsetY, width) {
   const progress = (seconds * beam.speed + beam.offset) % 1;
   const headIndex = Math.floor(progress * (points.length - 1));
@@ -303,9 +362,13 @@ function drawMovingBeam(context, points, beam, seconds, index, offsetX, offsetY,
 
   context.save();
   context.globalCompositeOperation = 'lighter';
-  strokePoints(context, trail, beam.color, 11, 0.18, 18);
-  strokePoints(context, trail, beam.color, 3.8, 0.8, 15);
-  strokePoints(context, trail, COLORS.white, 1.15, 0.96, 7);
+  strokePoints(context, trail, beam.color, 7, 0.12, 16);
+  strokePoints(context, trail, beam.color, 2.3, 0.48, 10);
+
+  const pulseRibbon = getPulseRibbon(points, headIndex, seconds, offsetX, offsetY, width);
+  fillPulseRibbon(context, pulseRibbon, beam.color, PULSE_RIBBON_MAX_WIDTH + 18, 0.12, 24);
+  fillPulseRibbon(context, pulseRibbon, beam.color, PULSE_RIBBON_MAX_WIDTH, 0.72, 14);
+  fillPulseRibbon(context, pulseRibbon, COLORS.white, PULSE_RIBBON_MAX_WIDTH * 0.28, 0.9, 6);
 
   const [headX, headY] = points[headIndex];
   const x = headX + offsetX;

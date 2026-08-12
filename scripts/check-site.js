@@ -193,6 +193,8 @@ if (
   !traceRiverJs.includes('riverWaveOffset') ||
   !traceRiverJs.includes('RIVER_WAVE_PRIMARY_AMPLITUDE = 14') ||
   !traceRiverJs.includes('RIVER_WAVE_SECONDARY_AMPLITUDE = 5') ||
+  !traceRiverJs.includes('PULSE_RIBBON_MAX_WIDTH') ||
+  !traceRiverJs.includes('fillPulseRibbon') ||
   !traceRiverJs.includes("imageSmoothingQuality = 'high'") ||
   !traceRiverJs.includes('riverDriftX') ||
   !traceRiverJs.includes('riverDriftY') ||
