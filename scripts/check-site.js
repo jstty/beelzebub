@@ -105,7 +105,8 @@ if (homeHtml.includes('forged for Node 24') || homeHtml.includes('class="release
 if (
   !homeHtml.includes('data-trace-river') ||
   !homeHtml.includes('trace-cinematic-stage') ||
-  !homeHtml.includes('Agent first.') ||
+  !homeHtml.includes('One hell</b> of a taskmaster.') ||
+  !homeHtml.includes('Whip your agents into shape.') ||
   !homeHtml.includes('Build testable workflows.') ||
   !homeHtml.includes('Have your agent do the work.') ||
   !/href="\/assets\/trace-river\.css\?v=[a-f0-9]{12}"/.test(homeHtml) ||
