@@ -13,6 +13,7 @@ const requiredFiles = [
   'migrate/agent-guide.md',
   'assets/motion-lab.css',
   'assets/motion-lab.js',
+  'assets/page-trace.js',
   'assets/trace-river.css',
   'assets/trace-river.js',
   'assets/site.css',
@@ -85,6 +86,7 @@ for (const htmlFile of productHtmlFiles) {
 }
 
 const homeHtml = readFileSync(path.join(outputRoot, 'index.html'), 'utf8');
+const examplesHtml = readFileSync(path.join(outputRoot, 'examples', 'index.html'), 'utf8');
 const apiHtml = readFileSync(path.join(outputRoot, 'api', 'index.html'), 'utf8');
 const migrationHtml = readFileSync(path.join(outputRoot, 'migrate', 'index.html'), 'utf8');
 const motionLabHtml = readFileSync(path.join(outputRoot, 'motion-lab', 'index.html'), 'utf8');
@@ -94,6 +96,7 @@ const traceRiverHtml = readFileSync(
 );
 const agentGuide = readFileSync(path.join(outputRoot, 'migrate', 'agent-guide.md'), 'utf8');
 const siteCss = readFileSync(path.join(outputRoot, 'assets', 'site.css'), 'utf8');
+const pageTraceJs = readFileSync(path.join(outputRoot, 'assets', 'page-trace.js'), 'utf8');
 const traceRiverCss = readFileSync(path.join(outputRoot, 'assets', 'trace-river.css'), 'utf8');
 const traceRiverJs = readFileSync(path.join(outputRoot, 'assets', 'trace-river.js'), 'utf8');
 if (homeHtml.includes('forged for Node 24') || homeHtml.includes('class="release-kicker"')) {
@@ -151,10 +154,19 @@ if (!siteCss.includes('@keyframes hero-color-drift')) {
 }
 if (
   !siteCss.includes('/* Trace River product theme */') ||
-  !siteCss.includes('@keyframes page-rail-drift') ||
+  !siteCss.includes('.page-trace-canvas') ||
   !siteCss.includes(".api-page .primary-nav a[aria-current='page']")
 ) {
   failures.push('assets/site.css is missing the shared Trace River product theme');
+}
+if (
+  !pageTraceJs.includes('drawPageTrace') ||
+  !pageTraceJs.includes('drawPulse') ||
+  !/src="\/assets\/page-trace\.js\?v=[a-f0-9]{12}"/.test(examplesHtml) ||
+  !/src="\/assets\/page-trace\.js\?v=[a-f0-9]{12}"/.test(apiHtml) ||
+  !/src="\/assets\/page-trace\.js\?v=[a-f0-9]{12}"/.test(migrationHtml)
+) {
+  failures.push('secondary pages are missing the simplified Trace River renderer');
 }
 const motionSamples = ['trace', 'topology', 'ribbons', 'grid', 'particles'];
 if (
@@ -237,6 +249,14 @@ if (
   !migrationHtml.includes('data-copy-panel')
 ) {
   failures.push('migrate/index.html is missing the AI-agent script-migration playbook');
+}
+if (
+  migrationHtml.indexOf('href="#agent"') > migrationHtml.indexOf('href="#scope"') ||
+  migrationHtml.indexOf('id="agent"') > migrationHtml.indexOf('id="scope"') ||
+  !siteCss.includes('.agent-prompt-window .example-code-bar > span:first-child') ||
+  !siteCss.includes('.migration-page .migration-nav::-webkit-scrollbar')
+) {
+  failures.push('migrate/index.html is missing the agent-first responsive navigation treatment');
 }
 if (
   migrationHtml.includes('Beelzebub 1.x') ||

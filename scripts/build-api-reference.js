@@ -268,6 +268,7 @@ function renderPage(project) {
     <link rel="icon" href="/assets/bz-logo.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="/assets/site.css" />
     <script src="/assets/site.js" defer></script>
+    <script src="/assets/page-trace.js" defer></script>
   </head>
   <body class="api-page">
     <a class="skip-link" href="#main">Skip to content</a>

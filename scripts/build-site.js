@@ -43,6 +43,7 @@ function versionBrowserAssets() {
   const versions = {
     '/assets/site.css': contentVersion('assets/site.css'),
     '/assets/site.js': contentVersion('assets/site.js'),
+    '/assets/page-trace.js': contentVersion('assets/page-trace.js'),
     '/assets/trace-river.css': contentVersion('assets/trace-river.css'),
     '/assets/trace-river.js': contentVersion('assets/trace-river.js')
   };

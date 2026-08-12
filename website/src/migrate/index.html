@@ -12,6 +12,7 @@
     <link rel="icon" href="/assets/bz-logo.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="/assets/site.css" />
     <script src="/assets/site.js" defer></script>
+    <script src="/assets/page-trace.js" defer></script>
   </head>
   <body class="examples-page migration-page">
     <a class="skip-link" href="#main">Skip to content</a>
@@ -70,15 +71,86 @@
         <div class="shell migration-layout">
           <aside class="migration-nav" aria-label="Migration sections">
             <span>On this page</span>
+            <a href="#agent">Give this to your agent</a>
             <a href="#scope">What this migrates</a>
             <a href="#plan">Plan the task graph</a>
             <a href="#example">Before and after</a>
             <a href="#packages">Reuse task packages</a>
-            <a href="#agent">Give this to your agent</a>
             <a href="#verify">Verify the result</a>
           </aside>
 
           <div class="migration-main">
+            <section class="migration-section agent-migration" id="agent">
+              <span class="eyebrow">GIVE THIS TO YOUR AGENT</span>
+              <h2>A complete implementation contract, ready to paste.</h2>
+              <p>
+                The Markdown guide tells an AI coding agent what to inspect, how to model the task
+                graph, which behavior to preserve, what to test, and how to report the result.
+              </p>
+
+              <div class="agent-workflow" aria-label="Agent migration workflow">
+                <article>
+                  <span>01</span>
+                  <strong>Discover</strong>
+                  <p>
+                    Inventory scripts, shell files, task runners, CI, runtime, and existing tests.
+                  </p>
+                </article>
+                <article>
+                  <span>02</span>
+                  <strong>Design</strong>
+                  <p>Map ordering, parallelism, inputs, cleanup, and reusable task boundaries.</p>
+                </article>
+                <article>
+                  <span>03</span>
+                  <strong>Implement</strong>
+                  <p>
+                    Create composable tasks and keep current package and CI entry points stable.
+                  </p>
+                </article>
+                <article>
+                  <span>04</span>
+                  <strong>Verify</strong>
+                  <p>Compare behavior, run the full validation suite, and report every result.</p>
+                </article>
+              </div>
+
+              <div class="agent-prompt-window" aria-label="Prompt for a coding agent">
+                <div class="example-code-bar">
+                  <span>Agent prompt</span>
+                  <button type="button" data-copy-panel>
+                    <span data-copy-label>Copy prompt</span>
+                  </button>
+                </div>
+                <pre
+                  class="example-code"
+                ><code>Migrate this project's task automation from package.json scripts, shell scripts,
+CI-only commands, and other task runners to Beelzebub 2.0.
+
+Follow https://beelzebub.io/migrate/agent-guide.md as the implementation contract.
+
+First inventory every public and private automation entry point and run the existing
+validation. Preserve command names and behavior. Replace complex command chains with
+named, composable Beelzebub tasks; model ordering with $sequence(), independent work
+with $parallel(), and reuse or extend shared task packages where useful. Keep package.json
+scripts and CI steps as short wrappers around the same task graph.
+
+Use Node 24.15 or newer, choose the project's existing ESM or CommonJS format, and
+configure TypeScript task-file loading when needed. Run the full project validation and
+representative Beelzebub CLI tasks. Report changed files, commands run, results, risks,
+and manual follow-up. Do not commit, push, publish, or deploy unless explicitly authorized.</code></pre>
+                <div class="agent-guide-footer">
+                  <p>
+                    Open the raw Markdown page and give its URL or complete contents directly to
+                    your coding agent.
+                  </p>
+                  <a class="button button-primary" href="/migrate/agent-guide.md"
+                    >Open Markdown guide <span aria-hidden="true">↗</span></a
+                  >
+                </div>
+              </div>
+            </section>
+
             <section class="migration-section" id="scope">
               <span class="eyebrow">START WITH THE PROJECT</span>
               <h2>Move shell logic into workflow code you can test.</h2>
@@ -277,77 +349,6 @@ class Quality extends SharedQuality {
 }
 
 export default [Quality, ProjectTasks];</code></pre>
-              </div>
-            </section>
-
-            <section class="migration-section agent-migration" id="agent">
-              <span class="eyebrow">GIVE THIS TO YOUR AGENT</span>
-              <h2>A complete implementation contract, ready to paste.</h2>
-              <p>
-                The Markdown guide tells an AI coding agent what to inspect, how to model the task
-                graph, which behavior to preserve, what to test, and how to report the result.
-              </p>
-
-              <div class="agent-workflow" aria-label="Agent migration workflow">
-                <article>
-                  <span>01</span>
-                  <strong>Discover</strong>
-                  <p>
-                    Inventory scripts, shell files, task runners, CI, runtime, and existing tests.
-                  </p>
-                </article>
-                <article>
-                  <span>02</span>
-                  <strong>Design</strong>
-                  <p>Map ordering, parallelism, inputs, cleanup, and reusable task boundaries.</p>
-                </article>
-                <article>
-                  <span>03</span>
-                  <strong>Implement</strong>
-                  <p>
-                    Create composable tasks and keep current package and CI entry points stable.
-                  </p>
-                </article>
-                <article>
-                  <span>04</span>
-                  <strong>Verify</strong>
-                  <p>Compare behavior, run the full validation suite, and report every result.</p>
-                </article>
-              </div>
-
-              <div class="agent-prompt-window" aria-label="Prompt for a coding agent">
-                <div class="example-code-bar">
-                  <span>Agent prompt</span>
-                  <button type="button" data-copy-panel>
-                    <span data-copy-label>Copy prompt</span>
-                  </button>
-                </div>
-                <pre
-                  class="example-code"
-                ><code>Migrate this project's task automation from package.json scripts, shell scripts,
-CI-only commands, and other task runners to Beelzebub 2.0.
-
-Follow https://beelzebub.io/migrate/agent-guide.md as the implementation contract.
-
-First inventory every public and private automation entry point and run the existing
-validation. Preserve command names and behavior. Replace complex command chains with
-named, composable Beelzebub tasks; model ordering with $sequence(), independent work
-with $parallel(), and reuse or extend shared task packages where useful. Keep package.json
-scripts and CI steps as short wrappers around the same task graph.
-
-Use Node 24.15 or newer, choose the project's existing ESM or CommonJS format, and
-configure TypeScript task-file loading when needed. Run the full project validation and
-representative Beelzebub CLI tasks. Report changed files, commands run, results, risks,
-and manual follow-up. Do not commit, push, publish, or deploy unless explicitly authorized.</code></pre>
-                <div class="agent-guide-footer">
-                  <p>
-                    Open the raw Markdown page and give its URL or complete contents directly to
-                    your coding agent.
-                  </p>
-                  <a class="button button-primary" href="/migrate/agent-guide.md"
-                    >Open Markdown guide <span aria-hidden="true">↗</span></a
-                  >
-                </div>
               </div>
             </section>
 
