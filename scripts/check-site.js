@@ -223,6 +223,9 @@ if (
 if (/\.trace-glass-panel\s*\{[^}]*backdrop-filter:\s*blur/s.test(traceRiverCss)) {
   failures.push('assets/trace-river.css uses live blur over the animated canvas');
 }
+if (!traceRiverCss.includes('.trace-task-callout-release > div')) {
+  failures.push('assets/trace-river.css does not offset the release label below the river rail');
+}
 const migrationSectionIds = ['scope', 'plan', 'example', 'packages', 'agent', 'verify'];
 if (
   migrationSectionIds.some((sectionId) => !migrationHtml.includes(`id="${sectionId}"`)) ||

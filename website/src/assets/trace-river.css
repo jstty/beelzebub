@@ -382,6 +382,10 @@
   transform: translate3d(calc(var(--trace-marker-x) - 21px), calc(var(--trace-marker-y) - 50%), 0);
 }
 
+.trace-task-callout-release > div {
+  transform: translateY(24px);
+}
+
 .trace-node-symbol {
   position: relative;
   display: grid;
@@ -651,6 +655,10 @@
   .trace-task-callout-release .trace-node-symbol {
     width: 34px;
     height: 34px;
+  }
+
+  .trace-task-callout-release > div {
+    transform: none;
   }
 
   .trace-timeline {
