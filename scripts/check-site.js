@@ -125,6 +125,9 @@ if (
 ) {
   failures.push('index.html is missing the overview tagline hierarchy');
 }
+if (!/\.trace-agent-handoff-mark\s*\{[^}]*color:\s*#f04a3a/s.test(traceRiverCss)) {
+  failures.push('index.html is missing the red agent handoff icon');
+}
 const homeHeader = homeHtml.match(
   /<header class="site-header trace-site-header"[\s\S]*?<\/header>/
 );
