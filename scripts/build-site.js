@@ -42,7 +42,9 @@ function contentVersion(relativePath) {
 function versionBrowserAssets() {
   const versions = {
     '/assets/site.css': contentVersion('assets/site.css'),
-    '/assets/site.js': contentVersion('assets/site.js')
+    '/assets/site.js': contentVersion('assets/site.js'),
+    '/assets/trace-river.css': contentVersion('assets/trace-river.css'),
+    '/assets/trace-river.js': contentVersion('assets/trace-river.js')
   };
 
   for (const htmlFile of collectHtmlFiles(outputRoot)) {

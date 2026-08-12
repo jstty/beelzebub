@@ -100,12 +100,21 @@ if (homeHtml.includes('forged for Node 24') || homeHtml.includes('class="release
   failures.push('index.html still includes the removed Node 24 release kicker');
 }
 if (
-  !homeHtml.includes('Stop writing shell scripts.') ||
-  !homeHtml.includes('Build workflows you can test.') ||
-  !homeHtml.includes('Compose workflow components') ||
-  !homeHtml.includes('Readable to people and agents')
+  !homeHtml.includes('data-trace-river') ||
+  !homeHtml.includes('trace-cinematic-stage') ||
+  !homeHtml.includes('Agent first.') ||
+  !homeHtml.includes('Build testable workflows.') ||
+  !homeHtml.includes('Have your agent do the work.') ||
+  !/href="\/assets\/trace-river\.css\?v=[a-f0-9]{12}"/.test(homeHtml) ||
+  !/src="\/assets\/trace-river\.js\?v=[a-f0-9]{12}"/.test(homeHtml)
 ) {
-  failures.push('index.html is missing the testable workflow component positioning');
+  failures.push('index.html is missing the production Trace River homepage');
+}
+const homeHeader = homeHtml.match(
+  /<header class="site-header trace-site-header"[\s\S]*?<\/header>/
+);
+if (!homeHeader || homeHeader[0].includes('class="brand"')) {
+  failures.push('index.html should keep branding in the hero instead of the home header');
 }
 if (!apiHtml.includes('data-api-symbol')) {
   failures.push('api/index.html is missing generated API symbols');
@@ -139,6 +148,13 @@ if (siteCss.includes('min-width: 560px')) {
 }
 if (!siteCss.includes('@keyframes hero-color-drift')) {
   failures.push('assets/site.css is missing the animated hero color fields');
+}
+if (
+  !siteCss.includes('/* Trace River product theme */') ||
+  !siteCss.includes('@keyframes page-rail-drift') ||
+  !siteCss.includes(".api-page .primary-nav a[aria-current='page']")
+) {
+  failures.push('assets/site.css is missing the shared Trace River product theme');
 }
 const motionSamples = ['trace', 'topology', 'ribbons', 'grid', 'particles'];
 if (
