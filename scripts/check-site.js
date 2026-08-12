@@ -163,14 +163,21 @@ if (
   !pageTraceJs.includes('drawPageTrace') ||
   !pageTraceJs.includes('drawPulse') ||
   !pageTraceJs.includes('pageTraceCompact') ||
-  !pageTraceJs.includes('IntersectionObserver') ||
   !pageTraceJs.includes('visibilitychange') ||
-  !pageTraceJs.includes('ResizeObserver') ||
+  !pageTraceJs.includes('orientationchange') ||
   !/src="\/assets\/page-trace\.js\?v=[a-f0-9]{12}"/.test(examplesHtml) ||
   !/src="\/assets\/page-trace\.js\?v=[a-f0-9]{12}"/.test(apiHtml) ||
   !/src="\/assets\/page-trace\.js\?v=[a-f0-9]{12}"/.test(migrationHtml)
 ) {
   failures.push('secondary pages are missing the simplified Trace River renderer');
+}
+if (
+  homeHtml.includes('trace-task-callouts') ||
+  homeHtml.includes('class="trace-timeline"') ||
+  !/\.page-trace-canvas\s*\{[^}]*position:\s*fixed/s.test(siteCss) ||
+  !siteCss.includes('@keyframes page-trace-mobile-drift')
+) {
+  failures.push('overview or secondary pages are missing the simplified fixed trace treatment');
 }
 const motionSamples = ['trace', 'topology', 'ribbons', 'grid', 'particles'];
 if (

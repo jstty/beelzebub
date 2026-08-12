@@ -7,7 +7,7 @@ if (pageTraceHero instanceof HTMLElement) {
   canvas.className = 'page-trace-canvas';
   canvas.dataset.pageTrace = '';
   canvas.setAttribute('aria-hidden', 'true');
-  pageTraceHero.prepend(canvas);
+  document.body.prepend(canvas);
 
   const context = canvas.getContext('2d', { alpha: true });
   const rails = [
@@ -19,7 +19,7 @@ if (pageTraceHero instanceof HTMLElement) {
   let height = 0;
   let lastFrame = 0;
   let animationFrame = null;
-  let pageTraceVisible = true;
+  let resizeFrame = null;
 
   function rgba(hex, alpha) {
     const value = Number.parseInt(hex.slice(1), 16);
@@ -148,11 +148,10 @@ if (pageTraceHero instanceof HTMLElement) {
     context.restore();
   }
 
-  function resizePageTrace() {
-    const bounds = pageTraceHero.getBoundingClientRect();
-    const nextWidth = Math.max(1, Math.round(bounds.width));
-    const nextHeight = Math.max(1, Math.round(bounds.height));
-    if (nextWidth === width && nextHeight === height) return false;
+  function resizePageTrace(force = false) {
+    const nextWidth = Math.max(1, Math.round(window.innerWidth));
+    const nextHeight = Math.max(1, Math.round(window.innerHeight));
+    if (!force && nextWidth === width && nextHeight === height) return false;
 
     const ratio = pageTraceCompact.matches
       ? Math.min(window.devicePixelRatio || 1, 1)
@@ -196,7 +195,6 @@ if (pageTraceHero instanceof HTMLElement) {
     return (
       !pageTraceReducedMotion.matches &&
       !pageTraceCompact.matches &&
-      pageTraceVisible &&
       document.visibilityState === 'visible'
     );
   }
@@ -220,22 +218,32 @@ if (pageTraceHero instanceof HTMLElement) {
   drawPageTrace(window.performance.now());
   updatePageTraceAnimation();
 
-  const pageTraceObserver = new IntersectionObserver(
-    ([entry]) => {
-      pageTraceVisible = Boolean(entry?.isIntersecting);
-      updatePageTraceAnimation();
+  window.addEventListener(
+    'resize',
+    () => {
+      if (pageTraceCompact.matches || resizeFrame !== null) return;
+      resizeFrame = window.requestAnimationFrame(() => {
+        resizeFrame = null;
+        refreshPageTrace();
+      });
     },
-    { rootMargin: '80px 0px', threshold: 0 }
+    { passive: true }
   );
-  pageTraceObserver.observe(pageTraceHero);
-
-  const pageTraceResizeObserver = new ResizeObserver(refreshPageTrace);
-  pageTraceResizeObserver.observe(pageTraceHero);
+  window.addEventListener(
+    'orientationchange',
+    () => {
+      window.setTimeout(() => {
+        resizePageTrace(true);
+        drawPageTrace(window.performance.now());
+      }, 120);
+    },
+    { passive: true }
+  );
 
   document.addEventListener('visibilitychange', updatePageTraceAnimation);
   pageTraceReducedMotion.addEventListener('change', updatePageTraceAnimation);
   pageTraceCompact.addEventListener('change', () => {
-    resizePageTrace();
+    resizePageTrace(true);
     drawPageTrace(window.performance.now());
     updatePageTraceAnimation();
   });
