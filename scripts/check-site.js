@@ -162,6 +162,10 @@ if (
 if (
   !pageTraceJs.includes('drawPageTrace') ||
   !pageTraceJs.includes('drawPulse') ||
+  !pageTraceJs.includes('pageTraceCompact') ||
+  !pageTraceJs.includes('IntersectionObserver') ||
+  !pageTraceJs.includes('visibilitychange') ||
+  !pageTraceJs.includes('ResizeObserver') ||
   !/src="\/assets\/page-trace\.js\?v=[a-f0-9]{12}"/.test(examplesHtml) ||
   !/src="\/assets\/page-trace\.js\?v=[a-f0-9]{12}"/.test(apiHtml) ||
   !/src="\/assets\/page-trace\.js\?v=[a-f0-9]{12}"/.test(migrationHtml)

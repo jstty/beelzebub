@@ -1,5 +1,6 @@
 const pageTraceHero = document.querySelector('.examples-hero, .api-hero');
 const pageTraceReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+const pageTraceCompact = window.matchMedia('(max-width: 760px), (pointer: coarse)');
 
 if (pageTraceHero instanceof HTMLElement) {
   const canvas = document.createElement('canvas');
@@ -17,6 +18,8 @@ if (pageTraceHero instanceof HTMLElement) {
   let width = 0;
   let height = 0;
   let lastFrame = 0;
+  let animationFrame = null;
+  let pageTraceVisible = true;
 
   function rgba(hex, alpha) {
     const value = Number.parseInt(hex.slice(1), 16);
@@ -147,12 +150,19 @@ if (pageTraceHero instanceof HTMLElement) {
 
   function resizePageTrace() {
     const bounds = pageTraceHero.getBoundingClientRect();
-    const ratio = Math.min(window.devicePixelRatio || 1, 1.5);
-    width = Math.max(1, Math.round(bounds.width));
-    height = Math.max(1, Math.round(bounds.height));
+    const nextWidth = Math.max(1, Math.round(bounds.width));
+    const nextHeight = Math.max(1, Math.round(bounds.height));
+    if (nextWidth === width && nextHeight === height) return false;
+
+    const ratio = pageTraceCompact.matches
+      ? Math.min(window.devicePixelRatio || 1, 1)
+      : Math.min(window.devicePixelRatio || 1, 1.35);
+    width = nextWidth;
+    height = nextHeight;
     canvas.width = Math.round(width * ratio);
     canvas.height = Math.round(height * ratio);
     context?.setTransform(ratio, 0, 0, ratio, 0, 0);
+    return true;
   }
 
   function drawPageTrace(milliseconds = 0) {
@@ -169,19 +179,64 @@ if (pageTraceHero instanceof HTMLElement) {
   }
 
   function animatePageTrace(milliseconds) {
-    if (milliseconds - lastFrame >= 1000 / 30) {
+    animationFrame = null;
+    if (!shouldAnimatePageTrace()) return;
+    if (milliseconds - lastFrame >= 1000 / 24) {
       lastFrame = milliseconds;
       drawPageTrace(milliseconds);
     }
-    if (!pageTraceReducedMotion.matches) window.requestAnimationFrame(animatePageTrace);
+    animationFrame = window.requestAnimationFrame(animatePageTrace);
   }
 
   function refreshPageTrace() {
-    resizePageTrace();
-    drawPageTrace(window.performance.now());
+    if (resizePageTrace()) drawPageTrace(window.performance.now());
   }
 
-  refreshPageTrace();
-  if (!pageTraceReducedMotion.matches) window.requestAnimationFrame(animatePageTrace);
-  window.addEventListener('resize', refreshPageTrace, { passive: true });
+  function shouldAnimatePageTrace() {
+    return (
+      !pageTraceReducedMotion.matches &&
+      !pageTraceCompact.matches &&
+      pageTraceVisible &&
+      document.visibilityState === 'visible'
+    );
+  }
+
+  function updatePageTraceAnimation() {
+    if (shouldAnimatePageTrace()) {
+      if (animationFrame === null) {
+        lastFrame = window.performance.now();
+        animationFrame = window.requestAnimationFrame(animatePageTrace);
+      }
+      return;
+    }
+
+    if (animationFrame !== null) {
+      window.cancelAnimationFrame(animationFrame);
+      animationFrame = null;
+    }
+  }
+
+  resizePageTrace();
+  drawPageTrace(window.performance.now());
+  updatePageTraceAnimation();
+
+  const pageTraceObserver = new IntersectionObserver(
+    ([entry]) => {
+      pageTraceVisible = Boolean(entry?.isIntersecting);
+      updatePageTraceAnimation();
+    },
+    { rootMargin: '80px 0px', threshold: 0 }
+  );
+  pageTraceObserver.observe(pageTraceHero);
+
+  const pageTraceResizeObserver = new ResizeObserver(refreshPageTrace);
+  pageTraceResizeObserver.observe(pageTraceHero);
+
+  document.addEventListener('visibilitychange', updatePageTraceAnimation);
+  pageTraceReducedMotion.addEventListener('change', updatePageTraceAnimation);
+  pageTraceCompact.addEventListener('change', () => {
+    resizePageTrace();
+    drawPageTrace(window.performance.now());
+    updatePageTraceAnimation();
+  });
 }
