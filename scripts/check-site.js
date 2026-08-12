@@ -107,8 +107,7 @@ if (
   !homeHtml.includes('trace-cinematic-stage') ||
   !homeHtml.includes('trace-brand-tagline">One <b>hell</b> of a taskmaster.') ||
   !homeHtml.includes('class="trace-tagline-secondary">Whip your <b>agents</b> into shape.') ||
-  !homeHtml.includes('class="trace-tagline-tertiary">Build testable workflows.') ||
-  !homeHtml.includes('Build testable workflows.') ||
+  !homeHtml.includes('class="trace-tagline-tertiary">Build <b>testable</b> workflows.') ||
   !homeHtml.includes('Have your agent do the work.') ||
   !/href="\/assets\/trace-river\.css\?v=[a-f0-9]{12}"/.test(homeHtml) ||
   !/src="\/assets\/trace-river\.js\?v=[a-f0-9]{12}"/.test(homeHtml)
@@ -119,8 +118,9 @@ if (
   !traceRiverCss.includes('.trace-brand-tagline') ||
   !traceRiverCss.includes('.trace-tagline-secondary') ||
   !traceRiverCss.includes('.trace-tagline-tertiary') ||
-  !traceRiverCss.includes('font-size: clamp(15px, 4.7cqw, 28px)') ||
+  !traceRiverCss.includes('font-size: clamp(17px, 7.2cqw, 46px)') ||
   !traceRiverCss.includes('font-size: clamp(19px, 8.1cqw, 52px)') ||
+  !traceRiverCss.includes('color: #c8bdd7') ||
   !traceRiverCss.includes('container-type: inline-size')
 ) {
   failures.push('index.html is missing the overview tagline hierarchy');

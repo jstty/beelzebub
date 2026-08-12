@@ -200,9 +200,10 @@
 }
 
 .trace-home-page .trace-cinematic-copy h1 .trace-tagline-secondary {
+  width: 100%;
   color: #f2e8dc;
-  font-size: 0.56em;
-  font-size: clamp(15px, 4.7cqw, 28px);
+  font-size: 0.88em;
+  font-size: clamp(17px, 7.2cqw, 46px);
   letter-spacing: -0.035em;
   line-height: 1.08;
   white-space: nowrap;
@@ -215,12 +216,16 @@
 .trace-home-page .trace-cinematic-copy h1 .trace-tagline-tertiary {
   width: 100%;
   margin-top: 4px;
-  color: #eadcc7;
+  color: #c8bdd7;
   font-size: 1em;
   font-size: clamp(19px, 8.1cqw, 52px);
   letter-spacing: -0.045em;
   line-height: 1.12;
   white-space: nowrap;
+}
+
+.trace-home-page .trace-cinematic-copy h1 .trace-tagline-tertiary b {
+  color: #f04a3a;
 }
 
 .trace-install {
