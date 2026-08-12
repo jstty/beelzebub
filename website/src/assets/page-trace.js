@@ -1,6 +1,8 @@
 const pageTraceHero = document.querySelector('.examples-hero, .api-hero');
 const pageTraceReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 const pageTraceCompact = window.matchMedia('(max-width: 760px), (pointer: coarse)');
+const PAGE_TRACE_DESKTOP_FRAME_MS = 1000 / 24;
+const PAGE_TRACE_COMPACT_FRAME_MS = 1000 / 10;
 
 if (pageTraceHero instanceof HTMLElement) {
   const canvas = document.createElement('canvas');
@@ -72,7 +74,7 @@ if (pageTraceHero instanceof HTMLElement) {
     return { x: point.x, y: point.y + wave };
   }
 
-  function strokeRail(rail, seconds, lineWidth, alpha, blur) {
+  function strokeRail(rail, seconds, lineWidth, alpha, blur, sampleCount = 72) {
     context.save();
     context.strokeStyle = rgba(rail.color, alpha);
     context.lineWidth = lineWidth;
@@ -81,8 +83,8 @@ if (pageTraceHero instanceof HTMLElement) {
     context.shadowColor = rail.color;
     context.shadowBlur = blur;
     context.beginPath();
-    for (let sample = 0; sample <= 72; sample += 1) {
-      const point = railPoint(rail, sample / 72, seconds);
+    for (let sample = 0; sample <= sampleCount; sample += 1) {
+      const point = railPoint(rail, sample / sampleCount, seconds);
       if (sample === 0) context.moveTo(point.x, point.y);
       else context.lineTo(point.x, point.y);
     }
@@ -90,24 +92,26 @@ if (pageTraceHero instanceof HTMLElement) {
     context.restore();
   }
 
-  function drawPulse(rail, seconds) {
+  function drawPulse(rail, seconds, compact = false) {
     const head = (seconds * 0.075 + rail.offset) % 1;
+    const radius = compact ? 6 : 11;
+    const step = compact ? 0.014 : 0.008;
     context.save();
     context.globalCompositeOperation = 'lighter';
 
-    for (let segment = -11; segment < 11; segment += 1) {
-      const startProgress = head + segment * 0.008;
-      const endProgress = startProgress + 0.009;
+    for (let segment = -radius; segment < radius; segment += 1) {
+      const startProgress = head + segment * step;
+      const endProgress = startProgress + step * 1.12;
       if (startProgress < 0 || endProgress > 1) continue;
-      const strength = Math.cos((Math.abs(segment + 0.5) / 11) * (Math.PI / 2)) ** 2;
+      const strength = Math.cos((Math.abs(segment + 0.5) / radius) * (Math.PI / 2)) ** 2;
       const start = railPoint(rail, startProgress, seconds);
       const end = railPoint(rail, endProgress, seconds);
 
       context.strokeStyle = rgba(rail.color, 0.18 + strength * 0.7);
-      context.lineWidth = 2 + strength * 10;
+      context.lineWidth = compact ? 1.5 + strength * 6 : 2 + strength * 10;
       context.lineCap = 'round';
       context.shadowColor = rail.color;
-      context.shadowBlur = 8 + strength * 18;
+      context.shadowBlur = compact ? 0 : 8 + strength * 18;
       context.beginPath();
       context.moveTo(start.x, start.y);
       context.lineTo(end.x, end.y);
@@ -117,14 +121,14 @@ if (pageTraceHero instanceof HTMLElement) {
     const point = railPoint(rail, head, seconds);
     context.fillStyle = '#fff2e7';
     context.shadowColor = rail.color;
-    context.shadowBlur = 18;
+    context.shadowBlur = compact ? 0 : 18;
     context.beginPath();
     context.arc(point.x, point.y, 2.4, 0, Math.PI * 2);
     context.fill();
     context.restore();
   }
 
-  function drawJunctions(seconds) {
+  function drawJunctions(seconds, compact = false) {
     const start = railPoint(rails[1], 0, seconds);
     const merge = railPoint(rails[1], 1, seconds);
     context.save();
@@ -137,7 +141,7 @@ if (pageTraceHero instanceof HTMLElement) {
       context.strokeStyle = rgba(color, 0.62);
       context.lineWidth = 1.2;
       context.shadowColor = color;
-      context.shadowBlur = 20;
+      context.shadowBlur = compact ? 0 : 20;
       context.beginPath();
       context.arc(point.x, point.y, 8, 0, Math.PI * 2);
       context.stroke();
@@ -154,7 +158,7 @@ if (pageTraceHero instanceof HTMLElement) {
     if (!force && nextWidth === width && nextHeight === height) return false;
 
     const ratio = pageTraceCompact.matches
-      ? Math.min(window.devicePixelRatio || 1, 1)
+      ? Math.min(window.devicePixelRatio || 1, 0.75)
       : Math.min(window.devicePixelRatio || 1, 1.35);
     width = nextWidth;
     height = nextHeight;
@@ -167,20 +171,29 @@ if (pageTraceHero instanceof HTMLElement) {
   function drawPageTrace(milliseconds = 0) {
     if (!context) return;
     const seconds = milliseconds / 1000;
+    const compact = pageTraceCompact.matches;
     context.clearRect(0, 0, width, height);
     for (const rail of rails) {
-      strokeRail(rail, seconds, 20, 0.025, 22);
-      strokeRail(rail, seconds, 5, 0.08, 12);
-      strokeRail(rail, seconds, 1.4, 0.5, 6);
-      drawPulse(rail, seconds);
+      if (compact) {
+        strokeRail(rail, seconds, 8, 0.035, 0, 30);
+        strokeRail(rail, seconds, 1.4, 0.46, 0, 30);
+      } else {
+        strokeRail(rail, seconds, 20, 0.025, 22);
+        strokeRail(rail, seconds, 5, 0.08, 12);
+        strokeRail(rail, seconds, 1.4, 0.5, 6);
+      }
+      drawPulse(rail, seconds, compact);
     }
-    drawJunctions(seconds);
+    drawJunctions(seconds, compact);
   }
 
   function animatePageTrace(milliseconds) {
     animationFrame = null;
     if (!shouldAnimatePageTrace()) return;
-    if (milliseconds - lastFrame >= 1000 / 24) {
+    const frameInterval = pageTraceCompact.matches
+      ? PAGE_TRACE_COMPACT_FRAME_MS
+      : PAGE_TRACE_DESKTOP_FRAME_MS;
+    if (milliseconds - lastFrame >= frameInterval) {
       lastFrame = milliseconds;
       drawPageTrace(milliseconds);
     }
@@ -192,11 +205,7 @@ if (pageTraceHero instanceof HTMLElement) {
   }
 
   function shouldAnimatePageTrace() {
-    return (
-      !pageTraceReducedMotion.matches &&
-      !pageTraceCompact.matches &&
-      document.visibilityState === 'visible'
-    );
+    return !pageTraceReducedMotion.matches && document.visibilityState === 'visible';
   }
 
   function updatePageTraceAnimation() {

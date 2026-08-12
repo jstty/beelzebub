@@ -598,6 +598,44 @@
 }
 
 @media (max-width: 760px) {
+  html.trace-home-root {
+    height: 100%;
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+
+  html.trace-home-root body.trace-home-page {
+    height: 100dvh;
+    min-height: 0;
+    overflow: hidden;
+    overscroll-behavior: none;
+  }
+
+  .trace-home-page .trace-prototype-main {
+    height: calc(100dvh - var(--header-height));
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .trace-home-page .trace-cinematic-stage {
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .trace-home-page .trace-cinematic-copy {
+    padding-top: clamp(18px, 5svh, 48px);
+  }
+
+  .trace-home-page .trace-cinematic-copy h1 {
+    margin-top: clamp(18px, 4svh, 34px);
+    margin-bottom: clamp(12px, 2.5svh, 20px);
+  }
+
+  .trace-home-page .trace-actions {
+    margin-top: clamp(12px, 3svh, 22px);
+  }
+
   .trace-cinematic-stage {
     width: min(calc(100% - 32px), 680px);
     min-height: 1240px;

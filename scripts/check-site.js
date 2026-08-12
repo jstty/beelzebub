@@ -52,7 +52,7 @@ for (const htmlFile of productHtmlFiles) {
   const html = readFileSync(htmlFile, 'utf8');
   const relativeHtml = path.relative(outputRoot, htmlFile);
 
-  if (!html.includes('<html lang="en">')) {
+  if (!/<html\b[^>]*\blang="en"[^>]*>/.test(html)) {
     failures.push(`${relativeHtml} is missing its document language`);
   }
   if (!html.includes('<meta name="viewport"')) {
@@ -175,10 +175,14 @@ if (
 if (
   homeHtml.includes('trace-task-callouts') ||
   homeHtml.includes('class="trace-timeline"') ||
+  !homeHtml.includes('class="trace-home-root"') ||
+  !traceRiverCss.includes('.trace-home-page .trace-cinematic-stage') ||
+  !traceRiverCss.includes('height: calc(100dvh - var(--header-height))') ||
   !/\.page-trace-canvas\s*\{[^}]*position:\s*fixed/s.test(siteCss) ||
-  !siteCss.includes('@keyframes page-trace-mobile-drift')
+  !pageTraceJs.includes('PAGE_TRACE_COMPACT_FRAME_MS = 1000 / 10') ||
+  !pageTraceJs.includes('Math.min(window.devicePixelRatio || 1, 0.75)')
 ) {
-  failures.push('overview or secondary pages are missing the simplified fixed trace treatment');
+  failures.push('overview or secondary pages are missing the viewport-locked trace treatment');
 }
 const motionSamples = ['trace', 'topology', 'ribbons', 'grid', 'particles'];
 if (
