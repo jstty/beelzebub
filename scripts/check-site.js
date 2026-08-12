@@ -118,7 +118,10 @@ if (
 if (
   !traceRiverCss.includes('.trace-brand-tagline') ||
   !traceRiverCss.includes('.trace-tagline-secondary') ||
-  !traceRiverCss.includes('.trace-tagline-tertiary')
+  !traceRiverCss.includes('.trace-tagline-tertiary') ||
+  !traceRiverCss.includes('font-size: clamp(15px, 4.7cqw, 28px)') ||
+  !traceRiverCss.includes('font-size: clamp(19px, 8.1cqw, 52px)') ||
+  !traceRiverCss.includes('container-type: inline-size')
 ) {
   failures.push('index.html is missing the overview tagline hierarchy');
 }
