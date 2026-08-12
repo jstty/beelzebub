@@ -158,6 +158,17 @@ if (
 ) {
   failures.push('motion-lab/trace-river/index.html is missing the full background prototype');
 }
+const traceHeader = traceRiverHtml.match(
+  /<header class="site-header trace-site-header"[\s\S]*?<\/header>/
+);
+if (
+  !traceRiverHtml.includes('Agent first.') ||
+  !traceRiverHtml.includes('Build testable workflows.') ||
+  !traceHeader ||
+  traceHeader[0].includes('class="brand"')
+) {
+  failures.push('motion-lab/trace-river/index.html is missing the agent-first splash treatment');
+}
 if (
   !traceRiverJs.includes('STATIC_LAYER_SCALE') ||
   !traceRiverJs.includes('TARGET_FRAME_MS') ||
