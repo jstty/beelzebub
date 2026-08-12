@@ -254,8 +254,11 @@ if (
 }
 for (const htmlFile of productHtmlFiles) {
   const html = readFileSync(htmlFile, 'utf8');
-  if (!html.includes('Migrate with AI')) {
-    failures.push(`${path.relative(outputRoot, htmlFile)} is missing the AI migration navigation`);
+  if (!/<a href="\/migrate\/"(?: aria-current="page")?>Migrate<\/a>/.test(html)) {
+    failures.push(`${path.relative(outputRoot, htmlFile)} is missing the Migrate navigation`);
+  }
+  if (html.includes('Migrate with AI')) {
+    failures.push(`${path.relative(outputRoot, htmlFile)} still includes the old migration label`);
   }
 }
 
