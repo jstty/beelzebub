@@ -53,57 +53,6 @@
   min-height: calc(100vh - var(--header-height));
 }
 
-.trace-prototype-controls {
-  position: fixed;
-  z-index: 20;
-  top: calc(var(--header-height) + 14px);
-  right: 26px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: rgba(var(--light-rgb), 0.48);
-  font-family: var(--font-mono);
-  font-size: 8px;
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
-}
-
-.trace-prototype-controls > a,
-.trace-prototype-controls button {
-  display: inline-flex;
-  min-height: 34px;
-  align-items: center;
-  gap: 8px;
-  padding: 0 12px;
-  border: 1px solid rgba(var(--light-rgb), 0.11);
-  background: rgba(5, 1, 8, 0.76);
-  border-radius: 7px;
-}
-
-.trace-prototype-controls button {
-  color: rgba(var(--light-rgb), 0.62);
-  cursor: pointer;
-  font: inherit;
-  text-transform: inherit;
-}
-
-.trace-prototype-controls > a:hover,
-.trace-prototype-controls > a:focus-visible,
-.trace-prototype-controls button:hover,
-.trace-prototype-controls button:focus-visible {
-  color: var(--white);
-  border-color: rgba(255, 59, 36, 0.5);
-  outline: none;
-}
-
-.trace-live-dot {
-  width: 5px;
-  height: 5px;
-  background: var(--mint);
-  border-radius: 50%;
-  box-shadow: 0 0 12px var(--mint);
-}
-
 .trace-cinematic-stage {
   position: relative;
   width: min(calc(100% - 56px), 1680px);
@@ -634,15 +583,6 @@
 }
 
 @media (max-width: 760px) {
-  .trace-prototype-controls {
-    top: calc(var(--header-height) + 10px);
-    right: 16px;
-  }
-
-  .trace-prototype-controls > a {
-    display: none;
-  }
-
   .trace-cinematic-stage {
     width: min(calc(100% - 32px), 680px);
     min-height: 1240px;

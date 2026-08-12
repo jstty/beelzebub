@@ -1,6 +1,4 @@
 const canvas = document.querySelector('[data-trace-river]');
-const toggle = document.querySelector('[data-trace-toggle]');
-const toggleLabel = document.querySelector('[data-trace-toggle-label]');
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 const compactViewport = window.matchMedia('(max-width: 700px)');
 const stackedMarkerViewport = window.matchMedia('(max-width: 760px)');
@@ -113,8 +111,6 @@ const junctions = [
 ];
 
 let paused = reducedMotion.matches;
-let pauseStarted = 0;
-let pausedDuration = 0;
 let pointerTargetX = 0;
 let pointerTargetY = 0;
 let pointerX = 0;
@@ -418,7 +414,7 @@ function positionTaskMarkers(width, height, seconds, offsetX, offsetY) {
 }
 
 function draw(timestamp) {
-  const seconds = (timestamp - pausedDuration) / 1000;
+  const seconds = timestamp / 1000;
   pointerX += (pointerTargetX - pointerX) * 0.06;
   pointerY += (pointerTargetY - pointerY) * 0.06;
   const riverDriftX = Math.sin(seconds * 0.085) * 18 + Math.sin(seconds * 0.031) * 7;
@@ -450,12 +446,6 @@ function draw(timestamp) {
   positionTaskMarkers(width, height, seconds, sceneOffsetX, sceneOffsetY);
 }
 
-function updateToggle() {
-  if (!toggle || !toggleLabel) return;
-  toggle.setAttribute('aria-pressed', String(paused));
-  toggleLabel.textContent = paused ? 'Play motion' : 'Pause motion';
-}
-
 function animate(timestamp) {
   if (
     !paused &&
@@ -467,16 +457,6 @@ function animate(timestamp) {
   }
   window.requestAnimationFrame(animate);
 }
-
-toggle?.addEventListener('click', () => {
-  paused = !paused;
-  if (paused) {
-    pauseStarted = performance.now();
-  } else if (pauseStarted > 0) {
-    pausedDuration += performance.now() - pauseStarted;
-  }
-  updateToggle();
-});
 
 window.addEventListener('pointermove', (event) => {
   pointerTargetX = (event.clientX / window.innerWidth - 0.5) * 8;
@@ -502,9 +482,7 @@ window.addEventListener('scroll', () =>
 reducedMotion.addEventListener('change', (event) => {
   paused = event.matches;
   draw(performance.now());
-  updateToggle();
 });
 
-updateToggle();
 draw(performance.now());
 window.requestAnimationFrame(animate);

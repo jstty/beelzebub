@@ -149,7 +149,6 @@ if (
 }
 if (
   !traceRiverHtml.includes('data-trace-river') ||
-  !traceRiverHtml.includes('data-trace-toggle') ||
   !traceRiverHtml.includes('trace-cinematic-stage') ||
   !traceRiverHtml.includes('trace-task-callouts') ||
   !traceRiverHtml.includes('trace-timeline') ||
@@ -157,6 +156,14 @@ if (
   !motionLabHtml.includes('href="/motion-lab/trace-river/"')
 ) {
   failures.push('motion-lab/trace-river/index.html is missing the full background prototype');
+}
+if (
+  traceRiverHtml.includes('trace-prototype-controls') ||
+  traceRiverHtml.includes('data-trace-toggle') ||
+  traceRiverHtml.includes('Pause motion') ||
+  traceRiverHtml.includes('← Motion lab')
+) {
+  failures.push('motion-lab/trace-river/index.html still contains the removed prototype controls');
 }
 const traceHeader = traceRiverHtml.match(
   /<header class="site-header trace-site-header"[\s\S]*?<\/header>/
