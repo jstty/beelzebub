@@ -81,14 +81,28 @@
   filter: drop-shadow(0 0 24px rgba(255, 23, 23, 0.16));
 }
 
-.trace-brand-lockup span {
+.trace-brand-lockup > span {
   font-size: clamp(58px, 6vw, 102px);
   font-weight: 800;
   letter-spacing: -0.07em;
   line-height: 0.9;
 }
 
-.trace-home-page .trace-brand-lockup span {
+.trace-home-page .trace-brand-copy {
+  display: grid;
+  width: min-content;
+  gap: clamp(7px, 1vw, 13px);
+  font-size: inherit;
+  letter-spacing: normal;
+}
+
+.trace-home-page .trace-brand-name {
+  color: #f51717;
+  font-size: clamp(58px, 6vw, 102px);
+  font-weight: 800;
+  letter-spacing: -0.07em;
+  line-height: 0.9;
+  white-space: nowrap;
   -webkit-text-stroke: clamp(1.5px, 0.16vw, 2.5px) #000;
   paint-order: stroke fill;
   text-shadow:
@@ -97,6 +111,28 @@
     -1px 1px 0 #000,
     1px 1px 0 #000,
     0 0 22px rgba(0, 0, 0, 0.72);
+}
+
+.trace-home-page .trace-brand-tagline {
+  color: #f2e8dc;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(12px, 1.9vw, 30px);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1;
+  white-space: nowrap;
+  -webkit-text-stroke: 1px #000;
+  paint-order: stroke fill;
+  text-shadow:
+    -1px -1px 0 #000,
+    1px -1px 0 #000,
+    -1px 1px 0 #000,
+    1px 1px 0 #000;
+}
+
+.trace-home-page .trace-brand-tagline b {
+  color: #f04a3a;
+  font-weight: inherit;
 }
 
 .trace-cinematic-copy h1 {
@@ -162,16 +198,15 @@
   font-weight: inherit;
 }
 
-.trace-home-page .trace-cinematic-copy h1 .trace-tagline-primary,
 .trace-home-page .trace-cinematic-copy h1 .trace-tagline-secondary {
   color: #f2e8dc;
-  font-size: 0.8em;
+  font-size: 0.68em;
   letter-spacing: -0.035em;
   line-height: 1.08;
 }
 
-.trace-home-page .trace-cinematic-copy h1 .trace-tagline-secondary {
-  color: rgba(208, 194, 182, 0.58);
+.trace-home-page .trace-cinematic-copy h1 .trace-tagline-secondary b {
+  color: #f04a3a;
 }
 
 .trace-home-page .trace-cinematic-copy h1 .trace-tagline-tertiary {
@@ -595,7 +630,11 @@
     width: min(650px, 55vw);
   }
 
-  .trace-brand-lockup span {
+  .trace-brand-lockup > span {
+    font-size: clamp(54px, 6.6vw, 78px);
+  }
+
+  .trace-home-page .trace-brand-name {
     font-size: clamp(54px, 6.6vw, 78px);
   }
 
@@ -674,7 +713,11 @@
     width: 68px;
   }
 
-  .trace-brand-lockup span {
+  .trace-brand-lockup > span {
+    font-size: clamp(48px, 15vw, 68px);
+  }
+
+  .trace-home-page .trace-brand-name {
     font-size: clamp(48px, 15vw, 68px);
   }
 
@@ -750,7 +793,11 @@
     width: 56px;
   }
 
-  .trace-brand-lockup span {
+  .trace-brand-lockup > span {
+    font-size: 44px;
+  }
+
+  .trace-home-page .trace-brand-name {
     font-size: 44px;
   }
 

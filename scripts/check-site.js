@@ -105,10 +105,9 @@ if (homeHtml.includes('forged for Node 24') || homeHtml.includes('class="release
 if (
   !homeHtml.includes('data-trace-river') ||
   !homeHtml.includes('trace-cinematic-stage') ||
-  !homeHtml.includes('trace-tagline-primary">One <b>hell</b> of a taskmaster.') ||
-  !homeHtml.includes('class="trace-tagline-secondary">Whip your agents into shape.') ||
+  !homeHtml.includes('trace-brand-tagline">One <b>hell</b> of a taskmaster.') ||
+  !homeHtml.includes('class="trace-tagline-secondary">Whip your <b>agents</b> into shape.') ||
   !homeHtml.includes('class="trace-tagline-tertiary">Build testable workflows.') ||
-  !homeHtml.includes('Whip your agents into shape.') ||
   !homeHtml.includes('Build testable workflows.') ||
   !homeHtml.includes('Have your agent do the work.') ||
   !/href="\/assets\/trace-river\.css\?v=[a-f0-9]{12}"/.test(homeHtml) ||
@@ -117,7 +116,7 @@ if (
   failures.push('index.html is missing the production Trace River homepage');
 }
 if (
-  !traceRiverCss.includes('.trace-tagline-primary') ||
+  !traceRiverCss.includes('.trace-brand-tagline') ||
   !traceRiverCss.includes('.trace-tagline-secondary') ||
   !traceRiverCss.includes('.trace-tagline-tertiary')
 ) {
@@ -264,7 +263,7 @@ if (!traceRiverCss.includes('.trace-task-callout-release > div')) {
   failures.push('assets/trace-river.css does not offset the release label below the river rail');
 }
 if (
-  !traceRiverCss.includes('.trace-home-page .trace-brand-lockup span') ||
+  !traceRiverCss.includes('.trace-home-page .trace-brand-name') ||
   !traceRiverCss.includes('-webkit-text-stroke: clamp(1.5px, 0.16vw, 2.5px) #000')
 ) {
   failures.push('assets/trace-river.css does not outline the overview wordmark');
