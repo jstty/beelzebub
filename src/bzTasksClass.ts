@@ -2,12 +2,16 @@ import { finished } from 'node:stream/promises';
 import pc from 'picocolors';
 
 import { BzTaskStats } from './bzStats.js';
+import type { ExecOptions, ExecResult } from './commandRunner.js';
+import type { WorkflowRuntime } from './workflow.js';
+import { executePipeline, type PipelineResult, type PipelineStep } from './pipeline.js';
 import * as util from './util.js';
 import type {
   BeelzebubConfig,
   LoggerLike,
   TaskFn,
   TaskInfo,
+  TaskExecution,
   TaskRecord,
   TaskTree,
   VLoggerLike,
@@ -44,6 +48,7 @@ export class BzTasks {
   logger!: LoggerLike;
   helpLogger!: LoggerLike;
   vLogger!: VLoggerLike;
+  workflow!: WorkflowRuntime;
 
   /** Set by the `@defaultTask` decorator. */
   $defaultTask?: string;
@@ -61,6 +66,7 @@ export class BzTasks {
   protected _running: Promise<unknown> | null = null;
   protected _beforeAllRun = false;
   protected _stats: BzTaskStats = new BzTaskStats();
+  protected _executions: TaskExecution[] = [];
 
   // Optional context-aware emit, attached during task execution.
   $emit!: (name: string, data?: unknown) => void;
@@ -83,6 +89,8 @@ export class BzTasks {
     );
     this.version = (this.beelzebub?.version as string) ?? '';
     this.namePath = this._buildNamePath(config);
+    if (!this._config.workflow) throw new Error('No workflow runtime is configured');
+    this.workflow = this._config.workflow;
   }
 
   /** Build the dotted namespace path for this task class. */
@@ -260,6 +268,22 @@ export class BzTasks {
   $afterAll(): unknown {
     return null;
   }
+  /** Runs after every attempted task, whether it succeeded or failed. */
+  $finallyEach(_taskInfo: TaskInfo, _execution: TaskExecution): unknown {
+    return null;
+  }
+  /** Runs after this task group has completed, whether it succeeded or failed. */
+  $finallyAll(): unknown {
+    return null;
+  }
+
+  $getExecutions(): readonly TaskExecution[] {
+    const executions = [...this._executions];
+    for (const task of Object.values(this.$getSubTasks())) {
+      executions.push(...task.$getExecutions());
+    }
+    return executions;
+  }
 
   $getRunning(): Promise<unknown> | null {
     return this._running;
@@ -310,7 +334,11 @@ export class BzTasks {
     for (const task of Object.values(this.$getSubTasks())) {
       await task._runAfterAll();
     }
-    await this._normalizeExecFuncToPromise(this.$afterAll, this);
+    try {
+      await this._normalizeExecFuncToPromise(this.$afterAll, this);
+    } finally {
+      await this._normalizeExecFuncToPromise(this.$finallyAll, this);
+    }
   }
 
   // -------- Task registration --------
@@ -425,6 +453,18 @@ export class BzTasks {
     return this.beelzebub.run(this, ...args);
   }
 
+  /** Execute a process through the configured, injectable command runner. */
+  $exec(command: string, args: readonly string[] = [], options?: ExecOptions): Promise<ExecResult> {
+    const runner = this._config.commandRunner;
+    if (!runner) throw new Error('No command runner is configured');
+    return runner.exec(command, args, options);
+  }
+
+  /** Run named task steps with testable conditions and continue-on-error semantics. */
+  $pipeline(steps: readonly PipelineStep[]): Promise<PipelineResult> {
+    return executePipeline(steps, (task) => this.$run(task));
+  }
+
   // -------- Internal scheduling --------
   protected async _waitForInit(): Promise<unknown> {
     if (this.beelzebub.isLoading()) return this.beelzebub.getInitPromise();
@@ -490,16 +530,16 @@ export class BzTasks {
       promise = this._sequence(parent, ...(tasks as unknown[]));
     }
 
-    this._running = promise.then((result) => {
+    this._running = promise.finally(() => {
       this._running = null;
-      return result;
     });
 
     try {
       return await this._running;
     } catch (e) {
       this.logger.error(e);
-      return undefined;
+      if (this._config.failureMode === 'log') return undefined;
+      throw e;
     }
   }
 
@@ -557,27 +597,50 @@ export class BzTasks {
       fullTaskName = `${this.namePath}.${taskName}`;
     }
 
-    if (!parent.$hasRunBefore()) {
-      await parent._runBeforeAll(taskInfo);
-    }
-    await this._runBeforeEach(parent, taskInfo);
+    const startedAt = new Date();
+    let statsId: number | undefined;
+    let value: unknown;
+    let taskError: Error | undefined;
 
-    this.beelzebub.emit('$before', { task: fullTaskName, vars: taskInfo.vars });
-    const statsId = parent._taskStatsStart(parent, taskName);
+    try {
+      if (!parent.$hasRunBefore()) {
+        await parent._runBeforeAll(taskInfo);
+      }
+      await this._runBeforeEach(parent, taskInfo);
 
-    if (parent && typeof parent === 'object') {
-      parent.$emit = (name: string, data?: unknown) => {
-        this.beelzebub.emit(name, { task: fullTaskName, vars: taskInfo.vars }, data);
+      this.beelzebub.emit('$before', { task: fullTaskName, vars: taskInfo.vars });
+      statsId = parent._taskStatsStart(parent, taskName);
+
+      if (parent && typeof parent === 'object') {
+        parent.$emit = (name: string, data?: unknown) => {
+          this.beelzebub.emit(name, { task: fullTaskName, vars: taskInfo.vars }, data);
+        };
+      }
+
+      value = await this._normalizeExecFuncToPromise(func, parent, vars);
+      await this._normalizeExecFuncToPromise(parent.$afterEach, parent, taskInfo);
+      this.beelzebub.emit('$after', { task: fullTaskName, vars: taskInfo.vars });
+      return value;
+    } catch (error) {
+      taskError = error instanceof Error ? error : new Error(String(error));
+      this.beelzebub.emit('$error', { task: fullTaskName, vars: taskInfo.vars }, taskError);
+      throw taskError;
+    } finally {
+      if (statsId !== undefined) parent._taskStatsEnd(parent, taskName, statsId);
+      const completedAt = new Date();
+      const execution: TaskExecution = {
+        task: fullTaskName,
+        outcome: taskError ? 'failure' : 'success',
+        conclusion: taskError ? 'failure' : 'success',
+        startedAt,
+        completedAt,
+        durationMs: completedAt.getTime() - startedAt.getTime()
       };
+      if (taskError) execution.error = taskError;
+      else if (value !== undefined) execution.value = value;
+      parent._executions.push(execution);
+      await this._normalizeExecFuncToPromise(parent.$finallyEach, parent, taskInfo, execution);
     }
-
-    await this._normalizeExecFuncToPromise(func, parent, vars);
-
-    parent._taskStatsEnd(parent, taskName, statsId);
-    await this._normalizeExecFuncToPromise(parent.$afterEach, parent, taskInfo);
-
-    this.beelzebub.emit('$after', { task: fullTaskName, vars: taskInfo.vars });
-    return undefined;
   }
 
   protected async _runPromiseTask(

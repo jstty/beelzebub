@@ -4,6 +4,9 @@ import Stumpy from 'stumpy';
 import Table from 'cli-table3';
 
 import { BzTasks } from './bzTasksClass.js';
+import { NodeCommandRunner } from './commandRunner.js';
+import { LocalWorkflowRuntime } from './workflow.js';
+import { GitHubWorkflowRuntime } from './github.js';
 import { InterfaceTasks } from './bzInterfaceClass.js';
 import { BzTaskStats, BzSummaryStats } from './bzStats.js';
 import * as util from './util.js';
@@ -11,6 +14,7 @@ import type {
   BeelzebubConfig,
   LoggerLike,
   TaskTree,
+  TaskExecution,
   VLoggerLike,
   VarDefMap,
   FlatTaskListEntry,
@@ -66,6 +70,12 @@ export class Beelzebub {
   }
 
   init(config: BeelzebubConfig = util.DefaultConfig): void {
+    if (!config.commandRunner) config.commandRunner = new NodeCommandRunner();
+    if (!config.workflow) {
+      config.workflow = GitHubWorkflowRuntime.isAvailable()
+        ? new GitHubWorkflowRuntime()
+        : new LocalWorkflowRuntime();
+    }
     if (!config.logger) {
       const stumpy = new Stumpy({
         dateStringFunc: (() => {
@@ -264,17 +274,24 @@ export class Beelzebub {
     }
 
     args.unshift(parent);
-    // The root tasks are always hidden, so call the internal `_run` directly.
-    const result = await (
-      this._rootTasks as unknown as { _run: (...a: unknown[]) => Promise<unknown> }
-    )._run(...args);
-
-    if (entryPoint) {
-      await (this._rootTasks as unknown as { _runAfterAll: () => Promise<unknown> })._runAfterAll();
-      this._stats.end();
-      this._printSummary();
+    try {
+      // The root tasks are always hidden, so call the internal `_run` directly.
+      return await (
+        this._rootTasks as unknown as { _run: (...a: unknown[]) => Promise<unknown> }
+      )._run(...args);
+    } finally {
+      if (entryPoint) {
+        try {
+          await (
+            this._rootTasks as unknown as { _runAfterAll: () => Promise<unknown> }
+          )._runAfterAll();
+        } finally {
+          this._stats.end();
+          this._tasksRunning = false;
+          this._printSummary();
+        }
+      }
     }
-    return result;
   }
 
   sequence(parent: unknown, ...args: unknown[]): Promise<unknown> {
@@ -302,6 +319,10 @@ export class Beelzebub {
 
   $getTaskFlatList(): FlatTaskListEntry[] {
     return this._rootTasks.$getTaskFlatList();
+  }
+
+  getExecutions(): readonly TaskExecution[] {
+    return this._rootTasks.$getExecutions();
   }
 
   protected _printSummary(): void {

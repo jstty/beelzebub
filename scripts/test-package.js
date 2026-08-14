@@ -63,10 +63,14 @@ try {
     path.join(consumerDir, 'smoke.mjs'),
     [
       "import bz, { Beelzebub, BzCLI, BzTasks, defaultTask, help, vars } from 'beelzebub';",
+      "import { createGitHubContext } from 'beelzebub/github';",
+      "import { MemoryCommandRunner, MemoryWorkflowRuntime } from 'beelzebub/testing';",
       "if (typeof bz !== 'function') throw new Error('default export is not callable');",
       'for (const value of [Beelzebub, BzCLI, BzTasks, defaultTask, help, vars]) {',
       "  if (typeof value !== 'function') throw new Error('expected public export is missing');",
       '}',
+      "if (createGitHubContext({ GITHUB_REPOSITORY: 'owner/repo' }).repositoryName !== 'repo') throw new Error('GitHub subpath export failed');",
+      "if (!(new MemoryCommandRunner()) || !(new MemoryWorkflowRuntime())) throw new Error('testing subpath export failed');",
       "console.log('esm-ok');",
       ''
     ].join('\n')
@@ -78,12 +82,16 @@ try {
     path.join(consumerDir, 'smoke.cjs'),
     [
       "const bz = require('beelzebub');",
+      "const { createGitHubContext } = require('beelzebub/github');",
+      "const { MemoryCommandRunner } = require('beelzebub/testing');",
       'const { Beelzebub, BzCLI, BzTasks, defaultTask, help, vars } = bz;',
       "if (typeof bz !== 'function') throw new Error('CommonJS export is not callable');",
       "if (bz.default !== bz) throw new Error('CommonJS default export is not interoperable');",
       'for (const value of [Beelzebub, BzCLI, BzTasks, defaultTask, help, vars]) {',
       "  if (typeof value !== 'function') throw new Error('expected CommonJS export is missing');",
       '}',
+      "if (createGitHubContext({ GITHUB_REPOSITORY: 'owner/repo' }).repositoryOwner !== 'owner') throw new Error('CommonJS GitHub export failed');",
+      "if (typeof MemoryCommandRunner !== 'function') throw new Error('CommonJS testing export failed');",
       "console.log('cjs-ok');",
       ''
     ].join('\n')
@@ -160,6 +168,25 @@ try {
     if (!cliOutput.includes('cli-file-ok')) {
       throw new Error(`CLI did not load its task file with ${fileArgs.join(' ')}`);
     }
+  }
+
+  writeFileSync(
+    path.join(consumerDir, 'tasks.ts'),
+    [
+      "import { BzTasks } from 'beelzebub';",
+      'export default class TypeScriptSmokeTasks extends BzTasks {',
+      "  run(options: { value?: number }) { console.log('cli-typescript-ok', options.value); }",
+      '}',
+      ''
+    ].join('\n')
+  );
+  const typeScriptCliOutput = run(
+    process.execPath,
+    [cliBin, '--file', './tasks.ts', 'TypeScriptSmokeTasks.run', '--value=2'],
+    consumerDir
+  );
+  if (!typeScriptCliOutput.includes('cli-typescript-ok 2')) {
+    throw new Error('CLI did not load its TypeScript task file without a manual loader');
   }
 
   console.log(`package smoke test passed: ${manifest.name}@${manifest.version}`);

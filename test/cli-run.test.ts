@@ -138,6 +138,29 @@ describe('BzCLI run behavior', () => {
     );
   });
 
+  it('loads TypeScript task files without a manual Node loader', async () => {
+    const directory = createTemporaryDirectory();
+    const { config, logger } = createTestConfig();
+    writeFileSync(
+      path.join(directory, 'tasks.ts'),
+      `const BzTasks = globalThis.__beelzebubTestTasksBase;
+export default class TypeScriptTasks extends BzTasks {
+  run(value: { count?: number }) { this.logger.log('typescript-task', value.count); }
+}
+`
+    );
+
+    await expect(
+      new BzCLI().run({
+        cwd: directory,
+        file: 'tasks.ts',
+        config,
+        args: ['TypeScriptTasks.run', '--count=3']
+      })
+    ).resolves.toBeDefined();
+    expect(logger.messages('log')).toContain('typescript-task 3');
+  });
+
   it.each(['--file', '-f'])(
     'loads an explicit file when %s and its value are separate arguments',
     async (fileFlag) => {
@@ -217,7 +240,7 @@ export default class BrokenTasks extends BzTasks {
     expect(logger.messages('log')).toContain('file-task {"count":2,"label":"","nested":{}}');
   });
 
-  it('reports task failures without rejecting the CLI run', async () => {
+  it('reports task failures and sets a failing process exit code', async () => {
     const directory = createTemporaryDirectory();
     const { config, logger } = createTestConfig();
     writeFileSync(
@@ -238,6 +261,7 @@ export default class FailingTasks extends BzTasks {
     ).resolves.toBeDefined();
 
     expect(logger.messages('error').join(' ')).toContain('CLI task failed');
+    expect(process.exitCode).toBe(1);
   });
 });
 

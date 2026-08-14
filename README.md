@@ -95,6 +95,7 @@ npm install -g beelzebub
 - [API reference](https://beelzebub.io/api/)
 - [Task Class](./docs/taskClass.md)
 - [Interface Class](./docs/interfaceClass.md)
+- [GitHub Actions with Beelzebub](./docs/githubActions.md)
 - [Migrating from v1](./MIGRATION.md)
 
 ---
@@ -238,10 +239,7 @@ export default [FrontendReact, FrontendBabel, MyTask];
 bz --file ./appTasks.ts MyTasks.task1
 ```
 
-> CLI files are loaded through dynamic `import()`. JavaScript task files run directly. For TypeScript task files, install `tsx` in the consuming project and register it with Node:
-> ```shell
-> node --import tsx ./node_modules/beelzebub/dist/bin/beelzebub.js --file ./beelzebub.ts MyTask
-> ```
+> CLI files are loaded through dynamic `import()`. TypeScript task files are loaded through Beelzebub's bundled `tsx` loader, so `bz --file ./beelzebub.ts MyTask` works directly.
 
 ---
 
@@ -278,6 +276,52 @@ npm run site:preview # publish a Firebase preview channel
 Coverage is enforced at 90% for statements, branches, functions, and lines. The complete local release gate runs all tests, then instruments the focused unit suite and fails if any metric regresses below that floor. Example integration tests remain in `npm test`; they run source files through Node's separate TypeScript loader, which cannot be merged reliably into Vitest's V8 source maps.
 
 The 2.0 product website lives in this repository under `website/` and deploys as a static site to the `beelzebub-io` Firebase project. See [`website/README.md`](./website/README.md) for the source, build, preview, and production-deployment layout.
+
+## GitHub Actions
+
+Beelzebub can own the testable TypeScript body of a GitHub Actions pipeline while a thin workflow file retains triggers, permissions, runners, matrices, environments, and job dependencies.
+
+```ts
+import { BzTasks, always } from 'beelzebub';
+
+export default class CI extends BzTasks {
+  verify() {
+    return this.$pipeline([
+      { id: 'lint', task: '.lint' },
+      { id: 'test', task: '.test' },
+      { id: 'summary', task: '.summary', when: always() }
+    ]);
+  }
+
+  lint() {
+    return this.$exec('npm', ['run', 'lint']);
+  }
+
+  test() {
+    return this.$exec('npm', ['test']);
+  }
+
+  async summary() {
+    await this.workflow.summary.heading('Verification', 2).paragraph('Complete.').write();
+  }
+}
+```
+
+Run it through the bundled Node 24 action:
+
+```yaml
+- uses: actions/checkout@v6
+- uses: actions/setup-node@v6
+  with:
+    node-version: 24
+- run: npm ci
+- uses: jstty/beelzebub/github-action@v2
+  with:
+    file: beelzebub.ts
+    task: CI.verify
+```
+
+The `beelzebub/github` entry point provides GitHub context, annotations, inputs and outputs, environment and PATH updates, masking, summaries, REST clients, OIDC, artifacts, and caching. The `beelzebub/testing` entry point provides `MemoryCommandRunner` and `MemoryWorkflowRuntime` for asserting commands, summaries, annotations, and outputs without running processes or contacting GitHub.
 
 TypeScript 7 does not yet expose the compiler API used by TypeDoc and typescript-eslint. Development therefore installs the official TypeScript 6 compatibility package alongside the TypeScript 7 compiler. Application and declaration compilation still use TypeScript 7.
 

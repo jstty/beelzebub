@@ -13,6 +13,7 @@ let beelzebubInst: unknown = null;
 export const DefaultConfig: BeelzebubConfig = {
   verbose: false,
   silent: false,
+  failureMode: 'throw',
   logger: null
 };
 

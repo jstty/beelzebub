@@ -3,6 +3,7 @@ import { pathToFileURL } from 'node:url';
 import { createRequire } from 'node:module';
 import { parseArgs, type ParseArgsConfig } from 'node:util';
 import { existsSync } from 'node:fs';
+import { tsImport } from 'tsx/esm/api';
 
 import { Beelzebub } from './beelzebub.js';
 import * as util from './util.js';
@@ -113,6 +114,7 @@ export class BzCLI {
       await bz.getInitPromise();
     } catch (e) {
       console.error(e);
+      process.exitCode = 1;
       return undefined;
     }
 
@@ -137,6 +139,7 @@ export class BzCLI {
       if (first !== undefined) await bz.run(first, ...(rest as unknown[]));
     } catch (e) {
       console.error(e);
+      process.exitCode = 1;
     }
     return bz;
   }
@@ -193,13 +196,21 @@ export class BzCLI {
       // Prefer dynamic import (works for both ESM and CJS in Node 22+).
       let mod: unknown;
       try {
-        mod = await import(pathToFileURL(resolved).href);
+        const url = pathToFileURL(resolved).href;
+        mod = /\.(?:cts|mts|tsx?|mts)$/i.test(resolved)
+          ? await tsImport(url, import.meta.url)
+          : await import(url);
       } catch {
         // Fallback to createRequire for legacy CJS configs.
         mod = requireRel(resolved);
       }
       // Unwrap default export if present.
-      if (mod && typeof mod === 'object' && 'default' in (mod as Record<string, unknown>)) {
+      while (
+        mod &&
+        typeof mod === 'object' &&
+        'default' in (mod as Record<string, unknown>) &&
+        (mod as Record<string, unknown>).default !== mod
+      ) {
         mod = (mod as Record<string, unknown>).default;
       }
       let fTasks: unknown[] = Array.isArray(mod) ? mod : [mod];

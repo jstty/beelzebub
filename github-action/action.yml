@@ -1,0 +1,41 @@
+name: Run Beelzebub pipeline
+description: Run a typed, testable Beelzebub workflow from a thin GitHub Actions step.
+author: jstty
+
+inputs:
+  file:
+    description: Path to the Beelzebub JavaScript or TypeScript task file.
+    required: false
+    default: beelzebub.ts
+  task:
+    description: One or more newline-separated task paths to run.
+    required: true
+  args:
+    description: Optional newline-separated task arguments.
+    required: false
+  working-directory:
+    description: Directory from which to load the task file and run tasks.
+    required: false
+    default: .
+  summary:
+    description: Add a Beelzebub task execution table to the GitHub job summary.
+    required: false
+    default: 'true'
+  failure-mode:
+    description: Use "throw" for CI-safe failures or "log" for legacy behavior.
+    required: false
+    default: throw
+
+outputs:
+  conclusion:
+    description: Effective Beelzebub pipeline conclusion.
+  task-count:
+    description: Number of task executions recorded.
+
+runs:
+  using: node24
+  main: dist/index.js
+
+branding:
+  icon: activity
+  color: red
