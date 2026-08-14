@@ -2,6 +2,9 @@
  * Public types & interfaces for Beelzebub.
  */
 
+import type { CommandRunner } from './commandRunner.js';
+import type { WorkflowRuntime } from './workflow.js';
+
 export interface LoggerLike {
   log(...args: unknown[]): void;
   warn(...args: unknown[]): void;
@@ -32,6 +35,16 @@ export interface VLoggerLike {
 export interface BeelzebubConfig {
   verbose?: boolean;
   silent?: boolean;
+  /**
+   * How public task entry points handle failures. CI-safe `throw` is the v2
+   * default. `log` is retained as an explicit compatibility mode for callers
+   * that relied on the v1 behavior.
+   */
+  failureMode?: 'throw' | 'log';
+  /** Injectable process runner used by task `$exec()` calls. */
+  commandRunner?: CommandRunner;
+  /** Injectable local or hosted workflow runtime. */
+  workflow?: WorkflowRuntime;
   logger?: LoggerLike | null;
   helpLogger?: LoggerLike | null;
   /** Internal: parent path for sub-tasks. */
@@ -58,6 +71,19 @@ export type VarDefMap = Record<string, VarDef>;
 export interface TaskInfo {
   task: string;
   vars?: Record<string, unknown> | undefined;
+}
+
+export type TaskOutcome = 'success' | 'failure' | 'skipped' | 'cancelled';
+
+export interface TaskExecution<T = unknown> {
+  task: string;
+  outcome: TaskOutcome;
+  conclusion: TaskOutcome;
+  value?: T;
+  error?: Error;
+  startedAt: Date;
+  completedAt: Date;
+  durationMs: number;
 }
 
 export type EventCallback = (taskInfo: unknown, data?: unknown) => void;

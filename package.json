@@ -13,10 +13,40 @@
         "types": "./dist/index.d.cts",
         "default": "./dist/index.cjs"
       }
+    },
+    "./github": {
+      "import": {
+        "types": "./dist/github.d.ts",
+        "default": "./dist/github.js"
+      },
+      "require": {
+        "types": "./dist/github.d.cts",
+        "default": "./dist/github.cjs"
+      }
+    },
+    "./testing": {
+      "import": {
+        "types": "./dist/testing.d.ts",
+        "default": "./dist/testing.js"
+      },
+      "require": {
+        "types": "./dist/testing.d.cts",
+        "default": "./dist/testing.cjs"
+      }
     }
   },
   "main": "./dist/index.cjs",
   "types": "./dist/index.d.cts",
+  "typesVersions": {
+    "*": {
+      "github": [
+        "dist/github.d.cts"
+      ],
+      "testing": [
+        "dist/testing.d.cts"
+      ]
+    }
+  },
   "bin": {
     "bz": "./dist/bin/beelzebub.js",
     "beelzebub": "./dist/bin/beelzebub.js"
@@ -61,7 +91,8 @@
     "url": "git+https://github.com/jstty/beelzebub.git"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.json && node scripts/post-build.js",
+    "build": "tsc -p tsconfig.json && node scripts/post-build.js && npm run action:build",
+    "action:build": "node scripts/build-action.js",
     "build:watch": "tsc -p tsconfig.json --watch",
     "docs:build": "typedoc",
     "docs:check": "npm run docs:build && git diff --exit-code -- docs/site",
@@ -75,6 +106,7 @@
     "site:deploy": "npm run site:check && firebase deploy --only hosting",
     "site:preview": "npm run site:check && firebase hosting:channel:deploy v2-preview",
     "clean": "node scripts/clean.js",
+    "ci": "node --import tsx ./src/bin/beelzebub.ts --file ./beelzebub.ci.ts",
     "dev": "tsx src/bin/beelzebub.ts",
     "test": "vitest run",
     "test:package": "node scripts/test-package.js",
@@ -92,22 +124,27 @@
     "prepublishOnly": "npm run clean && npm run build && npm run validate-pkg"
   },
   "dependencies": {
+    "@actions/artifact": "^6.2.1",
+    "@actions/cache": "^6.2.0",
+    "@actions/core": "^3.0.1",
+    "@actions/github": "^9.1.1",
     "@types/node": "^24.13.3",
     "cli-table3": "^0.6.5",
     "picocolors": "^1.1.1",
-    "stumpy": "^0.7.1"
+    "stumpy": "^0.7.1",
+    "tsx": "^4.23.12"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.5",
     "@eslint/js": "^10.0.1",
     "@typescript/native": "npm:typescript@^7.0.2",
     "@vitest/coverage-v8": "^4.1.10",
+    "esbuild": "^0.28.2",
     "eslint": "^10.8.0",
     "eslint-config-prettier": "^10.1.8",
     "globals": "^17.7.0",
     "prettier": "^3.9.6",
     "publint": "^0.3.22",
-    "tsx": "^4.23.1",
     "typedoc": "^0.28.20",
     "typescript": "npm:@typescript/typescript6@^6.0.2",
     "typescript-eslint": "^8.65.0",

@@ -175,7 +175,7 @@ describe('task execution internals', () => {
     await expect(tasks.runPromise(tasks, { task: 'alpha.extra' })).resolves.toBeUndefined();
     await expect(
       tasks.runPromise(tasks, { task: () => 'inline', vars: { value: 1 } })
-    ).resolves.toBeUndefined();
+    ).resolves.toBe('inline');
     await expect(tasks.runPromise(tasks, { task: 42 })).rejects.toThrow('invalid task name');
     await expect(tasks.runPromise(tasks, 42)).rejects.toThrow('task type not supported');
     await expect(tasks.runTask({ task: 'missing' })).resolves.toBeUndefined();

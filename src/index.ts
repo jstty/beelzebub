@@ -4,12 +4,48 @@ import { Beelzebub } from './beelzebub.js';
 import { BzCLI } from './bzCLI.js';
 import { BzTasks } from './bzTasksClass.js';
 import { InterfaceTasks } from './bzInterfaceClass.js';
+import { CommandError, NodeCommandRunner } from './commandRunner.js';
 import * as decoratorsImpl from './decorators.js';
 import { TmplStrFunc } from './tmplStrFunc.js';
+import { LocalWorkflowRuntime, WorkflowSummary } from './workflow.js';
+import { PipelineError, always, cancelled, executePipeline, failure, success } from './pipeline.js';
 import * as util from './util.js';
 import type { BeelzebubConfig } from './types.js';
 
-export { Beelzebub, BzCLI, BzTasks, InterfaceTasks, TmplStrFunc };
+export {
+  Beelzebub,
+  BzCLI,
+  BzTasks,
+  CommandError,
+  InterfaceTasks,
+  LocalWorkflowRuntime,
+  NodeCommandRunner,
+  PipelineError,
+  TmplStrFunc,
+  WorkflowSummary,
+  always,
+  cancelled,
+  executePipeline,
+  failure,
+  success
+};
+export type { CommandRunner, ExecOptions, ExecResult } from './commandRunner.js';
+export type {
+  AnnotationLocation,
+  SummarySink,
+  SummaryTableCell,
+  SummaryWriteOptions,
+  WorkflowContext,
+  WorkflowRuntime
+} from './workflow.js';
+export type {
+  PipelineCondition,
+  PipelineContext,
+  PipelineOutcome,
+  PipelineResult,
+  PipelineStep,
+  PipelineStepResult
+} from './pipeline.js';
 export type { CLIRunOptions } from './bzCLI.js';
 export * from './types.js';
 export const { defaultTask, help, vars } = decoratorsImpl;
@@ -30,6 +66,9 @@ export interface BeelzebubModule {
   sequence(...args: Parameters<Beelzebub['sequence']>): ReturnType<Beelzebub['sequence']>;
   parallel(...args: Parameters<Beelzebub['parallel']>): ReturnType<Beelzebub['parallel']>;
   run(...args: Parameters<Beelzebub['run']>): ReturnType<Beelzebub['run']>;
+  getExecutions(
+    ...args: Parameters<Beelzebub['getExecutions']>
+  ): ReturnType<Beelzebub['getExecutions']>;
   printHelp(...args: Parameters<Beelzebub['printHelp']>): ReturnType<Beelzebub['printHelp']>;
 
   CLI: typeof BzCLI;
@@ -56,7 +95,9 @@ factory.delete = () => {
 
 factory.create = (config?: BeelzebubConfig) => new Beelzebub(config);
 
-function bind<K extends 'init' | 'add' | 'sequence' | 'parallel' | 'run' | 'printHelp'>(name: K) {
+function bind<
+  K extends 'init' | 'add' | 'sequence' | 'parallel' | 'run' | 'getExecutions' | 'printHelp'
+>(name: K) {
   (factory as unknown as Record<string, unknown>)[name] = (...args: unknown[]) => {
     if (!util.getInstance()) util.setInstance(new Beelzebub());
     const inst = util.getInstance() as unknown as Record<string, (...a: unknown[]) => unknown>;
@@ -69,6 +110,7 @@ bind('add');
 bind('sequence');
 bind('parallel');
 bind('run');
+bind('getExecutions');
 bind('printHelp');
 
 factory.CLI = BzCLI;

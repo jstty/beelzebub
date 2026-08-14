@@ -21,14 +21,14 @@ registry (the <code>$</code> prefix is reserved for framework-provided helpers).
 </code><button type="button">Copy</button></pre>
 
 </div></div></section>
-<section class="tsd-panel tsd-hierarchy" data-refl="363">
+<section class="tsd-panel tsd-hierarchy" data-refl="382">
 <h4>Hierarchy (<a href="../hierarchy.html#BzTasks">View Summary</a>)</h4>
 <ul class="tsd-hierarchy">
 <li class="tsd-hierarchy-item"><span class="tsd-hierarchy-target">BzTasks</span>
 <ul class="tsd-hierarchy">
 <li class="tsd-hierarchy-item"><a href="InterfaceTasks.html" class="tsd-signature-type tsd-kind-class">InterfaceTasks</a></li></ul></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L39">src/bzTasksClass.ts:39</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L43">src/bzTasksClass.ts:43</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -47,6 +47,10 @@ registry (the <code>$</code> prefix is reserved for framework-provided helpers).
 <a href="#beforeeach" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$before<wbr/>Each</span></a>
 <a href="#config" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$config</span></a>
 <a href="#definetaskvars" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$define<wbr/>Task<wbr/>Vars</span></a>
+<a href="#exec" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$exec</span></a>
+<a href="#finallyall" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$finally<wbr/>All</span></a>
+<a href="#finallyeach" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$finally<wbr/>Each</span></a>
+<a href="#getexecutions" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$get<wbr/>Executions</span></a>
 <a href="#getglobalvars" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$get<wbr/>Global<wbr/>Vars</span></a>
 <a href="#getname" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$get<wbr/>Name</span></a>
 <a href="#getrunning" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$get<wbr/>Running</span></a>
@@ -63,6 +67,7 @@ registry (the <code>$</code> prefix is reserved for framework-provided helpers).
 <a href="#init" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$init</span></a>
 <a href="#isroot" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$is<wbr/>Root</span></a>
 <a href="#parallel" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$parallel</span></a>
+<a href="#pipeline" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$pipeline</span></a>
 <a href="#printhelp" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$print<wbr/>Help</span></a>
 <a href="#register" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$register</span></a>
 <a href="#run" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$run</span></a>
@@ -88,6 +93,7 @@ registry (the <code>$</code> prefix is reserved for framework-provided helpers).
 <a href="#namepath" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>name<wbr/>Path</span></a>
 <a href="#version" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>version</span></a>
 <a href="#vlogger" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>v<wbr/>Logger</span></a>
+<a href="#workflow" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>workflow</span></a>
 </div></section></div></details></section></section>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Constructors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="constructors-1">Constructors<a href="#constructors-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
@@ -105,7 +111,7 @@ registry (the <code>$</code> prefix is reserved for framework-provided helpers).
 <li><span><span class="tsd-kind-parameter">hidden</span>: <span class="tsd-signature-type">boolean</span><span class="tsd-signature-symbol"> = false</span></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">BzTasks</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L68">src/bzTasksClass.ts:68</a></li></ul></aside></div></li></ul></section></section></details>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L74">src/bzTasksClass.ts:74</a></li></ul></aside></div></li></ul></section></section></details>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="methods-1">Methods<a href="#methods-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
@@ -125,7 +131,7 @@ the sub-task's own <code>$init</code> has run.</p>
 <li><span><span class="tsd-kind-parameter">config</span>: <a href="../interfaces/BeelzebubConfig.html" class="tsd-signature-type tsd-kind-interface">BeelzebubConfig</a><span class="tsd-signature-symbol"> = {}</span></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L338">src/bzTasksClass.ts:338</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L366">src/bzTasksClass.ts:366</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="afterall"><span>$after<wbr/>All</span><a href="#afterall" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -134,7 +140,7 @@ the sub-task's own <code>$init</code> has run.</p>
 <div class="tsd-description">
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">unknown</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L260">src/bzTasksClass.ts:260</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L268">src/bzTasksClass.ts:268</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="aftereach"><span>$after<wbr/>Each</span><a href="#aftereach" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -147,7 +153,7 @@ the sub-task's own <code>$init</code> has run.</p>
 <li><span><span class="tsd-kind-parameter">_taskInfo</span>: <a href="../interfaces/TaskInfo.html" class="tsd-signature-type tsd-kind-interface">TaskInfo</a></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">unknown</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L254">src/bzTasksClass.ts:254</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L262">src/bzTasksClass.ts:262</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="beforeall"><span>$before<wbr/>All</span><a href="#beforeall" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -160,7 +166,7 @@ the sub-task's own <code>$init</code> has run.</p>
 <li><span><span class="tsd-kind-parameter">_taskInfo</span>: <a href="../interfaces/TaskInfo.html" class="tsd-signature-type tsd-kind-interface">TaskInfo</a></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">unknown</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L257">src/bzTasksClass.ts:257</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L265">src/bzTasksClass.ts:265</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="beforeeach"><span>$before<wbr/>Each</span><a href="#beforeeach" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -173,7 +179,7 @@ the sub-task's own <code>$init</code> has run.</p>
 <li><span><span class="tsd-kind-parameter">_taskInfo</span>: <a href="../interfaces/TaskInfo.html" class="tsd-signature-type tsd-kind-interface">TaskInfo</a></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">unknown</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L251">src/bzTasksClass.ts:251</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L259">src/bzTasksClass.ts:259</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="config"><span>$config</span><a href="#config" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -182,7 +188,7 @@ the sub-task's own <code>$init</code> has run.</p>
 <div class="tsd-description">
 <h4 class="tsd-returns-title">Returns <a href="../interfaces/BeelzebubConfig.html" class="tsd-signature-type tsd-kind-interface">BeelzebubConfig</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L155">src/bzTasksClass.ts:155</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L163">src/bzTasksClass.ts:163</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="definetaskvars"><span>$define<wbr/>Task<wbr/>Vars</span><a href="#definetaskvars" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -196,7 +202,60 @@ the sub-task's own <code>$init</code> has run.</p>
 <li><span><span class="tsd-kind-parameter">taskDef</span>: <a href="../types/VarDefMap.html" class="tsd-signature-type tsd-kind-type-alias">VarDefMap</a></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L221">src/bzTasksClass.ts:221</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L229">src/bzTasksClass.ts:229</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="exec"><span>$exec</span><a href="#exec" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="exec-1"><span class="tsd-kind-call-signature">$exec</span><span class="tsd-signature-symbol">(</span><br/>    <span class="tsd-kind-parameter">command</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">args</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-keyword">readonly</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">,</span><br/>    <span class="tsd-kind-parameter">options</span><span class="tsd-signature-symbol">?:</span> <a href="../interfaces/ExecOptions.html" class="tsd-signature-type tsd-kind-interface">ExecOptions</a><span class="tsd-signature-symbol">,</span><br/><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/ExecResult.html" class="tsd-signature-type tsd-kind-interface">ExecResult</a><span class="tsd-signature-symbol">&gt;</span><a href="#exec-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Execute a process through the configured, injectable command runner.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">command</span>: <span class="tsd-signature-type">string</span></span></li>
+<li><span><span class="tsd-kind-parameter">args</span>: <span class="tsd-signature-keyword">readonly</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol"> = []</span></span></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">options</span>: <a href="../interfaces/ExecOptions.html" class="tsd-signature-type tsd-kind-interface">ExecOptions</a></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/ExecResult.html" class="tsd-signature-type tsd-kind-interface">ExecResult</a><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L457">src/bzTasksClass.ts:457</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="finallyall"><span>$finally<wbr/>All</span><a href="#finallyall" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="finallyall-1"><span class="tsd-kind-call-signature">$finallyAll</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">unknown</span><a href="#finallyall-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Runs after this task group has completed, whether it succeeded or failed.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">unknown</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L276">src/bzTasksClass.ts:276</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="finallyeach"><span>$finally<wbr/>Each</span><a href="#finallyeach" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="finallyeach-1"><span class="tsd-kind-call-signature">$finallyEach</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">_taskInfo</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/TaskInfo.html" class="tsd-signature-type tsd-kind-interface">TaskInfo</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">_execution</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/TaskExecution.html" class="tsd-signature-type tsd-kind-interface">TaskExecution</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">unknown</span><a href="#finallyeach-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Runs after every attempted task, whether it succeeded or failed.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">_taskInfo</span>: <a href="../interfaces/TaskInfo.html" class="tsd-signature-type tsd-kind-interface">TaskInfo</a></span></li>
+<li><span><span class="tsd-kind-parameter">_execution</span>: <a href="../interfaces/TaskExecution.html" class="tsd-signature-type tsd-kind-interface">TaskExecution</a></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">unknown</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L272">src/bzTasksClass.ts:272</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="getexecutions"><span>$get<wbr/>Executions</span><a href="#getexecutions" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="getexecutions-1"><span class="tsd-kind-call-signature">$getExecutions</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-keyword">readonly</span> <a href="../interfaces/TaskExecution.html" class="tsd-signature-type tsd-kind-interface">TaskExecution</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span><a href="#getexecutions-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-keyword">readonly</span> <a href="../interfaces/TaskExecution.html" class="tsd-signature-type tsd-kind-interface">TaskExecution</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L280">src/bzTasksClass.ts:280</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="getglobalvars"><span>$get<wbr/>Global<wbr/>Vars</span><a href="#getglobalvars" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -205,7 +264,7 @@ the sub-task's own <code>$init</code> has run.</p>
 <div class="tsd-description">
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L217">src/bzTasksClass.ts:217</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L225">src/bzTasksClass.ts:225</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="getname"><span>$get<wbr/>Name</span><a href="#getname" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -214,7 +273,7 @@ the sub-task's own <code>$init</code> has run.</p>
 <div class="tsd-description">
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">string</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L181">src/bzTasksClass.ts:181</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L189">src/bzTasksClass.ts:189</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="getrunning"><span>$get<wbr/>Running</span><a href="#getrunning" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -223,7 +282,7 @@ the sub-task's own <code>$init</code> has run.</p>
 <div class="tsd-description">
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L264">src/bzTasksClass.ts:264</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L288">src/bzTasksClass.ts:288</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="getstatssummary"><span>$get<wbr/>Stats<wbr/>Summary</span><a href="#getstatssummary" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -238,7 +297,7 @@ the sub-task's own <code>$init</code> has run.</p>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">parentSummary</span>: <span class="tsd-signature-symbol">{</span> <span class="tsd-kind-property">diff</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/StatsDiff.html" class="tsd-signature-type tsd-kind-interface">StatsDiff</a><span class="tsd-signature-symbol">;</span> <span class="tsd-kind-property">tasksRuns</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/TaskRunStats.html" class="tsd-signature-type tsd-kind-interface">TaskRunStats</a><span class="tsd-signature-symbol">[]</span> <span class="tsd-signature-symbol">}</span></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-symbol">{</span> <span class="tsd-kind-property">diff</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/StatsDiff.html" class="tsd-signature-type tsd-kind-interface">StatsDiff</a><span class="tsd-signature-symbol">;</span> <span class="tsd-kind-property">tasksRuns</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/TaskRunStats.html" class="tsd-signature-type tsd-kind-interface">TaskRunStats</a><span class="tsd-signature-symbol">[]</span> <span class="tsd-signature-symbol">}</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L132">src/bzTasksClass.ts:132</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L140">src/bzTasksClass.ts:140</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="getsubtask"><span>$get<wbr/>Sub<wbr/>Task</span><a href="#getsubtask" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -251,7 +310,7 @@ the sub-task's own <code>$init</code> has run.</p>
 <li><span><span class="tsd-kind-parameter">name</span>: <span class="tsd-signature-type">string</span></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">BzTasks</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L193">src/bzTasksClass.ts:193</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L201">src/bzTasksClass.ts:201</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="getsubtasks"><span>$get<wbr/>Sub<wbr/>Tasks</span><a href="#getsubtasks" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -260,7 +319,7 @@ the sub-task's own <code>$init</code> has run.</p>
 <div class="tsd-description">
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <a href="" class="tsd-signature-type tsd-kind-class">BzTasks</a><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L205">src/bzTasksClass.ts:205</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L213">src/bzTasksClass.ts:213</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="gettask"><span>$get<wbr/>Task</span><a href="#gettask" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -273,7 +332,7 @@ the sub-task's own <code>$init</code> has run.</p>
 <li><span><span class="tsd-kind-parameter">name</span>: <span class="tsd-signature-type">string</span></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="../interfaces/TaskRecord.html" class="tsd-signature-type tsd-kind-interface">TaskRecord</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L185">src/bzTasksClass.ts:185</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L193">src/bzTasksClass.ts:193</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="gettaskflatlist"><span>$get<wbr/>Task<wbr/>Flat<wbr/>List</span><a href="#gettaskflatlist" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -284,7 +343,7 @@ the sub-task's own <code>$init</code> has run.</p>
 </div>
 <h4 class="tsd-returns-title">Returns <a href="../interfaces/FlatTaskListEntry.html" class="tsd-signature-type tsd-kind-interface">FlatTaskListEntry</a><span class="tsd-signature-symbol">[]</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L120">src/bzTasksClass.ts:120</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L128">src/bzTasksClass.ts:128</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="gettasktree"><span>$get<wbr/>Task<wbr/>Tree</span><a href="#gettasktree" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -295,7 +354,7 @@ the sub-task's own <code>$init</code> has run.</p>
 </div>
 <h4 class="tsd-returns-title">Returns <a href="../interfaces/TaskTree.html" class="tsd-signature-type tsd-kind-interface">TaskTree</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L96">src/bzTasksClass.ts:96</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L104">src/bzTasksClass.ts:104</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="getvardefsfortaskname"><span>$get<wbr/>Var<wbr/>Defs<wbr/>For<wbr/>Task<wbr/>Name</span><a href="#getvardefsfortaskname" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -310,7 +369,7 @@ the sub-task's own <code>$init</code> has run.</p>
 <li><span><span class="tsd-kind-parameter">taskStr</span>: <span class="tsd-signature-type">string</span></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="../types/VarDefMap.html" class="tsd-signature-type tsd-kind-type-alias">VarDefMap</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L232">src/bzTasksClass.ts:232</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L240">src/bzTasksClass.ts:240</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="hasrunbefore"><span>$has<wbr/>Run<wbr/>Before</span><a href="#hasrunbefore" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -319,7 +378,7 @@ the sub-task's own <code>$init</code> has run.</p>
 <div class="tsd-description">
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L169">src/bzTasksClass.ts:169</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L177">src/bzTasksClass.ts:177</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="hassubtask"><span>$has<wbr/>Sub<wbr/>Task</span><a href="#hassubtask" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -332,7 +391,7 @@ the sub-task's own <code>$init</code> has run.</p>
 <li><span><span class="tsd-kind-parameter">name</span>: <span class="tsd-signature-type">string</span></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L201">src/bzTasksClass.ts:201</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L209">src/bzTasksClass.ts:209</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="hastask"><span>$has<wbr/>Task</span><a href="#hastask" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -345,7 +404,7 @@ the sub-task's own <code>$init</code> has run.</p>
 <li><span><span class="tsd-kind-parameter">name</span>: <span class="tsd-signature-type">string</span></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L189">src/bzTasksClass.ts:189</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L197">src/bzTasksClass.ts:197</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="init"><span>$init</span><a href="#init" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -354,7 +413,7 @@ the sub-task's own <code>$init</code> has run.</p>
 <div class="tsd-description">
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">unknown</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L248">src/bzTasksClass.ts:248</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L256">src/bzTasksClass.ts:256</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="isroot"><span>$is<wbr/>Root</span><a href="#isroot" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -363,7 +422,7 @@ the sub-task's own <code>$init</code> has run.</p>
 <div class="tsd-description">
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L173">src/bzTasksClass.ts:173</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L181">src/bzTasksClass.ts:181</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="parallel"><span>$parallel</span><a href="#parallel" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -376,7 +435,22 @@ the sub-task's own <code>$init</code> has run.</p>
 <li><span><span class="tsd-signature-symbol">...</span><span class="tsd-kind-parameter">args</span>: <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">[]</span></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L420">src/bzTasksClass.ts:420</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L448">src/bzTasksClass.ts:448</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="pipeline"><span>$pipeline</span><a href="#pipeline" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="pipeline-1"><span class="tsd-kind-call-signature">$pipeline</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">steps</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-keyword">readonly</span> <a href="../interfaces/PipelineStep.html" class="tsd-signature-type tsd-kind-interface">PipelineStep</a><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/PipelineResult.html" class="tsd-signature-type tsd-kind-interface">PipelineResult</a><span class="tsd-signature-symbol">&gt;</span><a href="#pipeline-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Run named task steps with testable conditions and continue-on-error semantics.</p>
+</div>
+<div class="tsd-parameters">
+<h4 class="tsd-parameters-title">Parameters</h4>
+<ul class="tsd-parameter-list">
+<li><span><span class="tsd-kind-parameter">steps</span>: <span class="tsd-signature-keyword">readonly</span> <a href="../interfaces/PipelineStep.html" class="tsd-signature-type tsd-kind-interface">PipelineStep</a><span class="tsd-signature-symbol">[]</span></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/PipelineResult.html" class="tsd-signature-type tsd-kind-interface">PipelineResult</a><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L464">src/bzTasksClass.ts:464</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="printhelp"><span>$print<wbr/>Help</span><a href="#printhelp" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -387,7 +461,7 @@ the sub-task's own <code>$init</code> has run.</p>
 </div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L141">src/bzTasksClass.ts:141</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L149">src/bzTasksClass.ts:149</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="register"><span>$register</span><a href="#register" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -398,7 +472,7 @@ the sub-task's own <code>$init</code> has run.</p>
 </div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L269">src/bzTasksClass.ts:269</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L293">src/bzTasksClass.ts:293</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="run"><span>$run</span><a href="#run" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -411,7 +485,7 @@ the sub-task's own <code>$init</code> has run.</p>
 <li><span><span class="tsd-signature-symbol">...</span><span class="tsd-kind-parameter">args</span>: <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">[]</span></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L424">src/bzTasksClass.ts:424</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L452">src/bzTasksClass.ts:452</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="sequence"><span>$sequence</span><a href="#sequence" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -424,7 +498,7 @@ the sub-task's own <code>$init</code> has run.</p>
 <li><span><span class="tsd-signature-symbol">...</span><span class="tsd-kind-parameter">args</span>: <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">[]</span></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L416">src/bzTasksClass.ts:416</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L444">src/bzTasksClass.ts:444</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="setdefault"><span>$set<wbr/>Default</span><a href="#setdefault" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -437,7 +511,7 @@ the sub-task's own <code>$init</code> has run.</p>
 <li><span><span class="tsd-kind-parameter">taskFuncName</span>: <span class="tsd-signature-type">string</span></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L165">src/bzTasksClass.ts:165</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L173">src/bzTasksClass.ts:173</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="setglobalvars"><span>$set<wbr/>Global<wbr/>Vars</span><a href="#setglobalvars" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -450,7 +524,7 @@ the sub-task's own <code>$init</code> has run.</p>
 <li><span><span class="tsd-kind-parameter">vars</span>: <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L213">src/bzTasksClass.ts:213</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L221">src/bzTasksClass.ts:221</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="setname"><span>$set<wbr/>Name</span><a href="#setname" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -463,7 +537,7 @@ the sub-task's own <code>$init</code> has run.</p>
 <li><span><span class="tsd-kind-parameter">name</span>: <span class="tsd-signature-type">string</span></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L177">src/bzTasksClass.ts:177</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L185">src/bzTasksClass.ts:185</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="setsubtask"><span>$set<wbr/>Sub<wbr/>Task</span><a href="#setsubtask" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -477,7 +551,7 @@ the sub-task's own <code>$init</code> has run.</p>
 <li><span><span class="tsd-kind-parameter">task</span>: <a href="" class="tsd-signature-type tsd-kind-class">BzTasks</a></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L197">src/bzTasksClass.ts:197</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L205">src/bzTasksClass.ts:205</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="setsubtasks"><span>$set<wbr/>Sub<wbr/>Tasks</span><a href="#setsubtasks" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -490,7 +564,7 @@ the sub-task's own <code>$init</code> has run.</p>
 <li><span><span class="tsd-kind-parameter">tasks</span>: <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <a href="" class="tsd-signature-type tsd-kind-class">BzTasks</a><span class="tsd-signature-symbol">&gt;</span></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L209">src/bzTasksClass.ts:209</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L217">src/bzTasksClass.ts:217</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="settaskhelpdocs"><span>$set<wbr/>Task<wbr/>Help<wbr/>Docs</span><a href="#settaskhelpdocs" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -504,7 +578,7 @@ the sub-task's own <code>$init</code> has run.</p>
 <li><span><span class="tsd-kind-parameter">helpDocs</span>: <span class="tsd-signature-type">string</span></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L226">src/bzTasksClass.ts:226</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L234">src/bzTasksClass.ts:234</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="useasroot"><span>$use<wbr/>As<wbr/>Root</span><a href="#useasroot" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -515,7 +589,7 @@ the sub-task's own <code>$init</code> has run.</p>
 </div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L160">src/bzTasksClass.ts:160</a></li></ul></aside></div></li></ul></section></section></details>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L168">src/bzTasksClass.ts:168</a></li></ul></aside></div></li></ul></section></section></details>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="properties-1">Properties<a href="#properties-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
@@ -525,61 +599,66 @@ the sub-task's own <code>$init</code> has run.</p>
 <div class="tsd-comment tsd-typography"><p>Set by the <code>@defaultTask</code> decorator.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L49">src/bzTasksClass.ts:49</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L54">src/bzTasksClass.ts:54</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="emit"><span>$emit</span><a href="#emit" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">$emit</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">name</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">data</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">)</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">void</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L66">src/bzTasksClass.ts:66</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L72">src/bzTasksClass.ts:72</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="helpdocs"><code class="tsd-tag">Optional</code><span>$help<wbr/>Docs</span><a href="#helpdocs" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">$helpDocs</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">&gt;</span></div>
 <div class="tsd-comment tsd-typography"><p>Help docs by task name. Populated by the <code>@help</code> decorator.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L51">src/bzTasksClass.ts:51</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L56">src/bzTasksClass.ts:56</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="vardefs"><code class="tsd-tag">Optional</code><span>$var<wbr/>Defs</span><a href="#vardefs" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">$varDefs</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <a href="../types/VarDefMap.html" class="tsd-signature-type tsd-kind-type-alias">VarDefMap</a><span class="tsd-signature-symbol">&gt;</span></div>
 <div class="tsd-comment tsd-typography"><p>Variable definitions by task name. Populated by the <code>@vars</code> decorator.</p>
 </div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L53">src/bzTasksClass.ts:53</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L58">src/bzTasksClass.ts:58</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="beelzebub"><span>beelzebub</span><a href="#beelzebub" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">beelzebub</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">any</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L40">src/bzTasksClass.ts:40</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L44">src/bzTasksClass.ts:44</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="helplogger"><span>help<wbr/>Logger</span><a href="#helplogger" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">helpLogger</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/LoggerLike.html" class="tsd-signature-type tsd-kind-interface">LoggerLike</a></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L45">src/bzTasksClass.ts:45</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L49">src/bzTasksClass.ts:49</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="logger"><span>logger</span><a href="#logger" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">logger</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/LoggerLike.html" class="tsd-signature-type tsd-kind-interface">LoggerLike</a></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L44">src/bzTasksClass.ts:44</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L48">src/bzTasksClass.ts:48</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="name"><span>name</span><a href="#name" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">name</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L41">src/bzTasksClass.ts:41</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L45">src/bzTasksClass.ts:45</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="namepath"><span>name<wbr/>Path</span><a href="#namepath" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">namePath</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L43">src/bzTasksClass.ts:43</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L47">src/bzTasksClass.ts:47</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="version"><span>version</span><a href="#version" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">version</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L42">src/bzTasksClass.ts:42</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L46">src/bzTasksClass.ts:46</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="vlogger"><span>v<wbr/>Logger</span><a href="#vlogger" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">vLogger</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/VLoggerLike.html" class="tsd-signature-type tsd-kind-interface">VLoggerLike</a></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L46">src/bzTasksClass.ts:46</a></li></ul></aside></section></section></details></div>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L50">src/bzTasksClass.ts:50</a></li></ul></aside></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="workflow"><span>workflow</span><a href="#workflow" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<div class="tsd-signature"><span class="tsd-kind-property">workflow</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/WorkflowRuntime.html" class="tsd-signature-type tsd-kind-interface">WorkflowRuntime</a></div><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/bzTasksClass.ts#L51">src/bzTasksClass.ts:51</a></li></ul></aside></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
@@ -597,9 +676,9 @@ the sub-task's own <code>$init</code> has run.</p>
 <details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Constructors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Constructors</summary>
 <div><a href="#constructor"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Constructor"><use href="../assets/icons.svg#icon-512"></use></svg><span>constructor</span></a></div></details>
 <details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Methods</summary>
-<div><a href="#addsubtasks"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$add<wbr/>Sub<wbr/>Tasks</span></a><a href="#afterall"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$after<wbr/>All</span></a><a href="#aftereach"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$after<wbr/>Each</span></a><a href="#beforeall"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$before<wbr/>All</span></a><a href="#beforeeach"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$before<wbr/>Each</span></a><a href="#config"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$config</span></a><a href="#definetaskvars"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$define<wbr/>Task<wbr/>Vars</span></a><a href="#getglobalvars"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$get<wbr/>Global<wbr/>Vars</span></a><a href="#getname"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$get<wbr/>Name</span></a><a href="#getrunning"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$get<wbr/>Running</span></a><a href="#getstatssummary"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$get<wbr/>Stats<wbr/>Summary</span></a><a href="#getsubtask"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$get<wbr/>Sub<wbr/>Task</span></a><a href="#getsubtasks"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$get<wbr/>Sub<wbr/>Tasks</span></a><a href="#gettask"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$get<wbr/>Task</span></a><a href="#gettaskflatlist"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$get<wbr/>Task<wbr/>Flat<wbr/>List</span></a><a href="#gettasktree"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$get<wbr/>Task<wbr/>Tree</span></a><a href="#getvardefsfortaskname"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$get<wbr/>Var<wbr/>Defs<wbr/>For<wbr/>Task<wbr/>Name</span></a><a href="#hasrunbefore"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$has<wbr/>Run<wbr/>Before</span></a><a href="#hassubtask"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$has<wbr/>Sub<wbr/>Task</span></a><a href="#hastask"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$has<wbr/>Task</span></a><a href="#init"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$init</span></a><a href="#isroot"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$is<wbr/>Root</span></a><a href="#parallel"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$parallel</span></a><a href="#printhelp"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$print<wbr/>Help</span></a><a href="#register"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$register</span></a><a href="#run"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$run</span></a><a href="#sequence"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$sequence</span></a><a href="#setdefault"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$set<wbr/>Default</span></a><a href="#setglobalvars"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$set<wbr/>Global<wbr/>Vars</span></a><a href="#setname"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$set<wbr/>Name</span></a><a href="#setsubtask"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$set<wbr/>Sub<wbr/>Task</span></a><a href="#setsubtasks"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$set<wbr/>Sub<wbr/>Tasks</span></a><a href="#settaskhelpdocs"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$set<wbr/>Task<wbr/>Help<wbr/>Docs</span></a><a href="#useasroot"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$use<wbr/>As<wbr/>Root</span></a></div></details>
+<div><a href="#addsubtasks"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$add<wbr/>Sub<wbr/>Tasks</span></a><a href="#afterall"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$after<wbr/>All</span></a><a href="#aftereach"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$after<wbr/>Each</span></a><a href="#beforeall"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$before<wbr/>All</span></a><a href="#beforeeach"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$before<wbr/>Each</span></a><a href="#config"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$config</span></a><a href="#definetaskvars"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$define<wbr/>Task<wbr/>Vars</span></a><a href="#exec"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$exec</span></a><a href="#finallyall"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$finally<wbr/>All</span></a><a href="#finallyeach"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$finally<wbr/>Each</span></a><a href="#getexecutions"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$get<wbr/>Executions</span></a><a href="#getglobalvars"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$get<wbr/>Global<wbr/>Vars</span></a><a href="#getname"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$get<wbr/>Name</span></a><a href="#getrunning"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$get<wbr/>Running</span></a><a href="#getstatssummary"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$get<wbr/>Stats<wbr/>Summary</span></a><a href="#getsubtask"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$get<wbr/>Sub<wbr/>Task</span></a><a href="#getsubtasks"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$get<wbr/>Sub<wbr/>Tasks</span></a><a href="#gettask"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$get<wbr/>Task</span></a><a href="#gettaskflatlist"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$get<wbr/>Task<wbr/>Flat<wbr/>List</span></a><a href="#gettasktree"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$get<wbr/>Task<wbr/>Tree</span></a><a href="#getvardefsfortaskname"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$get<wbr/>Var<wbr/>Defs<wbr/>For<wbr/>Task<wbr/>Name</span></a><a href="#hasrunbefore"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$has<wbr/>Run<wbr/>Before</span></a><a href="#hassubtask"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$has<wbr/>Sub<wbr/>Task</span></a><a href="#hastask"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$has<wbr/>Task</span></a><a href="#init"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$init</span></a><a href="#isroot"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$is<wbr/>Root</span></a><a href="#parallel"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$parallel</span></a><a href="#pipeline"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$pipeline</span></a><a href="#printhelp"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$print<wbr/>Help</span></a><a href="#register"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$register</span></a><a href="#run"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$run</span></a><a href="#sequence"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$sequence</span></a><a href="#setdefault"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$set<wbr/>Default</span></a><a href="#setglobalvars"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$set<wbr/>Global<wbr/>Vars</span></a><a href="#setname"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$set<wbr/>Name</span></a><a href="#setsubtask"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$set<wbr/>Sub<wbr/>Task</span></a><a href="#setsubtasks"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$set<wbr/>Sub<wbr/>Tasks</span></a><a href="#settaskhelpdocs"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$set<wbr/>Task<wbr/>Help<wbr/>Docs</span></a><a href="#useasroot"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$use<wbr/>As<wbr/>Root</span></a></div></details>
 <details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Properties</summary>
-<div><a href="#defaulttask"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>$default<wbr/>Task</span></a><a href="#emit"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>$emit</span></a><a href="#helpdocs"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>$help<wbr/>Docs</span></a><a href="#vardefs"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>$var<wbr/>Defs</span></a><a href="#beelzebub"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>beelzebub</span></a><a href="#helplogger"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>help<wbr/>Logger</span></a><a href="#logger"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>logger</span></a><a href="#name"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>name</span></a><a href="#namepath"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>name<wbr/>Path</span></a><a href="#version"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>version</span></a><a href="#vlogger"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>v<wbr/>Logger</span></a></div></details></div></details></div>
+<div><a href="#defaulttask"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>$default<wbr/>Task</span></a><a href="#emit"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>$emit</span></a><a href="#helpdocs"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>$help<wbr/>Docs</span></a><a href="#vardefs"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>$var<wbr/>Defs</span></a><a href="#beelzebub"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>beelzebub</span></a><a href="#helplogger"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>help<wbr/>Logger</span></a><a href="#logger"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>logger</span></a><a href="#name"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>name</span></a><a href="#namepath"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>name<wbr/>Path</span></a><a href="#version"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>version</span></a><a href="#vlogger"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>v<wbr/>Logger</span></a><a href="#workflow"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>workflow</span></a></div></details></div></details></div>
 <div class="site-menu">
 <nav id="tsd-sidebar-links" class="tsd-navigation"><a href="https://github.com/jstty/beelzebub" class="tsd-nav-link">GitHub</a><a href="https://www.npmjs.com/package/beelzebub" class="tsd-nav-link">npm</a></nav>
 <nav class="tsd-navigation"><a href="../modules.html">Beelzebub - v2.0.0-dev</a>

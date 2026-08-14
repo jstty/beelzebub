@@ -174,7 +174,7 @@ describe('task lifecycle and dispatch', () => {
     expect(app.$getTaskFlatList()[0]?.stats).toBeDefined();
   });
 
-  it('logs invalid task inputs and task failures without rejecting the entry point', async () => {
+  it('rejects invalid task inputs and task failures for CI-safe entry points', async () => {
     const { config, logger } = createTestConfig({ verbose: true });
     const app = bz.create(config);
 
@@ -188,14 +188,48 @@ describe('task lifecycle and dispatch', () => {
     await app.getInitPromise();
 
     await expect(app.run('MissingTasks.nope')).resolves.toEqual([]);
-    await expect(app.run(undefined, { task: 42 } as never)).resolves.toBeUndefined();
+    await expect(app.run(undefined, { task: 42 } as never)).rejects.toThrow(
+      'invalid task name: "42"'
+    );
     await expect(app.run(undefined, 42)).resolves.toEqual([]);
-    await expect(app.run('ErrorTasks.fail')).resolves.toBeUndefined();
+    await expect(app.run('ErrorTasks.fail')).rejects.toThrow('expected task failure');
 
     expect(logger.messages('warn')).toEqual(
       expect.arrayContaining(['MissingTasks.nope task not added', 'unknown task input type'])
     );
     expect(logger.messages('error').join('\n')).toContain('invalid task name');
     expect(logger.messages('error').join('\n')).toContain('expected task failure');
+  });
+
+  it('preserves return values and runs failure cleanup with an execution record', async () => {
+    const { config } = createTestConfig();
+    const app = bz.create(config);
+    const calls: string[] = [];
+
+    class ResultTasks extends BzTasks {
+      value(): number {
+        return 42;
+      }
+
+      fail(): never {
+        throw new Error('boom');
+      }
+
+      override $finallyEach(_taskInfo: TaskInfo, execution: { outcome: string }): void {
+        calls.push(execution.outcome);
+      }
+    }
+
+    app.add(ResultTasks);
+    await app.getInitPromise();
+
+    await expect(app.run('ResultTasks.value')).resolves.toBe(42);
+    await expect(app.run('ResultTasks.fail')).rejects.toThrow('boom');
+
+    expect(app.getExecutions()).toEqual([
+      expect.objectContaining({ task: 'ResultTasks.value', outcome: 'success', value: 42 }),
+      expect.objectContaining({ task: 'ResultTasks.fail', outcome: 'failure' })
+    ]);
+    expect(calls).toEqual(['success', 'failure']);
   });
 });

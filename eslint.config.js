@@ -6,7 +6,14 @@ import globals from 'globals';
 
 export default tseslint.config(
   {
-    ignores: ['dist/**', 'docs/**', 'website/dist/**', 'node_modules/**', 'coverage/**']
+    ignores: [
+      'dist/**',
+      'github-action/dist/**',
+      'docs/**',
+      'website/dist/**',
+      'node_modules/**',
+      'coverage/**'
+    ]
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,

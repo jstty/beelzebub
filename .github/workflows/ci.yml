@@ -45,12 +45,11 @@ jobs:
           npm ci
           npm --prefix examples ci
 
-      - run: npm run format:check
-      - run: npm run lint
-      - run: npm run typecheck
-      - run: npm test
-      - run: npm run build
-      - run: npm run test:package
+      - name: Run the typed verification pipeline
+        uses: ./github-action
+        with:
+          file: beelzebub.ci.ts
+          task: CI.verify
 
   quality:
     name: Coverage, docs, audit, and package validation
@@ -76,75 +75,13 @@ jobs:
       - run: |
           npm ci
           npm --prefix examples ci
-      - name: Run coverage
-        id: coverage
-        continue-on-error: true
-        run: npm run coverage
-
-      - name: Create coverage summary
-        if: always()
-        run: node scripts/coverage-summary.js coverage-summary.md
-
-      - name: Post coverage summary
-        if: >-
-          always() &&
-          github.event_name == 'pull_request' &&
-          github.event.pull_request.head.repo.full_name == github.repository &&
-          github.actor != 'dependabot[bot]'
-        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9
+      - name: Run the typed quality pipeline
+        uses: ./github-action
         with:
-          script: |
-            const fs = require('node:fs');
-
-            const marker = '<!-- beelzebub-coverage-report -->';
-            const body = fs.readFileSync('coverage-summary.md', 'utf8');
-
-            const comments = await github.paginate(github.rest.issues.listComments, {
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-              per_page: 100
-            });
-            const previous = comments.find((comment) =>
-              comment.user?.type === 'Bot' && comment.body?.includes(marker)
-            );
-
-            if (previous) {
-              await github.rest.issues.updateComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                comment_id: previous.id,
-                body
-              });
-            } else {
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.issue.number,
-                body
-              });
-            }
-
-      - name: Enforce coverage result
-        if: always() && steps.coverage.outcome != 'success'
-        run: exit 1
-
-      - run: npm run build
-      - run: npm run site:check
-      - run: npm run validate-pkg
-      - run: npm run audit
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: coverage
-          path: coverage/
-          if-no-files-found: error
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: website-static
-          path: website/dist/
-          if-no-files-found: error
+          file: beelzebub.ci.ts
+          task: CI.quality
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   preview:
     name: Firebase Hosting preview (PR only)

@@ -155,11 +155,10 @@ JavaScript task files load through Node's module system. A JavaScript task file 
 bz --file ./beelzebub.js ProjectTasks.release
 ```
 
-If a CLI task file contains TypeScript syntax or decorators, install `tsx` in the consuming project and register it with Node:
+TypeScript task files are loaded through Beelzebub's bundled TypeScript loader:
 
 ```sh
-node --import tsx ./node_modules/beelzebub/dist/bin/beelzebub.js \
-  --file ./beelzebub.ts ProjectTasks.release
+bz --file ./beelzebub.ts ProjectTasks.release
 ```
 
 Replace long package scripts with short, stable entry points while preserving any script names developers and CI already use:

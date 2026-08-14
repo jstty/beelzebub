@@ -1,4 +1,5 @@
 dist
+github-action/dist
 node_modules
 legacy
 docs/site

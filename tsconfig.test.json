@@ -9,6 +9,15 @@
     "sourceMap": false,
     "noImplicitOverride": false
   },
-  "include": ["src", "test", "examples", "scripts", "vitest.config.ts", "eslint.config.js"],
+  "include": [
+    "src",
+    "test",
+    "examples",
+    "scripts",
+    "beelzebub.ci.ts",
+    "github-action/src",
+    "vitest.config.ts",
+    "eslint.config.js"
+  ],
   "exclude": ["dist", "node_modules", "legacy"]
 }

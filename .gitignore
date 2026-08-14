@@ -9,6 +9,8 @@ npm-debug.log
 
 # Build outputs
 dist
+!github-action/dist/
+!github-action/dist/index.js
 website/dist
 .firebase
 *.tsbuildinfo
