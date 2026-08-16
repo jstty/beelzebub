@@ -3,6 +3,14 @@ import { describe, expect, it, vi } from 'vitest';
 import { CommandError, NodeCommandRunner } from '../src/index.js';
 
 describe('NodeCommandRunner', () => {
+  it('resolves platform command shims without enabling a shell', async () => {
+    const runner = new NodeCommandRunner();
+    const result = await runner.exec('npm', ['--version'], { silent: true });
+
+    expect(result).toMatchObject({ command: 'npm', exitCode: 0, stderr: '' });
+    expect(result.stdout.trim()).toMatch(/^\d+\.\d+\.\d+$/);
+  });
+
   it('captures output, arguments, and successful exit details', async () => {
     const runner = new NodeCommandRunner();
     const result = await runner.exec(

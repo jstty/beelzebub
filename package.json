@@ -130,6 +130,7 @@
     "@actions/github": "^9.1.1",
     "@types/node": "^24.13.3",
     "cli-table3": "^0.6.5",
+    "cross-spawn": "^7.0.6",
     "picocolors": "^1.1.1",
     "stumpy": "^0.7.1",
     "tsx": "^4.23.12"
@@ -137,6 +138,7 @@
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.5",
     "@eslint/js": "^10.0.1",
+    "@types/cross-spawn": "^6.0.6",
     "@typescript/native": "npm:typescript@^7.0.2",
     "@vitest/coverage-v8": "^4.1.10",
     "esbuild": "^0.28.2",
