@@ -37,7 +37,7 @@ describe('bundled GitHub Action', () => {
       });
 
       expect(result.status, result.stderr).toBe(0);
-      expect(readFileSync(outputPath, 'utf8')).toContain('fixture-output');
+      expect(readFileSync(outputPath, 'utf8')).toContain('relative-typescript-import');
       expect(readFileSync(outputPath, 'utf8')).toContain('conclusion');
       expect(readFileSync(summaryPath, 'utf8')).toContain('Fixture summary');
       expect(readFileSync(summaryPath, 'utf8')).toContain('Beelzebub pipeline');

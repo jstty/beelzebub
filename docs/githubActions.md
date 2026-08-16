@@ -62,7 +62,7 @@ jobs:
           task: CI.verify
 ```
 
-The bundled action loads TypeScript directly and accepts these inputs:
+The bundled action loads the project's installed `beelzebub` package from `working-directory`, then uses that version to load TypeScript directly. Run the project's dependency-install step first. The action accepts these inputs:
 
 - `file`: task file, defaulting to `beelzebub.ts`
 - `task`: one or more newline-separated task paths

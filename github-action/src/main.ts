@@ -1,13 +1,23 @@
+import { createRequire } from 'node:module';
 import path from 'node:path';
 
 import * as core from '@actions/core';
 
-import {
-  BzCLI,
-  type Beelzebub,
-  type TaskExecution,
-  type WorkflowRuntime
-} from '../../src/index.js';
+import type { Beelzebub, TaskExecution, WorkflowRuntime } from '../../src/index.js';
+
+type BeelzebubModule = Pick<typeof import('../../src/index.js'), 'BzCLI'>;
+
+function loadBeelzebub(cwd: string): BeelzebubModule {
+  const requireFromProject = createRequire(path.join(cwd, 'package.json'));
+  try {
+    return requireFromProject('beelzebub') as BeelzebubModule;
+  } catch (error) {
+    throw new Error(
+      `Unable to load Beelzebub from ${cwd}. Install the project dependencies before running the action.`,
+      { cause: error }
+    );
+  }
+}
 
 function executionRows(executions: readonly TaskExecution[]): Array<Array<string | number>> {
   return [
@@ -36,6 +46,7 @@ async function main(): Promise<void> {
     const tasks = core.getMultilineInput('task', { required: true });
     const args = core.getMultilineInput('args');
     const failureMode = core.getInput('failure-mode') === 'log' ? 'log' : 'throw';
+    const { BzCLI } = loadBeelzebub(cwd);
 
     app = await new BzCLI().run({
       cwd,
