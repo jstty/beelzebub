@@ -4,6 +4,11 @@ Status: proposed
 
 Baseline: `dev/v2.0` at `65b5b2b`
 
+Detailed implementation suite: [plans/bz-ci/README.md](bz-ci/README.md). The suite breaks this
+strategy into architecture, workflow/IR, testing, GitHub integration, scheduling, runner,
+infrastructure, data, security/OIDC, product/billing, SRE/DR, and issue-level delivery plans with
+dependencies, schemas, failure behavior, tests, work packages, and release gates.
+
 ## Product thesis
 
 bz CI should be a GitHub-native but GitHub Actions-independent CI service built around one
