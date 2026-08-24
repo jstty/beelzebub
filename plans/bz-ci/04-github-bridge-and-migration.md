@@ -221,6 +221,9 @@ Generated code is a starting point and never committed automatically without an 
 
 Deliverable: migration report checked into `plans/ci-migration.md` or stored as a bz report.
 
+The beelzebub repository is inventoried first. Its formatting job is the first migration slice;
+the implementation does not wait for every repository job or supported bridge feature.
+
 ### Step 2: extract runner-local behavior
 
 1. Convert command steps into `BzTasks` methods.
@@ -248,28 +251,36 @@ Gate: generated topology matches the inventoried current workflow.
 4. Compare planned jobs, command trace, outcomes, outputs, annotations, summary, and artifact hash.
 5. Classify differences as expected, bridge limitation, or bug.
 
-Gate: thirty consecutive days without unexplained differences.
+First-job shadow gate: at least 20 correlated real executions with no unexplained semantic
+difference. Continue collecting parity after promotion; this early gate does not authorize removal
+of the fallback or migration of higher-risk jobs.
 
 ### Step 5: generated bridge authority
 
-1. Make generated Check required on a low-risk branch.
+1. After at least 50 correlated executions over seven days and a fallback drill, make the generated
+   formatting Check required on the default branch.
 2. Retain manual original-workflow dispatch.
-3. Observe another release cycle.
-4. Remove duplicate original scheduling only after rollback is tested.
+3. Promote lint/typecheck and later jobs independently in risk order.
+4. Observe higher-risk and complete-topology parity for thirty days and at least one release cycle.
+5. Remove duplicate original scheduling per job only after its rollback is tested.
 
 ### Step 6: independent shadow
 
 1. Install bz GitHub App.
-2. Run independent bz Check as non-required.
-3. Compare against generated GitHub bridge.
-4. Validate GitHub Actions outage drills.
+2. Shadow-plan every event without side effects and compare plan digests first.
+3. Run a low-risk independent bz Check as non-required on a static runner.
+4. Compare against generated GitHub bridge.
+5. Diagnose it through the bz UI/CLI and validate GitHub Actions outage drills.
 
 ### Step 7: independent authority
 
-1. Make bz Check required.
+1. After at least 100 successful/expected correlated attempts over seven days plus scheduler,
+   runner, log-resume, cleanup, restore, and fallback tests, make one low-risk bz Check required.
 2. Retain bridge workflow as manually dispatchable fallback.
-3. Document emergency activation and consistency implications.
-4. Remove fallback only when organizational policy permits it.
+3. Promote non-release jobs individually; retain publish/deploy/release until their security and GA
+   gates pass.
+4. Document and time emergency activation and consistency implications.
+5. Remove fallback only when organizational policy permits it after the early-GA window.
 
 ## Parity record
 
@@ -338,6 +349,7 @@ raw secret-bearing process state.
 - Compare safe semantic data.
 - Render unexplained differences.
 - Require explicit disposition.
+- Track per-job DF stage, evidence window, promotion, fallback owner, and exception expiry.
 
 ## Tests
 
@@ -356,6 +368,8 @@ raw secret-bearing process state.
 - Three repositories run task-body mode with meaningful workflow unit tests.
 - Three repositories generate deterministic GitHub workflows from WorkflowPlanV1.
 - The compatibility catalog covers every action used by those repositories.
+- The beelzebub formatting job begins bridge shadowing as soon as the minimal IR/emitter is usable.
+- Formatting, lint, and typecheck can promote independently without waiting for full-topology parity.
 - Dual-run comparison has no unexplained semantic difference for thirty days.
 - A documented rollback returns a repository to its prior required GitHub workflow.
 - No bridge limitation is misrepresented as independent-mode support.

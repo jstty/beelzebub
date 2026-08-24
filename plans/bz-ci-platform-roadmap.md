@@ -573,12 +573,45 @@ Testing is a product capability and a platform release gate.
 
 ### Dogfood and cutover policy
 
-1. Keep GitHub Actions as the release authority while bz runs in shadow mode.
-2. Compare workflow plan, task sequence, result, summary, and artifact hashes automatically.
-3. Make bz a non-required GitHub Check after the independent alpha is stable.
-4. Make bz required for one low-risk repository after the beta SLO is met for 30 days.
-5. Keep a manual GitHub Actions fallback during private beta and early GA.
-6. Do not make bz the only way to build or deploy bz until restore and outage drills pass.
+Dogfooding starts with the first minimal workflow slice and advances per job; it does not wait for a
+complete milestone or service.
+
+```mermaid
+flowchart LR
+  baseline[Capture current CI fixtures] --> local[Test one real job locally]
+  local --> bridgeShadow[Generated bridge job, non-required]
+  bridgeShadow --> bridgeRequired[Generated bridge job, required]
+  bridgeRequired --> plannerShadow[Native planner shadow]
+  plannerShadow --> runnerShadow[Static runner job, non-required]
+  runnerShadow --> nativeRequired[Native low-risk job, required]
+  nativeRequired --> nativeNonRelease[Native non-release CI]
+  nativeNonRelease --> nativeRelease[Native release authority]
+```
+
+1. In M0, inventory beelzebub's actual checks, events, commands, permissions, secrets, outputs,
+   artifacts, timings, required-check configuration, and fallback procedure as committed fixtures.
+2. In the first M1 IR slice, model and scenario-test the real formatting job. Build its thin bridge
+   emitter immediately instead of waiting for the full language surface.
+3. Dual-run that generated job under a distinct non-required Check, compare semantic command trace,
+   outcome, outputs, annotations, summary, and artifacts, then make it required after its parity and
+   fallback gate passes.
+4. Move lint, typecheck, tests, build, package, docs, and audit through the generated bridge one job
+   at a time. GitHub-hosted, Blacksmith, or custom runners can remain the execution provider.
+5. Shadow-plan every repository event through the native planner before it creates runs or Checks.
+6. Execute formatting and lint through a fenced static runner as non-required bz Checks and use the
+   live UI/CLI for diagnosis before making one low-risk Check required.
+7. Move non-release jobs through BYOC and managed runners only after each job's cache, artifact,
+   isolation, capacity, and recovery evidence passes.
+8. Move publish/deploy/release last, after 30-day SLO evidence plus restore, GitHub outage, key
+   rotation, approval, OIDC, and rollback drills.
+9. The authoritative dogfood lane consumes the last promoted bz version; candidate code runs in a
+   shadow lane so a broken commit cannot prevent its corrective PR.
+10. Keep the last-known-good generated workflow, immutable tool pins, exact required-Check restore
+    procedure, and a manually dispatchable GitHub fallback through private beta and early GA.
+
+Every promotion has a per-job record and named rollback owner. A milestone cannot pass if its
+promised dogfood stage is not active on the default branch. The detailed DF0–DF9 gates are in the
+[delivery program](bz-ci/13-delivery-program.md#dogfood-first-delivery-lane).
 
 ## Reliability targets
 
@@ -610,6 +643,7 @@ milestones.
 - Write ADRs for workflow IR, queue semantics, planner sandbox, runner leases, and storage.
 - Define `WorkflowPlanV1`, job states, attempt fencing, and protocol versioning.
 - Create threat model and service-level objectives.
+- Commit DF0 fixtures and a parity manifest for the repository's current real CI.
 
 Exit: the team can explain which code is trusted, where every durable fact lives, and how every
 job reaches one terminal state.
@@ -619,15 +653,19 @@ job reaches one terminal state.
 - Ship `defineWorkflow()`, expressions, matrices, dependencies, runner capabilities, and IR.
 - Ship planning, validation, graph, explain, and event simulation commands.
 - Expand the in-memory test kit and publish testing documentation.
-- Dogfood the beelzebub CI definition locally.
+- Model and scenario-test the real formatting job locally from the first minimal IR slice.
+- Start its generated bridge Check as non-required without waiting for the full M1 feature set.
 
-Exit: complex CI topology and edge cases can be validated without GitHub or subprocesses.
+Exit: complex CI topology and edge cases can be validated without GitHub or subprocesses, while
+the first real generated job is collecting parity on repository events.
 
 ### Milestone 2: GitHub bridge — 4 to 6 weeks
 
 - Generate thin GitHub workflows from the IR.
 - Run through GitHub-hosted and Blacksmith labels.
-- Add semantic comparison and shadow dogfooding.
+- Add semantic comparison and job-by-job shadow dogfooding.
+- Make formatting required after its DF3 gate, then migrate the remaining non-release jobs in risk
+  order with individual rollback evidence.
 - Test migration against at least three repositories.
 
 Exit: users can adopt the new language without trusting a new control plane.
@@ -637,6 +675,8 @@ Exit: users can adopt the new language without trusting a new control plane.
 - GitHub App, durable webhook inbox, planner sandbox, PostgreSQL scheduler, queue, Check runs.
 - Minimal agent protocol, local Docker runner, live logs, cancellation, and terminal status.
 - Manual/API trigger and basic run UI.
+- Shadow-plan every beelzebub event and execute at least one real low-risk job through the static
+  runner as a distinct non-required Check.
 
 Exit: a push creates and completes a bz Check without invoking GitHub Actions.
 
@@ -646,6 +686,8 @@ Exit: a push creates and completes a bz Check without invoking GitHub Actions.
 - Artifacts, dependency cache, native secrets, runner pools, quotas, and audit events.
 - Fork PR security, lease recovery, provider conformance, and failure injection.
 - Invite a small set of design partners.
+- Promote one low-risk native beelzebub Check to required after DF7 and expand native jobs only by
+  per-job evidence.
 
 Exit: selected repositories can use bz as a non-required daily CI check on customer compute.
 
@@ -654,6 +696,8 @@ Exit: selected repositories can use bz as a non-required daily CI check on custo
 - Ephemeral x64 and ARM64 managed VMs, autoscaling, cleanup verification, and usage metering.
 - Environment protection, approvals, schedules, notifications, and better migration tooling.
 - Backup/restore, regional outage, security, and upgrade drills.
+- Run the supported beelzebub non-release topology natively through DF8 while retaining protected
+  releases on the bridge.
 
 Exit: bz is required on low-risk repositories and meets beta reliability targets for 30 days.
 
@@ -663,6 +707,8 @@ Exit: bz is required on low-risk repositories and meets beta reliability targets
 - Billing, budgets, support tooling, retention controls, deletion, and audit export.
 - External security assessment and remediation.
 - GA SLO dashboards, incident response, capacity planning, and public status page.
+- Dual-run and promote beelzebub publish/deploy/release authority only through the DF9 security,
+  SLO, restore, outage, and fallback gate.
 
 Exit: managed Linux and BYOC modes meet GA gates and have a tested GitHub Actions fallback.
 
@@ -707,16 +753,21 @@ multi-tenant runner service would likely extend the schedule beyond 18 months.
 
 ## Immediate implementation backlog
 
-1. Write the `WorkflowPlanV1` RFC and JSON Schema.
-2. Specify the run, job, attempt, lease, and cancellation state machines.
-3. Add a `defineWorkflow()` proof of concept next to the current `BzTasks` API.
-4. Add deterministic `bz plan --json` and golden tests.
-5. Extend `MemoryWorkflowRuntime` with event and permission fixtures.
-6. Build a scheduler simulator that consumes only the IR.
-7. Compile the IR to the repository's current GitHub Actions topology.
-8. Dual-run the generated bridge and existing workflow and compare results.
-9. Write the planner/runner threat model and fork PR policy.
-10. Prototype the fenced lease protocol with an in-memory service and local Docker agent.
+1. Inventory the repository's current CI jobs, scripts, events, permissions, required Checks,
+   secrets, outputs, artifacts, timing, runner labels, and rollback path as DF0 fixtures.
+2. Write the minimal `WorkflowPlanV1` RFC/JSON Schema needed to model the real formatting job.
+3. Add a `defineWorkflow()` proof of concept next to the current `BzTasks` API and snapshot that
+   job's plan for push, PR, fork, cancellation, success, and failure.
+4. Add deterministic `bz plan --json`, simulation, explanation, and golden tests.
+5. Extend `MemoryWorkflowRuntime` with the real event, permission, and failure fixtures.
+6. Build the one-job GitHub emitter and launch its distinct non-required Check immediately.
+7. Add correlated parity reporting and rehearse the last-known-good workflow/required-Check fallback.
+8. Build a scheduler simulator that consumes only the IR and shares those fixtures.
+9. Expand bridge generation job by job through lint, typecheck, tests, build, and package.
+10. Specify the run, job, attempt, lease, and cancellation state machines.
+11. Write the planner/runner threat model and fork PR policy.
+12. Prototype the fenced lease protocol with an in-memory service and local static/Docker agent,
+    then execute the first native non-required formatting Check.
 
 ## References
 

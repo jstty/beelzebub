@@ -17,6 +17,8 @@ Deliver a complete CI product through evidence-based increments, beginning with 
 - First runner paths: static local, BYOC Kubernetes, then managed disposable Linux.
 - Public workflow authoring: TypeScript bz SDK compiled to a versioned declarative plan.
 - GitHub Actions bridge remains available throughout migration.
+- The beelzebub repository begins DF0 immediately and consumes every safe new slice before external
+  rollout.
 - Windows, macOS, GPU, multi-region active-active, broad Marketplace action compatibility, and enterprise SSO are post-GA unless a design partner changes priorities.
 - Expected path with the stated team is roughly 12–18 months to a responsibly scoped GA; discovery results may change this.
 
@@ -24,6 +26,7 @@ Deliver a complete CI product through evidence-based increments, beginning with 
 
 | Lane | Responsibility | Detailed plan |
 | --- | --- | --- |
+| Dogfood | real repository adoption, parity, promotion, and fallback | DF0–DF9 in this plan |
 | Language | SDK, compiler, IR, expressions, diagnostics | [02](02-workflow-sdk-and-ir.md) |
 | Testability | fixtures, simulator, conformance, explanations | [03](03-testing-and-simulation.md) |
 | GitHub | bridge, App, webhooks, checks, planner | [04](04-github-bridge-and-migration.md), [05](05-github-app-and-planner.md) |
@@ -53,6 +56,110 @@ flowchart TD
 ```
 
 Bridge-mode generation can ship alongside SDK/simulator. UI can start against fake/projected APIs once schemas stabilize. Cloud runner image/capacity work can begin once the agent handshake and job spec are versioned.
+
+## Dogfood-first delivery lane
+
+Dogfooding is a mandatory lane through every milestone, beginning with the first compilable workflow
+slice. It does not wait for the complete bridge, control plane, UI, managed runners, or a milestone
+release. Promotion happens one repository job at a time when that job's evidence passes.
+
+The beelzebub repository is the first tenant and conformance repository. Design partners broaden
+coverage later; they do not replace internal use.
+
+### Dogfood progression
+
+```mermaid
+flowchart LR
+  baseline[DF0 Baseline fixtures] --> local[DF1 Local plan + simulation]
+  local --> bridgeShadow[DF2 One bridge job, non-required]
+  bridgeShadow --> bridgeRequired[DF3 One bridge job, required]
+  bridgeRequired --> bridgeFull[DF4 Generated bridge for non-release CI]
+  bridgeFull --> plannerShadow[DF5 Native planner shadow]
+  plannerShadow --> nativeShadow[DF6 Static runner, non-required]
+  nativeShadow --> nativeRequired[DF7 One native job, required]
+  nativeRequired --> nativeCI[DF8 Native non-release CI]
+  nativeCI --> releaseAuthority[DF9 Native release authority]
+```
+
+| Stage | Earliest implementation point | Real beelzebub workload | Authority and fallback | Promotion evidence |
+| --- | --- | --- | --- | --- |
+| DF0 baseline | first M0 work | inventory current checks, scripts, events, permissions, secrets, outputs, artifacts, durations, and failure classes | current GitHub workflow remains authoritative | committed fixtures and a reviewed parity manifest |
+| DF1 local | first minimal IR/compiler slice | model `format:check`, then lint/typecheck, with push, PR, fork, cancellation, and failure fixtures | no remote execution change | canonical plan is stable and seeded edge failures are caught locally |
+| DF2 bridge shadow | minimal event/job IR plus thin emitter; do not wait for all M1 features | generate one no-secret `format:check` job under a distinct non-required Check | handwritten Check remains required | at least 20 correlated executions and no unexplained semantic difference |
+| DF3 bridge authority | immediately after DF2 gate | make generated `format:check` required, then add lint/typecheck | prior workflow remains manually dispatchable and branch-protection rollback is rehearsed | at least 50 correlated executions over seven days, zero unexplained difference, and successful fallback drill |
+| DF4 complete bridge | M2 grows feature by feature | migrate test, coverage, build, package validation, docs/site, and audit in risk order | GitHub Actions/Blacksmith/custom remains the scheduler; retain last-known-good workflow | every non-release job has parity evidence; original automatic scheduling is removed only job by job |
+| DF5 planner shadow | first safe M3 planner | shadow-plan every beelzebub PR/push at its exact SHA without creating runs or Checks | generated bridge is authoritative | server plan digest/graph/permissions match local plan; planner failures are bounded and diagnosed |
+| DF6 native shadow | first fenced scheduler/agent/log vertical slice | run format, then lint, on a trusted static runner with a distinct non-required bz Check and live UI | generated bridge stays required | at least 100 attempts over seven days with no duplicate effect, unexplained outcome, lost log, or cleanup residue |
+| DF7 native authority | after DF6 and restore/rollback checks | make one low-risk bz Check required | bridge is manual emergency fallback; required-check restoration is documented and timed | fallback within 30 minutes, scheduler/agent restart tests pass, and user-visible failure reasons are correct |
+| DF8 native non-release CI | M4–M5 capability gates | progressively move typecheck, unit, build, package, docs, cache, and artifact jobs | preserve bridge definitions and pins; protected publish/deploy stays on the established authority | beta SLO, security, cache/artifact, capacity, and restore evidence for each migrated risk tier |
+| DF9 native release authority | M6 only | publish/deploy/release jobs with approvals, secrets, and OIDC | tested GitHub bridge fallback remains through early GA | 30-day SLO window plus outage, restore, key rotation, environment approval, and rollback drills |
+
+The execution order follows risk, not duration:
+
+1. deterministic, no-network, no-secret checks such as formatting;
+2. lint and typecheck;
+3. unit tests and coverage;
+4. build and package validation;
+5. documentation/site generation and other artifact-producing jobs;
+6. dependency/network-sensitive audit or integration jobs;
+7. credential-bearing publish, deploy, and release jobs last.
+
+### Bootstrap and version rule
+
+The repository must not require an unproven commit of bz to validate that same commit.
+
+- The authoritative dogfood workflow consumes the last promoted bz SDK/CLI/bridge/agent version or
+  an immutable artifact produced by the established bootstrap CI.
+- Candidate code is built and tested by the established authority, then exercised in a distinct
+  shadow Check before promotion.
+- Generated workflow provenance records both the repository source SHA and the bz tool version.
+- A promotion changes one explicit version pin or generated artifact and retains the prior pin for
+  rollback.
+- Database, plan, and protocol compatibility tests cover the promoted and immediately prior
+  versions.
+- A broken candidate can fail its own shadow lane without preventing a corrective PR from using the
+  last promoted lane.
+
+### Per-job promotion contract
+
+A job advances one dogfood stage only when its promotion record contains:
+
+- logical job ID, source/event set, plan digest, provider/runtime versions, and runner class;
+- graph, permission, command, outcome, conclusion, output, annotation, summary, artifact, and cache
+  comparison as applicable;
+- classified differences with owner and expiry; “probably equivalent” is not a disposition;
+- number and time span of correlated executions;
+- observed platform failure, flake, queue, duration, and log-completeness results;
+- secret/trust review for the job's current event types;
+- branch-protection/check-name change and tested reversal procedure;
+- named promotion approver and rollback owner.
+
+Logs need not be byte-identical when timestamps or provider system messages differ. Semantic
+command traces, user-visible outcome, declared outputs, artifacts, permissions, and security
+decisions must agree.
+
+### Continuous dogfood requirements
+
+- Every CI-platform pull request runs local plan, simulation, conformance, and generated-file drift
+  checks through the current authoritative workflow.
+- Once a feature has a safe repository use case, the next increment must use it or record a dated,
+  owned exception explaining the blocker.
+- Dogfood failures are labeled separately as workflow/user, bridge, planner, scheduler, agent,
+  runner/provider, data-plane, GitHub projection, or test-harness failures.
+- Weekly review covers adoption by risk tier, parity differences, fallback readiness, time to
+  diagnose, platform retry rate, and which handwritten CI remains.
+- Release notes identify the first real repository job exercising every newly promoted contract.
+- A milestone cannot pass if its promised dogfood stage is not active on the default branch.
+
+### Fallback requirements
+
+- Keep the last-known-good generated GitHub workflow and immutable tool pins available.
+- Keep an original or generated fallback workflow manually dispatchable until DF9 has passed its
+  early-GA retention period.
+- Record exact required Check names and the branch-protection/API procedure to restore them.
+- Test fallback before each authority promotion and at least monthly while native bz is required.
+- Fallback never rewrites or deletes bz run history; it starts a separately attributable execution.
+- Do not use the fallback to mask unexplained parity differences or exhausted reliability budgets.
 
 ## Milestone 0: contracts and risk retirement
 
@@ -102,6 +209,21 @@ Evidence: golden plan fixtures, determinism test across process/machine, diagnos
 
 Evidence: recorded vertical-slice demo, failure observations, protocol/schema revisions.
 
+### M0.5 Dogfood baseline
+
+- inventory the repository's current GitHub workflows, `beelzebub.ci.ts`, package scripts,
+  required Checks, runner labels, third-party actions, permissions, secrets, caches, artifacts, and
+  deploy/release paths;
+- capture push, pull request, fork, cancellation, failure, retry, and default-branch fixtures from
+  sanitized real events;
+- record the current logical graph, command traces, outputs, summaries, annotations, artifact
+  hashes, duration, queue time, and failure categories;
+- assign stable logical IDs and risk tiers to each current CI job;
+- document the exact current fallback and branch-protection restoration procedure.
+
+Evidence: committed DF0 parity manifest and fixtures that later local, bridge, and native paths all
+consume.
+
 ### M0 gate
 
 Proceed only if:
@@ -110,6 +232,7 @@ Proceed only if:
 - local simulator and scheduler can share semantic fixtures;
 - agent never requires a general control-plane credential;
 - source-of-truth and fork trust rules are agreed;
+- DF0 captures the repository's real CI topology, trust inputs, outputs, and rollback path;
 - no unresolved high-risk threat invalidates the topology;
 - team accepts scope and staffing range.
 
@@ -167,6 +290,19 @@ Maps to: TEST-01 through TEST-07.
 
 Maps to: PROD-02 subset.
 
+### M1.6 First repository dogfood slice
+
+- represent the real `format:check` job with the minimal stable event/job/runner IR;
+- snapshot its plan and explanations for push, pull request, fork, cancellation, success, and
+  intentional failure fixtures;
+- run those checks in the repository's authoritative existing CI from the start of M1;
+- build the minimal thin GitHub emitter in parallel as soon as this IR slice stabilizes;
+- launch the generated job under a distinct non-required Check and collect DF2 parity;
+- retain the last promoted CLI/generator pin so a candidate cannot block its corrective PR.
+
+This slice intentionally precedes support for every matrix, service, environment, cache, or remote
+runner feature.
+
 ### M1 gate
 
 - all representative design-partner workflows compile or have explicit unsupported-feature reports;
@@ -174,6 +310,8 @@ Maps to: PROD-02 subset.
 - semantic fixtures run against compiler/simulator with no network;
 - matrix/plan limits fail safely;
 - public APIs have docs/examples and compatibility snapshots;
+- `format:check` is modeled and scenario-tested locally, and its generated DF2 Check is collecting
+  parity on real repository events;
 - design partners can catch deliberately seeded CI edge regressions locally.
 
 Release: versioned developer preview packages and CLI. No hosted execution claim.
@@ -220,13 +358,26 @@ Maps to: BRIDGE-05, BRIDGE-06.
 - test provider label selection, forks, protected environments, cancellation, and cache scoping;
 - detect generated-file drift in bz's own CI.
 
+### M2.5 Repository bridge promotion
+
+- complete DF2 for formatting and promote it through the documented DF3 gate;
+- migrate lint and typecheck next, then test/coverage, build/package, docs/site, and audit according
+  to the risk order;
+- retain distinct comparison Checks until each job's unexplained-difference count is zero;
+- keep GitHub-hosted, Blacksmith, and custom runner mappings in the parity matrix;
+- remove handwritten automatic scheduling per job, never as one repository-wide deletion;
+- run the branch-protection and manual-fallback drill before each required-Check promotion.
+
 ### M2 gate
 
 - representative workflows execute through bridge mode with recorded parity;
 - generated output is deterministic and code-reviewed;
 - unsupported behavior is explicit at compile time;
 - third-party code is pinned and permission-reviewed;
-- bz's own repository dogfoods the generator and local scenario tests.
+- bz's own repository has a required generated low-risk Check and uses generated bridge jobs for
+  the complete supported non-release topology;
+- every migrated job has a promotion record, while every remaining handwritten job has a dated
+  blocker.
 
 Release: bridge beta. This milestone is useful independently and reduces pressure to rush hosted runners.
 
@@ -296,6 +447,15 @@ Maps to: DATA-01 through DATA-04 and DATA-06 partial.
 
 Maps to: PROD-01 through PROD-04 partial.
 
+### M3.8 Native repository dogfood
+
+- shadow-plan every beelzebub push and pull request at the exact source SHA without side effects;
+- compare server plan digest, graph, permissions, and diagnostics with the local/generated plan;
+- execute `format:check`, then lint, through the static runner under distinct non-required Checks;
+- use the bz run UI and CLI—not database inspection—to diagnose dogfood runs;
+- record duplicate, restart, cancellation, lost-runner, log-resume, and cleanup evidence;
+- promote one low-risk native Check to required only after DF6/DF7 gates and a timed fallback drill.
+
 ### M3 gate
 
 - end-to-end synthetic and real repository runs pass repeatedly;
@@ -304,6 +464,8 @@ Maps to: PROD-01 through PROD-04 partial.
 - cross-tenant endpoint suite passes;
 - finalized logs/artifacts survive service restarts and reconcile;
 - users can diagnose seeded planner, policy, user-code, runner, and platform failures;
+- DF5 shadow planning covers every repository PR and DF6 executes at least one real low-risk job;
+- if DF7 is promoted, required-check fallback restores the bridge within 30 minutes;
 - staging restore test succeeds.
 
 Release: private internal/design-partner preview on static trusted runners only.
@@ -350,6 +512,16 @@ Maps to: SEC-02, SEC-03; PROD-05 subset.
 - run cluster offline, GitHub outage, database failover, queue replay, and runner loss game days;
 - measure event-to-start and failure attribution with design partners.
 
+### M4.6 Native non-release dogfood expansion
+
+- run the repository's low-risk DF7 Check on the same Kubernetes provider conformance path offered
+  to alpha users;
+- migrate typecheck and unit tests only after cache, artifact, fork, and cancellation policies for
+  those jobs pass;
+- keep publish/deploy/release and any not-yet-proven job on the generated bridge;
+- conduct monthly fallback activation while any native Check is required;
+- require the team to diagnose routine runs through the product UI, CLI, and audit trail.
+
 ### M4 gate
 
 - two Kubernetes versions/providers pass conformance;
@@ -358,6 +530,9 @@ Maps to: SEC-02, SEC-03; PROD-05 subset.
 - secret and cache trust matrices pass adversarial tests;
 - environment approvals are generation/source-bound and auditable;
 - every alpha incident has correlation and a runbook path;
+- at least one low-risk beelzebub native Check is required and its bridge fallback has been tested
+  during the milestone;
+- every additional migrated job has its own DF8 promotion evidence;
 - design partners complete install, upgrade, run, and removal exercises.
 
 Release: invitation-only BYOC alpha with documented limits and no managed public runner promise.
@@ -424,6 +599,18 @@ Maps to: BILL-01 through BILL-03.
 
 Maps to: OPS-04 through OPS-07.
 
+### M5.7 Managed-runner dogfood
+
+- canary every managed image and runner size with the repository's no-secret checks before design
+  partners receive it;
+- progressively move non-release build, package, docs, cache, and artifact jobs after their managed
+  isolation/capacity evidence passes;
+- use dogfood usage events to shadow rate subscriptions and invoices without charging the internal
+  organization;
+- exercise budgets, entitlement denial, runner exhaustion, platform retry, and incident credits on
+  controlled dogfood runs;
+- retain protected publish/deploy on the established bridge until DF9.
+
 ### M5 gate
 
 - managed runner isolation review has no unresolved critical/high finding;
@@ -434,6 +621,7 @@ Maps to: OPS-04 through OPS-07.
   with deterministic entitlement behavior;
 - shadow billing reconciles within accepted tolerance for two periods;
 - full restore meets approved beta RPO/RTO;
+- the supported non-release beelzebub topology runs natively through DF8 with per-job rollback;
 - support/on-call can diagnose seeded incidents without raw database/customer access;
 - beta cohort agrees product explanations materially reduce CI trial-and-error.
 
@@ -485,6 +673,14 @@ Target outcome: a scoped, supportable product with contractual limits, security/
 
 At each step compare platform, user-failure classification, capacity, support, security, and billing signals. Stop or roll back enrollment—not customer history—when gates fail.
 
+### M6.6 Release-authority dogfood
+
+- dual-run protected publish/deploy/release jobs with side effects disabled on the native shadow;
+- compare approval, secret-name, OIDC claim, artifact provenance, version, and destination decisions;
+- perform restore, GitHub outage, key rotation, environment approval invalidation, and fallback drills;
+- promote native release authority only after DF9 evidence and named security/SRE/release approval;
+- keep the tested manual bridge fallback through the documented early-GA retention window.
+
 ### GA gate
 
 All must be true:
@@ -497,6 +693,8 @@ All must be true:
 - SLOs have owners, budgets, dashboards, alerts, and observed results;
 - RPO/RTO are demonstrated by restore exercise;
 - billing has reconciled live usage and correction paths;
+- the repository has completed DF9 or has an explicit GA-blocking exception; dogfood scope cannot
+  silently remain at a lower stage;
 - on-call/support/legal/privacy readiness is approved;
 - no unresolved severity-one or release-blocking issue remains.
 
@@ -505,6 +703,25 @@ Release: GA for the explicitly published scope, not every future runner or Actio
 ## Issue-level execution backlog
 
 The following order turns each plan into trackable delivery. Each item must use the work-item template in [README](README.md#standard-work-package-template).
+
+### Dogfood backlog
+
+These items start immediately and remain open across the technical workstreams:
+
+- **DOG-01:** commit the DF0 workflow inventory, event fixtures, stable job IDs, risk tiers, and
+  baseline parity manifest;
+- **DOG-02:** model and scenario-test the real formatting job with the first minimal IR;
+- **DOG-03:** generate and dual-run the formatting bridge Check under a distinct name;
+- **DOG-04:** automate correlated parity records and difference disposition;
+- **DOG-05:** rehearse branch-protection and last-known-good workflow restoration;
+- **DOG-06:** promote formatting, lint, and typecheck through DF3 individually;
+- **DOG-07:** shadow-plan every repository event through the native planner;
+- **DOG-08:** execute a low-risk job through the static agent and live UI, then promote through DF7;
+- **DOG-09:** move the non-release topology through BYOC/managed DF8 by per-job evidence;
+- **DOG-10:** dual-run and promote protected release authority through DF9 only after GA drills.
+
+Every DOG item links to the implementation issues that enable it, but remains owned by a named
+dogfood/release lead rather than disappearing between workstream backlogs.
 
 ### Foundation backlog
 
@@ -635,6 +852,8 @@ Security, product design, technical writing, finance/legal/privacy, and customer
 ### Weekly
 
 - workstream demo of executable behavior;
+- dogfood-stage report: active jobs, promotions, parity differences, exceptions, platform failures,
+  fallback age, and handwritten CI remaining;
 - contract-change review;
 - risk/blocker and critical-path update;
 - reliability/security defect review;
@@ -643,6 +862,7 @@ Security, product design, technical writing, finance/legal/privacy, and customer
 ### Per increment
 
 - versioned design/contract change;
+- first safe real repository consumer or a dated dogfood exception with owner;
 - code, tests, operational telemetry, and documentation;
 - failure-injection evidence for new boundaries;
 - upgrade/rollback statement;
@@ -670,6 +890,8 @@ Security, product design, technical writing, finance/legal/privacy, and customer
 - user/operator docs and diagnostic reason codes exist;
 - performance/cost bounds meet the current milestone;
 - owner accepts on-call/support consequences;
+- the real repository dogfood path exercises the change when safe, or an approved exception records
+  the missing prerequisite and target increment;
 - completion evidence is linked from the issue.
 
 ## Release strategy
@@ -728,6 +950,7 @@ Shadow systems must never acquire secrets, publish checks, deploy, bill, or othe
 | Billing disputes/duplicate usage | reconciliation mismatch | immutable ledger, corrections, shadow periods | blocks charging, not core runs |
 | Operations load exceeds team | pages/run/support volume high | fewer services, automation, quotas, cohort limits | delay expansion |
 | Actions become an accidental permanent dependency | native path adoption stalls | milestone targets and native design partners | revisit product differentiation |
+| Dogfood starts too late or only exercises happy paths | features complete without real repository use | mandatory DF0–DF9 lane, per-job gates, failure fixtures, and weekly adoption review | blocks the corresponding milestone |
 
 Every risk has a named owner, review date, severity, evidence link, and contingency in the project tracker.
 
@@ -740,6 +963,17 @@ Every risk has a named owner, review date, severity, evidence link, and continge
 - plan/simulator/scheduler conformance rate;
 - median iterations from workflow change to working CI;
 - user-reported “rerun and hope” incidents.
+
+### Dogfood health
+
+- current DF stage and days at stage for every repository job;
+- percentage of non-release topology represented, bridge-generated, native-shadowed, and native-required;
+- correlated executions and unexplained parity differences per job;
+- dogfood platform failure and retry rate by subsystem;
+- median fallback activation time and age of last successful drill;
+- number, owner, and age of dogfood exceptions;
+- percentage of platform changes first exercised by a real repository workload before external rollout;
+- handwritten CI jobs remaining and dated removal/blocker status.
 
 ### Product correctness
 

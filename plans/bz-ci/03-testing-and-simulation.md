@@ -375,6 +375,11 @@ bz explain deploy --event test/ci/events/fork-pr.json
 language. The standalone simulator remains available for repositories without a JavaScript test
 runner.
 
+For dogfooding, create this structure first in the beelzebub repository from sanitized current
+GitHub events and actual package scripts. Start with formatting, then lint/typecheck, tests, build,
+package, docs, audit, and protected release scenarios in risk order. Each production bug or
+unexplained bridge/native parity difference adds a fixture before its fix is promoted.
+
 ## Implementation work packages
 
 ### TEST-01: event builders and raw adapters
@@ -434,6 +439,7 @@ runner.
   are assertable.
 - Scheduler and simulator pass the same semantic suite.
 - Failure diagnostics explain the decision path and source field.
-- The beelzebub repository tests its workflow without real subprocesses.
+- The beelzebub repository tests its real formatting job from the first minimal IR slice and grows
+  its fixture coverage with every dogfood promotion.
 - Three external repositories cover at least one historical CI edge-case failure with a regression
   test.

@@ -555,11 +555,17 @@ service.
 
 ## Rollout
 
-1. Publish behind an experimental export and CLI flag.
-2. Convert the repository CI definition without changing the existing GitHub scheduler.
-3. Store golden `WorkflowPlanV1` fixtures in source control.
-4. Stabilize author API only after three repository conversions.
-5. Mark IR v1 stable before the independent scheduler consumes it in production.
+1. Capture the repository's current CI graph/events/permissions/outputs as DF0 fixtures before the
+   new API changes its representation.
+2. Publish the minimum event/job/runner IR behind an experimental export and CLI flag.
+3. Immediately model the real formatting job and store its golden `WorkflowPlanV1`, explanations,
+   and failure scenarios in source control.
+4. Build the one-job bridge emitter as soon as that slice stabilizes; do not wait for the complete
+   workflow feature set.
+5. Convert lint/typecheck and then higher-risk repository jobs without changing the existing GitHub
+   scheduler until each bridge promotion gate passes.
+6. Stabilize the author API only after three repository conversions and real dogfood feedback.
+7. Mark IR v1 stable before the independent scheduler consumes it in production.
 
 ## Exit criteria
 

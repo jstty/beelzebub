@@ -197,6 +197,19 @@ No work item is complete merely because its success path passes locally.
 
 ## Delivery lanes
 
+### Lane 0: dogfood and promotion
+
+- Capture the repository's real CI as fixtures and a parity manifest before SDK work diverges.
+- Exercise each safe feature through a real beelzebub job in the next increment.
+- Promote jobs through local, bridge-shadow, bridge-required, planner-shadow, native-shadow,
+  native-required, and release-authority stages.
+- Retain the last promoted tool version and generated GitHub workflow as the bootstrap/fallback.
+- Own parity differences, dogfood exceptions, branch-protection changes, and monthly fallback drills.
+
+Lane 0 begins immediately and consumes output from every other lane. A milestone is incomplete if
+its corresponding DF0–DF9 stage in the [delivery program](13-delivery-program.md#dogfood-first-delivery-lane)
+is not running on the default branch.
+
 ### Lane A: developer platform
 
 - Workflow SDK and IR.
@@ -232,6 +245,7 @@ No work item is complete merely because its success path passes locally.
 - A deterministic workflow plan is produced locally.
 - The simulator explains all job and matrix decisions.
 - The generated GitHub bridge matches the repository's current topology.
+- The real formatting job is scenario-tested and running as a non-required generated Check.
 
 ### Independent vertical-slice gate
 
@@ -240,18 +254,21 @@ No work item is complete merely because its success path passes locally.
 - One job is leased to a local agent.
 - Logs stream to the service.
 - A GitHub Check completes without invoking GitHub Actions.
+- Every repository event is shadow-planned and one real low-risk job runs natively as non-required.
 
 ### BYOC alpha gate
 
 - Static and Kubernetes agents pass the provider conformance suite.
 - Fork PR, cancellation, lease loss, cache poisoning, and GitHub outage tests pass.
 - Artifacts, cache, native secrets, audit, quotas, and retention operate end to end.
+- One low-risk native repository Check is required with a timed, tested bridge fallback.
 
 ### Managed beta gate
 
 - Every attempt gets an ephemeral VM and verified cleanup.
 - Capacity, budgets, usage, and provider failure are visible and bounded.
 - Thirty days of shadow or non-required daily use meet beta SLOs.
+- The supported repository non-release topology runs natively with per-job promotion records.
 
 ### GA gate
 
@@ -259,6 +276,7 @@ No work item is complete merely because its success path passes locally.
 - External security assessment findings are resolved or explicitly accepted.
 - Thirty days of required-check use meet GA SLOs.
 - A tested fallback and rollback remain available.
+- Protected publish/deploy/release authority passes DF9 or remains an explicit GA blocker.
 
 ## Change-control process
 
