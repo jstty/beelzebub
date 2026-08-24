@@ -10,6 +10,10 @@ Depends on: [planner](05-github-app-and-planner.md), [scheduler](06-control-plan
 
 Turn the CI engine into an operable product. A developer can install the GitHub App, validate a workflow locally, run it, understand every scheduling and execution decision, inspect output, approve protected work, and diagnose failure without guessing. Organization owners can govern access, runners, usage, and spend.
 
+The same product surface includes the complete managed-service subscription lifecycle: plan
+selection, trial, checkout, effective entitlements, plan changes, cancellation, payment recovery,
+usage, invoices, and enterprise contract overrides.
+
 ## Primary personas
 
 | Persona | Core need |
@@ -129,6 +133,13 @@ Governance:
 
 Usage and billing:
 
+- `GET /v1/product-plans`
+- `GET /v1/organizations/{id}/subscription`
+- `POST /v1/organizations/{id}/subscription/checkout-session`
+- `PATCH /v1/organizations/{id}/subscription`
+- `POST /v1/organizations/{id}/subscription/cancel`
+- `POST /v1/organizations/{id}/billing-portal-session`
+- `GET /v1/organizations/{id}/entitlements`
 - `GET /v1/organizations/{id}/usage`
 - `GET/PATCH /v1/organizations/{id}/budgets`
 - `GET /v1/organizations/{id}/invoices`
@@ -195,8 +206,32 @@ Local commands must not require network unless resolving declared remote depende
 - environments and approvals;
 - secrets and OIDC federation;
 - runner pools and capacity;
-- members, roles, GitHub installation, policies, audit, usage, and billing;
+- members, roles, GitHub installation, policies, audit, usage, subscription, and billing;
 - incident/service status links.
+
+### Live run experience
+
+In bz terminology, GitHub “actions” become workflow jobs and task steps. The web application is a
+first-class live execution surface, not only a configuration console.
+
+For a running workflow it shows:
+
+- the expanded job DAG with waiting, approval, queued, provisioning, running, uploading, cleanup,
+  retrying, and terminal states updating live;
+- start time, elapsed time, queue time, runner pool/image, matrix values, attempt number, and
+  current step for every job;
+- streaming stdout, stderr, system messages, annotations, and step summaries with reconnect by
+  durable log sequence;
+- dependency, condition, policy, concurrency, quota, and runner-capability explanations;
+- artifacts and outputs as they become finalized, without exposing partial uploads;
+- approval/deny actions for authorized reviewers;
+- cancel run, cancel eligible job, rerun failed, rerun with dependencies, and rerun all controls;
+- GitHub commit, pull request, check, source SHA, plan digest, and workflow-definition links;
+- a degraded-state banner when GitHub projection or live fanout is delayed while internal
+  execution continues.
+
+REST remains the durable source of truth; SSE supplies updates. Reloading or switching devices
+reconstructs the same state without relying on an in-memory browser session.
 
 ### Run graph
 
@@ -251,6 +286,81 @@ Initial notifications:
 Later: Slack/Teams and incident-management integrations. Notification delivery is asynchronous, retryable, deduplicated by `(event_id, destination, template_version)`, and never controls run correctness.
 
 ## Usage and billing
+
+### Service subscriptions and entitlements
+
+The SaaS requires an explicit subscription service in addition to usage metering. Payment-provider
+state is an integration input; bz's durable subscription and entitlement snapshot is the
+authorization source used by the scheduler.
+
+Initial commercial model:
+
+| Plan | Intended customer | Runner access | Commercial shape |
+| --- | --- | --- | --- |
+| Free/developer | evaluation and small projects | bridge plus limited BYOC/control-plane use | fixed included allowance |
+| Team | private repositories and managed Linux | managed usage plus included allowance | base subscription plus usage |
+| Enterprise | larger organizations and compliance needs | BYOC and managed pools | contract, commits, or invoiced usage |
+
+Exact names, limits, prices, and whether a free plan ships are product decisions. The system models
+them through a versioned catalog rather than hard-coded conditionals.
+
+Subscription lifecycle:
+
+```mermaid
+stateDiagram-v2
+  [*] --> incomplete: checkout created
+  incomplete --> trialing: payment method / contract accepted
+  incomplete --> cancelled: checkout expires
+  trialing --> active: trial converts
+  trialing --> cancelled: trial cancelled
+  active --> active: upgrade / scheduled downgrade
+  active --> past_due: renewal payment fails
+  past_due --> active: payment recovered
+  past_due --> suspended: grace period expires
+  suspended --> active: payment or contract restored
+  active --> cancelled: cancellation effective
+  suspended --> cancelled: termination
+  cancelled --> [*]
+```
+
+Required behavior:
+
+- hosted checkout and billing portal keep payment-card data out of bz services;
+- subscriptions belong to a billing account linked one-to-one with an organization initially;
+- a versioned product catalog defines base price, included usage, overage meters, retention,
+  concurrency, managed runner sizes, BYOC limits, support level, and feature entitlements;
+- trials have explicit start/end, plan, included allowance, and conversion rules;
+- upgrades can take effect immediately with provider-calculated proration;
+- downgrades and cancellations default to period end and warn about incompatible current usage;
+- provider webhook deliveries are signature-verified, durably stored, deduplicated, ordered per
+  subscription where possible, and reconciled by periodic provider reads;
+- `past_due` enters a documented grace period with owner notifications and retry status;
+- suspension stops new chargeable jobs but does not delete repositories, logs, artifacts, audit,
+  or billing history;
+- protected/deployment jobs receive an explicit organization policy for suspension behavior rather
+  than being terminated unexpectedly;
+- resumption recalculates entitlements before new work is admitted;
+- enterprise manual contracts use the same entitlement model with an audited administrative source;
+- taxes, invoice identity, currency, refunds, credits, and provider customer mapping are modeled
+  without putting fiscal logic in the scheduler.
+
+Core records:
+
+```text
+product_plans(plan_id, version, currency, billing_interval, active_from, retired_at)
+product_prices(price_id, plan_id, meter, unit_amount, included_quantity, effective_from)
+billing_accounts(account_id, organization_id, provider, provider_customer_id, invoice_profile)
+subscriptions(subscription_id, account_id, plan_version, status, period_start, period_end,
+  trial_end, cancel_at, provider_subscription_id, version)
+subscription_items(subscription_id, price_id, quantity)
+entitlement_snapshots(account_id, subscription_version, key, value, effective_at, expires_at)
+billing_provider_events(provider, external_event_id, payload_digest, state, received_at, processed_at)
+```
+
+The API service evaluates management permissions and displays provider state. The scheduler reads a
+local, versioned entitlement snapshot and records its version on admission decisions; it never
+calls the payment provider in the scheduling transaction. Missing or stale entitlement data fails
+according to a documented grace policy and emits a visible explanation.
 
 ### Immutable usage ledger
 
@@ -400,6 +510,19 @@ Done when failure injection cannot double charge or lose usage.
 
 Done when shadow invoices reconcile within accepted tolerance for two periods.
 
+### BILL-03: subscription and entitlement lifecycle
+
+- implement product/price catalog, billing accounts, trials, checkout, upgrades, scheduled
+  downgrades, cancellation, dunning, suspension, resumption, and enterprise overrides;
+- ingest and reconcile signed provider webhooks idempotently;
+- materialize versioned entitlements and enforce them locally in API, scheduler, retention, and
+  runner-capacity decisions;
+- build organization subscription/usage/invoice UI and owner notifications;
+- test proration, late/out-of-order events, grace periods, provider outage, and restoration.
+
+Done when every plan transition produces deterministic entitlements, usage admission behavior, an
+auditable customer-visible state, and a reconciled provider record.
+
 ## Product validation
 
 - usability tests for onboarding, failed-run diagnosis, approval, OIDC setup, and runner troubleshooting;
@@ -408,6 +531,8 @@ Done when shadow invoices reconcile within accepted tolerance for two periods.
 - 10,000-job run graph and 1 GB log viewer performance tests;
 - authorization tests for every UI/API action and cross-tenant URL;
 - billing replay, duplicate, correction, late-event, rounding, and period-close tests;
+- subscription checkout, trial, upgrade, downgrade, cancellation, payment failure, suspension,
+  resumption, provider outage, and webhook reordering tests;
 - chaos tests where notification, analytics, payment provider, and live fanout are unavailable;
 - privacy review for telemetry, support access, exports, and retention.
 
@@ -418,5 +543,7 @@ Done when shadow invoices reconcile within accepted tolerance for two periods.
 - Every non-success state has a structured reason and a valid next action.
 - Core API and CLI contracts are versioned and tested for compatibility.
 - Administrative and support actions are least-privileged and audited.
+- Organizations can subscribe, trial, change plan, cancel, recover payment, and inspect effective
+  entitlements without scheduler dependence on the payment provider.
 - Usage is immutable, replayable, correctable, and reconciled before billing.
 - Core experiences meet accessibility and large-run/log performance targets.

@@ -258,12 +258,12 @@ Every scheduling decision records:
 
 Example:
 
-```text
-job deploy skipped
-  because condition was false at jobs.deploy.if
-    event.name == "push"                 true
-    context.ref == "refs/heads/main"     false (actual refs/heads/feature)
-    needs.quality.conclusion == success  true
+```mermaid
+flowchart TD
+  skipped[Job deploy skipped] --> falseCondition[Condition was false at jobs.deploy.if]
+  falseCondition --> event["event.name == push: true"]
+  falseCondition --> ref["context.ref == refs/heads/main: false<br/>actual: refs/heads/feature"]
+  falseCondition --> quality["needs.quality.conclusion == success: true"]
 ```
 
 The production scheduler emits the same explanation structure for UI and support.

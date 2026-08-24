@@ -196,11 +196,21 @@ outbox_events
 
 ### Run state
 
-```text
-created -> planning -> queued -> running -> completed
-   |          |          |         |
-   +----------+----------+---------+--> cancel_requested -> completed
-   +----------------------------------> completed(config failure/skipped)
+```mermaid
+stateDiagram-v2
+  [*] --> created
+  created --> planning
+  planning --> queued
+  queued --> running
+  running --> completed
+  created --> cancel_requested
+  planning --> cancel_requested
+  queued --> cancel_requested
+  running --> cancel_requested
+  cancel_requested --> completed
+  created --> completed: configuration failure / skipped
+  planning --> completed: configuration failure / skipped
+  completed --> [*]
 ```
 
 Planning may precede run creation in the initial architecture. If so, `planning` is represented by
@@ -209,10 +219,25 @@ and expose one consistent public lifecycle.
 
 ### Job state
 
-```text
-waiting -> approval_wait -> ready -> queued -> running -> terminal
-    |             |           |        |         |
-    +-------------+-----------+--------+--------> skipped/cancelled
+```mermaid
+stateDiagram-v2
+  [*] --> waiting
+  waiting --> approval_wait
+  waiting --> ready
+  approval_wait --> ready: approved
+  ready --> queued
+  queued --> running
+  running --> terminal
+  waiting --> skipped
+  approval_wait --> skipped: denied / expired
+  waiting --> cancelled
+  approval_wait --> cancelled
+  ready --> cancelled
+  queued --> cancelled
+  running --> cancelled
+  terminal --> [*]
+  skipped --> [*]
+  cancelled --> [*]
 ```
 
 Terminal outcomes:
@@ -228,12 +253,29 @@ Conclusion may differ from outcome only through documented continue-on-error sem
 
 ### Attempt state
 
-```text
-created -> dispatching -> queued -> leased -> running -> uploading -> completed
-    |          |           |         |         |            |
-    +----------+-----------+---------+---------+-----------> cancelled
-                                      |         +----------> timed_out
-                                      +--------------------> lost
+```mermaid
+stateDiagram-v2
+  [*] --> created
+  created --> dispatching
+  dispatching --> queued
+  queued --> leased
+  leased --> running
+  running --> uploading
+  uploading --> completed
+  created --> cancelled
+  dispatching --> cancelled
+  queued --> cancelled
+  leased --> cancelled
+  running --> cancelled
+  uploading --> cancelled
+  leased --> lost
+  running --> lost
+  running --> timed_out
+  uploading --> timed_out
+  completed --> [*]
+  cancelled --> [*]
+  timed_out --> [*]
+  lost --> [*]
 ```
 
 A database transition function validates expected current state, entity version, and active fence.
@@ -269,24 +311,35 @@ Inputs that can make progress possible:
 
 Pseudo-algorithm for one run:
 
-```text
-begin transaction
-  lock run row by id
-  select nonterminal jobs whose dependencies may have changed
-  for each job in stable order
-    load dependency outcomes and declared outputs
-    if run cancellation requested -> cancel/skip according to state
-    else if dependencies unresolved -> keep waiting
-    else evaluate default dependency success and job condition
-    if condition false -> mark skipped
-    else resolve effective permissions, environment and runner requirement
-    if policy denied -> mark failed or approval_wait as policy defines
-    else acquire concurrency slot if required
-    if slot unavailable -> keep waiting with reason
-    else mark ready and create attempt if absent
-  recalculate run state/conclusion
-  insert outbox events
-commit
+```mermaid
+flowchart TD
+  begin[Begin transaction] --> lock[Lock run row by ID]
+  lock --> select[Select affected nonterminal jobs]
+  select --> next{Next job in stable order?}
+  next -- No --> recalculate[Recalculate run state and conclusion]
+  recalculate --> outbox[Insert outbox events]
+  outbox --> commit[Commit]
+  next -- Yes --> inputs[Load dependency outcomes and declared outputs]
+  inputs --> cancelled{Run cancellation requested?}
+  cancelled -- Yes --> cancel[Cancel or skip according to current state]
+  cancelled -- No --> unresolved{Dependencies unresolved?}
+  unresolved -- Yes --> waiting[Keep waiting with dependency reason]
+  unresolved -- No --> condition[Evaluate dependency success and job condition]
+  condition --> conditionResult{Condition true?}
+  conditionResult -- No --> skip[Mark skipped]
+  conditionResult -- Yes --> resolve[Resolve permissions, environment, and runner requirement]
+  resolve --> allowed{Policy allowed?}
+  allowed -- No --> denied[Mark failed or approval wait according to policy]
+  allowed -- Yes --> acquire[Acquire concurrency slot if required]
+  acquire --> available{Slot available?}
+  available -- No --> concurrencyWait[Keep waiting with concurrency reason]
+  available -- Yes --> ready[Mark ready and create attempt if absent]
+  cancel --> next
+  waiting --> next
+  skip --> next
+  denied --> next
+  concurrencyWait --> next
+  ready --> next
 ```
 
 Use `FOR UPDATE SKIP LOCKED` or an equivalent bounded claim query for repair workers, never a

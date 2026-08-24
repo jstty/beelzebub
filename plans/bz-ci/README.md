@@ -15,6 +15,10 @@ for one part of a complete bz CI service.
 The plans deliberately separate decisions from implementation. Items marked **required** are
 release requirements. Items marked **decision** require an ADR before dependent work begins.
 
+All architecture, dependency, lifecycle, state-machine, and flow diagrams use Mermaid so GitHub
+renders them and reviewers can update them as code. Plain text/code fences are reserved for literal
+commands, file layouts, formulas, schemas, and protocol examples rather than diagrams.
+
 ## Complete-solution definition
 
 The first complete solution is reached when a GitHub organization can:
@@ -31,6 +35,8 @@ The first complete solution is reached when a GitHub organization can:
 10. Cancel, time out, retry, approve, and rerun work with a complete audit trail.
 11. Recover accepted work after service, queue, runner, or GitHub API failures.
 12. Enforce quotas, retention, budgets, and tenant isolation.
+13. Start, change, cancel, and recover a service subscription with explainable effective
+    entitlements and reconciled usage invoices.
 
 The service is not complete if the happy path works but these failure paths remain undefined.
 
@@ -48,31 +54,65 @@ The service is not complete if the happy path works but these failure paths rema
 | 8 | [`08-runner-infrastructure.md`](08-runner-infrastructure.md) | Static, Kubernetes, customer VM, and managed runner pools |
 | 9 | [`09-logs-artifacts-and-cache.md`](09-logs-artifacts-and-cache.md) | Durable execution data and secure cross-job transfer |
 | 10 | [`10-security-secrets-and-oidc.md`](10-security-secrets-and-oidc.md) | Authorization, tenant isolation, secrets, identity, and audit |
-| 11 | [`11-product-api-ui-and-billing.md`](11-product-api-ui-and-billing.md) | Operable user product and commercial controls |
+| 11 | [`11-product-api-ui-and-billing.md`](11-product-api-ui-and-billing.md) | Live execution UI, service subscriptions, and commercial controls |
 | 12 | [`12-platform-sre-and-disaster-recovery.md`](12-platform-sre-and-disaster-recovery.md) | Production infrastructure, SLOs, observability, and recovery |
 | 13 | [`13-delivery-program.md`](13-delivery-program.md) | Team sequencing, issue breakdown, gates, and GA cutover |
 
 ## Dependency graph
 
-```text
-01 architecture
-   |
-   +--> 02 workflow SDK + IR --> 03 testing + simulation --> 04 GitHub bridge
-   |              |                        |
-   |              +------------------------+--> 05 GitHub App + planner
-   |                                                   |
-   +--------------------------------------------------> 06 control plane
-   |                                                   |
-   +-------------------------------> 07 agent protocol-+
-                                         |
-                                         +--> 08 runner infrastructure
-                                         |
-                                         +--> 09 logs/artifacts/cache
-                                                   |
-05 + 06 + 07 + 09 --------------------------------> 10 security/secrets/OIDC
-06 + 09 + 10 --------------------------------------> 11 product/API/billing
-all services --------------------------------------> 12 SRE/DR
-all plans -----------------------------------------> 13 delivery program
+```mermaid
+flowchart TD
+  p01[01 Architecture]
+  p02[02 Workflow SDK + IR]
+  p03[03 Testing + simulation]
+  p04[04 GitHub bridge]
+  p05[05 GitHub App + planner]
+  p06[06 Control plane]
+  p07[07 Agent protocol]
+  p08[08 Runner infrastructure]
+  p09[09 Logs / artifacts / cache]
+  p10[10 Security / secrets / OIDC]
+  p11[11 Product / API / UI / subscriptions]
+  p12[12 SRE / DR]
+  p13[13 Delivery program]
+
+  p01 --> p02
+  p02 --> p03
+  p03 --> p04
+  p02 --> p05
+  p03 --> p05
+  p01 --> p06
+  p05 --> p06
+  p01 --> p07
+  p06 --> p07
+  p07 --> p08
+  p07 --> p09
+  p05 --> p10
+  p06 --> p10
+  p07 --> p10
+  p09 --> p10
+  p06 --> p11
+  p09 --> p11
+  p10 --> p11
+  p05 --> p12
+  p06 --> p12
+  p07 --> p12
+  p08 --> p12
+  p09 --> p12
+  p10 --> p12
+  p11 --> p12
+  p01 --> p13
+  p02 --> p13
+  p03 --> p13
+  p04 --> p13
+  p05 --> p13
+  p06 --> p13
+  p07 --> p13
+  p08 --> p13
+  p09 --> p13
+  p10 --> p13
+  p11 --> p13
+  p12 --> p13
 ```
 
 Work may run in parallel after the shared contracts stabilize. It must not bypass a dependency by

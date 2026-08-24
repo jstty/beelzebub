@@ -31,25 +31,25 @@ Deliver a complete CI product through evidence-based increments, beginning with 
 | Execution | agent, protocol, providers, capacity, images | [07](07-runner-agent-and-protocol.md), [08](08-runner-infrastructure.md) |
 | Data | logs, artifacts, cache | [09](09-logs-artifacts-and-cache.md) |
 | Identity/security | authorization, secrets, OIDC, audit | [10](10-security-secrets-and-oidc.md) |
-| Product | API, CLI, UI, usage, billing | [11](11-product-api-ui-and-billing.md) |
+| Product | API, CLI, live execution UI, subscriptions, usage, billing | [11](11-product-api-ui-and-billing.md) |
 | Operations | cloud foundation, delivery, SLO, DR | [12](12-platform-sre-and-disaster-recovery.md) |
 
 A lane is an ownership model, not a permanent team silo. Cross-boundary contracts require reviewers from both sides.
 
 ## Critical path
 
-```text
-architecture/IR contracts
-  -> SDK + simulator
-  -> deterministic planner
-  -> run state + scheduler
-  -> agent protocol + static provider
-  -> logs/artifacts + GitHub checks
-  -> BYOC alpha
-  -> secrets/OIDC + managed isolation/capacity
-  -> beta product/operations/billing
-  -> security, scale, and recovery evidence
-  -> GA
+```mermaid
+flowchart TD
+  contracts[Architecture / IR contracts] --> sdk[SDK + simulator]
+  sdk --> planner[Deterministic planner]
+  planner --> scheduler[Run state + scheduler]
+  scheduler --> agent[Agent protocol + static provider]
+  agent --> data[Logs / artifacts + GitHub Checks]
+  data --> byoc[BYOC alpha]
+  byoc --> managed[Secrets / OIDC + managed isolation / capacity]
+  managed --> beta[Beta product / operations / subscriptions]
+  beta --> evidence[Security, scale, and recovery evidence]
+  evidence --> ga[GA]
 ```
 
 Bridge-mode generation can ship alongside SDK/simulator. UI can start against fake/projected APIs once schemas stabilize. Cloud runner image/capacity work can begin once the agent handshake and job spec are versioned.
@@ -402,14 +402,18 @@ Maps to: SEC-04.
 
 Maps to: PROD-03 through PROD-06.
 
-### M5.5 Usage and shadow billing
+### M5.5 Subscriptions, usage, and shadow billing
 
 - freeze meter definitions and charge boundaries;
 - emit immutable compute/storage/egress events and corrections;
+- implement a versioned product/price catalog, trials, hosted checkout/portal, plan changes,
+  cancellation, dunning, suspension/resumption, and materialized entitlement snapshots;
+- reconcile signed payment-provider webhooks and enforce entitlements without calling the provider
+  from scheduler transactions;
 - implement price catalog, provisional aggregates, budget alerts, credits, exports, provider adapter, and reconciliation;
 - produce shadow invoices for at least two periods without charging customers.
 
-Maps to: BILL-01, BILL-02.
+Maps to: BILL-01 through BILL-03.
 
 ### M5.6 Beta reliability
 
@@ -426,6 +430,8 @@ Maps to: OPS-04 through OPS-07.
 - common jobs meet queue-start/log/projected-status SLO hypotheses under beta load;
 - OIDC provider negative tests prove unauthorized repositories/refs/environments fail;
 - kill switches, key rotation, image revocation, and runner destruction are exercised;
+- trial, upgrade, downgrade, cancellation, payment failure, suspension, and restoration paths pass
+  with deterministic entitlement behavior;
 - shadow billing reconciles within accepted tolerance for two periods;
 - full restore meets approved beta RPO/RTO;
 - support/on-call can diagnose seeded incidents without raw database/customer access;
@@ -599,11 +605,11 @@ The following order turns each plan into trackable delivery. Each item must use 
 77. Implement onboarding and repository health UI.
 78. Implement accessible run graph/table, explanations, and log viewer.
 79. Implement artifact/cache/environment/approval/secret/OIDC/runner pages.
-80. Implement audit/usage/billing administration and support console.
+80. Implement audit/usage/subscription/billing administration and support console.
 81. Ship signed CLI with run/log/artifact/runner/secret/OIDC commands.
 82. Implement notification outbox, GitHub, email, and signed webhooks.
 83. Freeze usage meters/boundaries and implement immutable ledger.
-84. Implement rating/catalog/budget/credit/export/provider/reconciliation.
+84. Implement product catalog/subscriptions/entitlements/rating/budget/credit/export/provider reconciliation.
 85. Build production accounts/network/edge/compute/data through IaC.
 86. Implement signed canary deploy, schema expand-contract, and rollback.
 87. Implement telemetry correlation, dashboards, SLOs, synthetics, and alerts.
@@ -771,7 +777,7 @@ The program is complete for GA scope only when a repository owner can:
 5. receive ordered logs, verified artifacts, safe caches, retries, cancellation, approvals, and GitHub Checks;
 6. use secrets safely or cloud OIDC without persistent cloud keys;
 7. understand every skip, block, retry, failure, and cancellation;
-8. govern members, environments, runners, budgets, usage, and audit;
+8. govern members, environments, runners, subscription, entitlements, budgets, usage, and audit;
 9. recover from service/runner/GitHub failures without duplicate effects;
 10. rely on published compatibility, limits, security model, SLOs, and support;
 

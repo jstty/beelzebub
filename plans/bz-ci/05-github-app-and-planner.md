@@ -47,16 +47,16 @@ Optional feature subscriptions are documented with their permissions.
 
 ## Event gateway request lifecycle
 
-```text
-receive HTTPS POST
- -> enforce method/content type/body limit
- -> capture delivery/event headers
- -> verify HMAC over raw bytes
- -> parse minimal envelope
- -> insert webhook_deliveries row and raw payload reference
- -> commit
- -> return 202
- -> asynchronous event processor claims inbox row
+```mermaid
+flowchart TD
+  receive[Receive HTTPS POST] --> limits[Enforce method, content type, and body limit]
+  limits --> headers[Capture delivery and event headers]
+  headers --> hmac[Verify HMAC over raw bytes]
+  hmac --> parse[Parse minimal envelope]
+  parse --> insert[Insert webhook delivery and raw payload reference]
+  insert --> commit[Commit]
+  commit --> accepted[Return 202]
+  commit --> processor[Asynchronous event processor claims inbox row]
 ```
 
 The gateway target is durable response below one second p99 and always below GitHub's ten-second

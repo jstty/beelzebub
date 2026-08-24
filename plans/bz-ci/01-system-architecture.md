@@ -22,29 +22,36 @@ layer around them.
 
 ### Local-only context
 
-```text
-developer -> bz CLI -> workflow planner -> local scheduler simulator
-                    -> existing task engine -> local command runner
+```mermaid
+flowchart LR
+  developer[Developer] --> cli[bz CLI]
+  cli --> planner[Workflow planner]
+  planner --> simulator[Local scheduler simulator]
+  cli --> engine[Existing task engine]
+  engine --> runner[Local command runner]
 ```
 
 Local planning and testing require no account, network connection, or service token.
 
 ### GitHub bridge context
 
-```text
-GitHub Actions scheduler -> generated thin workflow -> bz GitHub Action -> existing task engine
+```mermaid
+flowchart LR
+  scheduler[GitHub Actions scheduler] --> workflow[Generated thin workflow]
+  workflow --> action[bz GitHub Action]
+  action --> engine[Existing task engine]
 ```
 
 This path validates semantics and provides migration while GitHub remains the scheduler.
 
 ### Independent SaaS context
 
-```text
-GitHub App / API / schedule
-       -> bz control plane
-       -> customer or managed runner controller
-       -> ephemeral bz-agent
-       -> existing task engine
+```mermaid
+flowchart LR
+  sources[GitHub App / API / schedule] --> control[bz control plane]
+  control --> controller[Customer or managed runner controller]
+  controller --> agent[Ephemeral bz-agent]
+  agent --> engine[Existing task engine]
 ```
 
 GitHub is an event source and status surface. It is not the workflow scheduler or log store.
@@ -219,24 +226,24 @@ Use opaque UUID or UUIDv7 identifiers internally. Store provider identifiers sep
 
 Hierarchy:
 
-```text
-account
-  installation
-    repository
-      workflow definition
-        workflow plan version
-          run
-            job
-              attempt
+```mermaid
+flowchart TD
+  account[Account] --> installation[Installation]
+  installation --> repository[Repository]
+  repository --> definition[Workflow definition]
+  definition --> plan[Workflow plan version]
+  plan --> run[Run]
+  run --> job[Job]
+  job --> attempt[Attempt]
 ```
 
 Runner hierarchy:
 
-```text
-account
-  runner pool
-    runner session
-      attempt lease
+```mermaid
+flowchart TD
+  account[Account] --> pool[Runner pool]
+  pool --> session[Runner session]
+  session --> lease[Attempt lease]
 ```
 
 Objects never change account ownership. Repository transfer creates an explicit reconciliation and

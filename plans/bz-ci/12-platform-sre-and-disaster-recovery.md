@@ -29,22 +29,18 @@ Staging mirrors production architecture at smaller scale and receives the exact 
 
 The design remains portable at service boundaries, while the first managed deployment is explicit:
 
-```text
-GitHub/users
-    |
-Route 53 + ACM + WAF
-    |
-public ALB/API ingress
-    |
-ECS/Fargate services in private subnets
-    |-- RDS PostgreSQL Multi-AZ
-    |-- SQS queues + DLQs
-    |-- ElastiCache only where proven necessary
-    |-- S3 logs/artifacts/cache/exports
-    |-- KMS + Secrets Manager
-    |-- OpenTelemetry collectors
-    |
-isolated runner account/VPCs via public purpose-bound APIs
+```mermaid
+flowchart TD
+  users[GitHub / users] --> edge[Route 53 + ACM + WAF]
+  edge --> ingress[Public ALB / API ingress]
+  ingress --> services[ECS / Fargate services in private subnets]
+  services --> postgres[RDS PostgreSQL Multi-AZ]
+  services --> queues[SQS queues + DLQs]
+  services --> cache[ElastiCache where proven necessary]
+  services --> objects[S3 logs / artifacts / cache / exports]
+  services --> keys[KMS + Secrets Manager]
+  services --> telemetry[OpenTelemetry collectors]
+  services --> runners[Isolated runner account / VPCs<br/>via public purpose-bound APIs]
 ```
 
 ### Edge and ingress

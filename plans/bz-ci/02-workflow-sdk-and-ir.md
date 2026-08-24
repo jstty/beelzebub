@@ -10,9 +10,12 @@ plan must drive local simulation, the GitHub bridge, and the independent schedul
 The distributed workflow API describes jobs. The existing bz task engine implements what happens
 inside one job.
 
-```text
-defineWorkflow() -> serializable job DAG -> server/local scheduler
-BzTasks methods  -> runner-local tasks   -> existing task engine
+```mermaid
+flowchart LR
+  define[defineWorkflow] --> dag[Serializable job DAG]
+  dag --> scheduler[Server / local scheduler]
+  tasks[BzTasks methods] --> local[Runner-local tasks]
+  local --> engine[Existing task engine]
 ```
 
 This avoids serializing arbitrary closures and preserves ordinary TypeScript for task behavior.
@@ -47,6 +50,77 @@ Required exports:
 - duration and byte-size constructors
 - workflow-plan validation and canonical serialization
 - public IR types without planner or service implementation dependencies
+
+## Impact on the existing v2 SDK
+
+This CI work intentionally extends the current v2 SDK instead of replacing its task model. The
+current `BzTasks`, `CommandRunner`, `$pipeline()`, task lifecycle, `WorkflowRuntime`, GitHub
+runtime, and memory test runtime remain the implementation layer inside one job.
+
+### Package export changes
+
+| Current v2 surface | Planned change | Compatibility rule |
+| --- | --- | --- |
+| `beelzebub` | Keep existing task, pipeline, command, and local-runtime exports | No CI service dependency in the root import |
+| `beelzebub/workflow` | Add workflow builders, expressions, IR types, validation, and canonicalization | New additive export path |
+| `beelzebub/testing` | Add event fixtures, scheduler simulation, plan assertions, failure injection, and CI capability fakes | Existing memory runner/runtime APIs remain valid |
+| `beelzebub/github` | Add bridge generation and GitHub-context adapters around the existing runtime | Existing GitHub Action runtime remains supported |
+| `bz` CLI | Add the `ci check`, `ci test`, `ci simulate`, `ci explain`, bridge, and remote-run command groups | Existing task invocation syntax remains supported |
+
+The package `exports`, `typesVersions`, build entry points, API reports, package tests, and
+documentation generation must be updated for each new public path. Server implementations and
+runner wire clients do not become root SDK exports; protocol types use an internal or separately
+versioned package so application bundles do not acquire service dependencies.
+
+### Runtime capability changes
+
+The current `WorkflowRuntime` is already implemented by local, memory, and GitHub providers and
+may also be implemented by users. Adding required members directly would therefore be a breaking
+change. Introduce an additive extended runtime instead:
+
+```ts
+interface CiWorkflowRuntime extends WorkflowRuntime {
+  readonly artifacts: ArtifactRuntime;
+  readonly cache: CacheRuntime;
+  readonly secrets: SecretRuntime;
+  readonly identity: OidcRuntime;
+}
+```
+
+- `BzAgentWorkflowRuntime` implements the service-backed capabilities using attempt-scoped grants.
+- `MemoryCiWorkflowRuntime` records declarations, reads, writes, misses, and denied access for tests.
+- `GitHubWorkflowRuntime` gains an adapter to its existing artifact, cache, and ID-token operations.
+- `LocalWorkflowRuntime` uses explicit local filesystem/test providers and never silently contacts
+  the bz service.
+- Tasks that only require the current `WorkflowRuntime` remain source compatible.
+- Capability-dependent helpers accept `CiWorkflowRuntime` or perform an explicit capability guard;
+  they never assume every task is running in hosted CI.
+
+Secret access should return an opaque/file-oriented handle by default. Environment-variable
+injection remains an explicit compatibility helper because process environments are easy to leak.
+
+### Context and task binding changes
+
+- Add typed `PlanningContext`, `SimulationContext`, and `CiExecutionContext` views instead of
+  continuing to grow the current open-ended `WorkflowContext` index signature.
+- Keep planning expressions serializable; they cannot close over the execution runtime.
+- Bind each remote job to an existing bz task by stable task name plus validated serializable
+  variables.
+- Add task metadata needed before execution—declared outputs, required capabilities, and safe
+  cleanup behavior—without serializing task method bodies.
+- Preserve direct local `bz.run()` and existing GitHub Action behavior when no distributed
+  workflow definition exists.
+
+### Required v2 implementation sequence
+
+1. Add the `beelzebub/workflow` export and `WorkflowPlanV1` without changing task execution.
+2. Expand `beelzebub/testing` with fixtures and the simulator using the existing memory classes.
+3. Add `CiWorkflowRuntime` and provider adapters while retaining `WorkflowRuntime` compatibility.
+4. Add bridge generation to prove the plan against the existing GitHub runtime.
+5. Add the agent runtime only after the runner protocol is versioned.
+6. Dogfood all additions in this repository before declaring the authoring surface stable.
+
+These are planned SDK changes, not changes made by this documentation branch.
 
 ## Authoring contract
 
@@ -338,16 +412,16 @@ not change when only diagnostic line numbers change.
 
 ## Planning lifecycle
 
-```text
-resolve workflow file
- -> load pinned SDK/runtime
- -> evaluate defineWorkflow in sandbox
- -> capture author definition
- -> validate and normalize
- -> apply account/repository policy
- -> validate effective plan
- -> canonicalize and hash
- -> emit plan + diagnostics + source map
+```mermaid
+flowchart TD
+  resolve[Resolve workflow file] --> load[Load pinned SDK / runtime]
+  load --> evaluate[Evaluate defineWorkflow in sandbox]
+  evaluate --> capture[Capture author definition]
+  capture --> normalize[Validate and normalize]
+  normalize --> policy[Apply account / repository policy]
+  policy --> validate[Validate effective plan]
+  validate --> canonicalize[Canonicalize and hash]
+  canonicalize --> emit[Emit plan + diagnostics + source map]
 ```
 
 The local and remote planners call the same pure validation/canonicalization library after loading

@@ -45,6 +45,7 @@ emulation. The initial differentiators are:
 - GitHub Checks integration with rerun and cancel operations.
 - Local planning, validation, simulation, and unit testing.
 - Short-lived cloud identity through a bz OIDC issuer before GA.
+- Service subscriptions, plan entitlements, usage billing, budgets, invoices, and cancellation.
 
 ### Explicit non-goals for the first release
 
@@ -58,26 +59,17 @@ emulation. The initial differentiators are:
 
 ## Architecture boundaries
 
-```text
-GitHub / CLI / schedule
-          |
-          v
-  event gateway + durable inbox
-          |
-          v
- sandboxed planner at exact commit SHA
-          |
-          v
- versioned workflow IR + policy validation
-          |
-          v
- durable DAG scheduler -----> GitHub Checks projector
-          |
-          v
- capability queue <--------> runner controller/provider
-          |
-          v
- ephemeral bz-agent -----> logs / artifacts / cache / outputs
+```mermaid
+flowchart TD
+  sources[GitHub / CLI / schedule] --> gateway[Event gateway + durable inbox]
+  gateway --> planner[Sandboxed planner at exact commit SHA]
+  planner --> ir[Versioned workflow IR + policy validation]
+  ir --> scheduler[Durable DAG scheduler]
+  scheduler --> checks[GitHub Checks projector]
+  scheduler --> queue[Capability queue]
+  queue <--> controller[Runner controller / provider]
+  controller --> agent[Ephemeral bz-agent]
+  agent --> data[Logs / artifacts / cache / outputs]
 ```
 
 The system has five deliberately separate layers:
@@ -281,13 +273,29 @@ job, never as an import inside the API or scheduler process.
 
 ### Job states
 
-```text
-waiting -> ready -> queued -> leased -> running -> succeeded
-   |        |        |         |          |       -> failed
-   |        |        |         |          |       -> timed_out
-   |        |        |         |          |       -> cancelled
-   |        |        |         |          `------> lost -> retry/wait
-   `--------+--------+---------+-----------------> skipped
+```mermaid
+stateDiagram-v2
+  [*] --> waiting
+  waiting --> ready
+  ready --> queued
+  queued --> leased
+  leased --> running
+  running --> succeeded
+  running --> failed
+  running --> timed_out
+  running --> cancelled
+  leased --> lost
+  running --> lost
+  lost --> waiting: retry
+  waiting --> skipped
+  ready --> skipped
+  queued --> skipped
+  leased --> skipped
+  succeeded --> [*]
+  failed --> [*]
+  timed_out --> [*]
+  cancelled --> [*]
+  skipped --> [*]
 ```
 
 Terminal state transitions are immutable. Retry creates a new attempt rather than reopening an
@@ -417,7 +425,7 @@ a supported generic provisioning or partner API.
 - Allow each account to restrict audiences and claim patterns.
 - Test key rotation and revocation behavior before GA.
 
-## Workstream 8: product UI, administration, and billing
+## Workstream 8: product UI, administration, subscriptions, and billing
 
 ### User experience
 
@@ -437,6 +445,18 @@ a supported generic provisioning or partner API.
 - Secret and OIDC policy management.
 - Audit-log export and deletion workflows.
 - Usage budgets and alerts before work is rejected.
+
+### Service subscriptions
+
+- Versioned Free/developer, Team, and Enterprise-style product/price catalog without hard-coded
+  scheduler checks.
+- Hosted checkout and billing portal, trials, upgrades, scheduled downgrades, cancellation,
+  payment-recovery grace periods, suspension, and resumption.
+- Durable entitlement snapshots enforced locally by the API, scheduler, retention workers, and
+  runner capacity manager.
+- Signed, idempotent payment-provider webhooks plus periodic reconciliation.
+- Customer-visible subscription, effective entitlements, invoices, credits, and payment state.
+- Enterprise contract overrides through the same audited entitlement model.
 
 ### Metering and billing
 
@@ -683,6 +703,7 @@ multi-tenant runner service would likely extend the schedule beyond 18 months.
 8. Which common Marketplace actions receive first-party bz replacements?
 9. Which secrets and cache behaviors are safe for fork pull requests?
 10. What portions of usage and runner telemetry may leave customer infrastructure?
+11. Which payment provider, plan model, trial policy, and subscription grace behavior ship first?
 
 ## Immediate implementation backlog
 
