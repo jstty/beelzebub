@@ -35,7 +35,10 @@ export type {
   SummarySink,
   SummaryTableCell,
   SummaryWriteOptions,
+  ArtifactOperationSnapshot,
+  CacheOperationSnapshot,
   WorkflowContext,
+  WorkflowExecutionSnapshot,
   WorkflowRuntime
 } from './workflow.js';
 export type {

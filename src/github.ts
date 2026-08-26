@@ -1,5 +1,6 @@
 import { appendFile, readFile, stat, unlink, writeFile } from 'node:fs/promises';
 import { readFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 
 import * as core from '@actions/core';
 import * as github from '@actions/github';
@@ -11,7 +12,10 @@ import {
   type AnnotationLocation,
   type SummarySink,
   type SummaryWriteOptions,
+  type ArtifactOperationSnapshot,
+  type CacheOperationSnapshot,
   type WorkflowContext,
+  type WorkflowExecutionSnapshot,
   type WorkflowRuntime
 } from './workflow.js';
 
@@ -187,6 +191,10 @@ export class GitHubWorkflowRuntime implements WorkflowRuntime {
   protected readonly core: GitHubCoreAdapter;
   protected readonly artifactClient: ArtifactClient;
   protected readonly cacheClient: GitHubCacheClient;
+  protected readonly outputs = new Map<string, string>();
+  protected readonly artifactOperations: ArtifactOperationSnapshot[] = [];
+  protected readonly cacheOperations: CacheOperationSnapshot[] = [];
+  protected diagnosticCount = 0;
 
   constructor(options: GitHubRuntimeOptions = {}) {
     this.env = options.env ?? process.env;
@@ -208,12 +216,15 @@ export class GitHubWorkflowRuntime implements WorkflowRuntime {
     this.core.info(message);
   }
   notice(message: string, location?: AnnotationLocation): void {
+    this.diagnosticCount++;
     this.core.notice(message, location);
   }
   warning(message: string, location?: AnnotationLocation): void {
+    this.diagnosticCount++;
     this.core.warning(message, location);
   }
   error(message: string, location?: AnnotationLocation): void {
+    this.diagnosticCount++;
     this.core.error(message, location);
   }
   group<T>(name: string, fn: () => Promise<T>): Promise<T> {
@@ -223,6 +234,7 @@ export class GitHubWorkflowRuntime implements WorkflowRuntime {
     this.core.setSecret(value);
   }
   async setOutput(name: string, value: unknown): Promise<void> {
+    this.outputs.set(name, String(value));
     this.core.setOutput(name, value);
   }
   async exportVariable(name: string, value: unknown): Promise<void> {
@@ -261,51 +273,77 @@ export class GitHubWorkflowRuntime implements WorkflowRuntime {
 
   async uploadArtifact(name: string, files: string[], options: UploadWorkflowArtifactOptions = {}) {
     const { rootDirectory, ...uploadOptions } = options;
-    return this.artifactClient.uploadArtifact(
+    const result = await this.artifactClient.uploadArtifact(
       name,
       files,
       rootDirectory ?? this.context.workspace ?? process.cwd(),
       uploadOptions
     );
+    this.artifactOperations.push({ operation: 'upload', name, fileCount: files.length });
+    return result;
   }
 
   async downloadArtifact(name: string, options: DownloadWorkflowArtifactOptions = {}) {
     const { findBy, ...downloadOptions } = options;
     const findOptions = findBy ? { findBy } : {};
     const { artifact } = await this.artifactClient.getArtifact(name, findOptions);
-    return this.artifactClient.downloadArtifact(artifact.id, {
+    const result = await this.artifactClient.downloadArtifact(artifact.id, {
       ...downloadOptions,
       ...findOptions
     });
+    this.artifactOperations.push({ operation: 'download', name });
+    return result;
   }
 
   isCacheAvailable(): boolean {
     return this.cacheClient.isFeatureAvailable();
   }
 
-  restoreCache(
+  async restoreCache(
     paths: string[],
     primaryKey: string,
     restoreKeys?: string[],
     options?: Parameters<typeof actionsCache.restoreCache>[3],
     enableCrossOsArchive?: boolean
   ): Promise<string | undefined> {
-    return this.cacheClient.restoreCache(
+    const matchedKey = await this.cacheClient.restoreCache(
       paths,
       primaryKey,
       restoreKeys,
       options,
       enableCrossOsArchive
     );
+    this.cacheOperations.push({
+      operation: 'restore',
+      pathCount: paths.length,
+      keyDigest: createHash('sha256').update(primaryKey).digest('hex'),
+      hit: matchedKey !== undefined
+    });
+    return matchedKey;
   }
 
-  saveCache(
+  async saveCache(
     paths: string[],
     key: string,
     options?: Parameters<typeof actionsCache.saveCache>[2],
     enableCrossOsArchive?: boolean
   ): Promise<number> {
-    return this.cacheClient.saveCache(paths, key, options, enableCrossOsArchive);
+    const cacheId = await this.cacheClient.saveCache(paths, key, options, enableCrossOsArchive);
+    this.cacheOperations.push({
+      operation: 'save',
+      pathCount: paths.length,
+      keyDigest: createHash('sha256').update(key).digest('hex')
+    });
+    return cacheId;
+  }
+
+  getExecutionSnapshot(): WorkflowExecutionSnapshot {
+    return {
+      outputs: Object.fromEntries(this.outputs),
+      artifacts: [...this.artifactOperations],
+      caches: [...this.cacheOperations],
+      diagnosticCount: this.diagnosticCount
+    };
   }
 }
 
