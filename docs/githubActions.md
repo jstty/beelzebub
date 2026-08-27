@@ -62,7 +62,7 @@ jobs:
           task: CI.verify
 ```
 
-The bundled action loads the project's installed `beelzebub` package from `working-directory`, then uses that version to load TypeScript directly. Run the project's dependency-install step first. The action accepts these inputs:
+The bundled action loads the project's installed `beelzebub` package from `working-directory`, then uses that version to load TypeScript directly. A handwritten workflow may install dependencies first, or a generated bridge job may select the action's `npm`, `pnpm`, `yarn`, or no-shell custom bootstrap adapter. The action accepts these inputs:
 
 - `file`: task file, defaulting to `beelzebub.ts`
 - `task`: one or more newline-separated task paths
@@ -70,8 +70,18 @@ The bundled action loads the project's installed `beelzebub` package from `worki
 - `working-directory`: task working directory
 - `summary`: whether to append the automatic task table
 - `failure-mode`: `throw` by default; `log` is the legacy compatibility mode
+- `bootstrap`: `none`, `npm`, `pnpm`, `yarn`, or `custom`
+- `bootstrap-command-json`: a JSON argument vector used only with `custom`; it never invokes a shell
 
 It outputs `conclusion` and `task-count`.
+
+### Generated bridge contract
+
+Generated workflows set `bridge-contract-version: "1"` and provide a canonical plan hash, job ID, evaluated matrix JSON, evaluated task-variable JSON, and expected output descriptors. Contract 1 accepts exactly one task and rejects unstructured `args`. It verifies that the repository resolves Beelzebub 2.x before task execution.
+
+Contract 1 additionally emits bounded `result`, `plan-hash`, `job-id`, `outputs-json`, `artifact-cache-summary`, `diagnostic-count`, and `runtime-version` outputs. Structured outputs are limited to 64 KiB each and fail explicitly on overflow. Sensitive expected outputs are never copied into `outputs-json` or `result`; cache summaries retain only a SHA-256 key digest and operation counts. Artifact/cache clients use the GitHub runtime's ambient credentials and the adapter does not serialize tokens or credentials.
+
+The bridge remains deliberately thin. GitHub owns scheduling, permissions, runner labels, matrices, service containers, environments, dependencies, and cancellation. The action does not emulate arbitrary marketplace actions, retry policies, privileged containers, or runner provisioning. `pnpm` and `yarn` bootstrap require those executables to be available on the selected runner. Event fixtures are repository-relative and intended for controlled parity tests.
 
 ## Workflow runtime
 
@@ -94,6 +104,8 @@ import {
 ```
 
 `GitHubWorkflowRuntime` exposes action inputs, OIDC tokens, an authenticated Octokit client, artifacts, and dependency caches. `upsertIssueComment()` creates or updates a bot-authored marker comment so pull request reports do not accumulate duplicates.
+
+`getExecutionSnapshot()` returns provider-neutral task outputs plus a redacted artifact/cache operation summary and diagnostic count. It intentionally excludes secrets, tokens, raw cache keys, and file contents.
 
 GitHub limits each step summary to 1 MiB. The adapter enforces that limit before writing to `GITHUB_STEP_SUMMARY` and supports append, overwrite, read, and clear operations.
 

@@ -25,12 +25,59 @@ inputs:
     description: Use "throw" for CI-safe failures or "log" for legacy behavior.
     required: false
     default: throw
+  bridge-contract-version:
+    description: Structured bz bridge contract version. Use "1" for generated bridge jobs.
+    required: false
+    default: legacy
+  plan-hash:
+    description: Canonical sha256 plan hash for structured bridge jobs.
+    required: false
+  job-id:
+    description: Canonical workflow plan job ID for structured bridge jobs.
+    required: false
+  matrix-json:
+    description: Evaluated matrix values as a JSON object.
+    required: false
+    default: '{}'
+  vars-json:
+    description: Evaluated task variables as a JSON object.
+    required: false
+    default: '{}'
+  expected-outputs-json:
+    description: JSON array of expected output descriptors.
+    required: false
+    default: '[]'
+  event-fixture:
+    description: Optional repository-relative JSON event fixture used for parity tests.
+    required: false
+  bootstrap:
+    description: 'Dependency bootstrap adapter: none, npm, pnpm, yarn, or custom.'
+    required: false
+    default: none
+  bootstrap-command-json:
+    description: JSON argument array for the custom bootstrap adapter; no shell is used.
+    required: false
+    default: '[]'
 
 outputs:
   conclusion:
     description: Effective Beelzebub pipeline conclusion.
   task-count:
     description: Number of task executions recorded.
+  result:
+    description: Versioned structured bridge result JSON.
+  plan-hash:
+    description: Verified workflow plan hash.
+  job-id:
+    description: Verified workflow plan job ID.
+  outputs-json:
+    description: Non-sensitive expected task outputs as JSON.
+  artifact-cache-summary:
+    description: Redacted artifact and cache operation summary as JSON.
+  diagnostic-count:
+    description: Number of runtime diagnostics emitted.
+  runtime-version:
+    description: Project Beelzebub runtime version used for task execution.
 
 runs:
   using: node24

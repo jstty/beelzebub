@@ -10,6 +10,7 @@ import {
   type SummarySink,
   type SummaryWriteOptions,
   type WorkflowContext,
+  type WorkflowExecutionSnapshot,
   type WorkflowRuntime
 } from './workflow.js';
 
@@ -151,5 +152,15 @@ export class MemoryWorkflowRuntime implements WorkflowRuntime {
   }
   getState(name: string): string | undefined {
     return this.state.get(name);
+  }
+  getExecutionSnapshot(): WorkflowExecutionSnapshot {
+    return {
+      outputs: Object.fromEntries([...this.outputs].map(([name, value]) => [name, String(value)])),
+      artifacts: [],
+      caches: [],
+      diagnosticCount: this.calls.filter(({ method }) =>
+        ['notice', 'warning', 'error'].includes(method)
+      ).length
+    };
   }
 }

@@ -157,6 +157,29 @@ export interface WorkflowRuntime {
   addPath(path: string): Promise<void>;
   saveState(name: string, value: unknown): Promise<void>;
   getState(name: string): string | undefined;
+  /** Redacted, provider-neutral execution data for bridge adapters and tests. */
+  getExecutionSnapshot?(): WorkflowExecutionSnapshot;
+}
+
+export interface ArtifactOperationSnapshot {
+  readonly operation: 'upload' | 'download';
+  readonly name: string;
+  readonly fileCount?: number;
+}
+
+export interface CacheOperationSnapshot {
+  readonly operation: 'restore' | 'save';
+  readonly pathCount: number;
+  /** SHA-256 of the cache key; raw keys are intentionally not retained. */
+  readonly keyDigest: string;
+  readonly hit?: boolean;
+}
+
+export interface WorkflowExecutionSnapshot {
+  readonly outputs: Readonly<Record<string, string>>;
+  readonly artifacts: readonly ArtifactOperationSnapshot[];
+  readonly caches: readonly CacheOperationSnapshot[];
+  readonly diagnosticCount: number;
 }
 
 class ConsoleSummarySink implements SummarySink {
@@ -174,6 +197,7 @@ export class LocalWorkflowRuntime implements WorkflowRuntime {
   readonly summary: WorkflowSummary;
   protected readonly outputs = new Map<string, string>();
   protected readonly state = new Map<string, string>();
+  protected diagnosticCount = 0;
 
   constructor(context: WorkflowContext = {}, sink: SummarySink = new ConsoleSummarySink()) {
     this.context = context;
@@ -187,12 +211,15 @@ export class LocalWorkflowRuntime implements WorkflowRuntime {
     console.info(message);
   }
   notice(message: string): void {
+    this.diagnosticCount++;
     console.info(message);
   }
   warning(message: string): void {
+    this.diagnosticCount++;
     console.warn(message);
   }
   error(message: string): void {
+    this.diagnosticCount++;
     console.error(message);
   }
   async group<T>(name: string, fn: () => Promise<T>): Promise<T> {
@@ -218,5 +245,13 @@ export class LocalWorkflowRuntime implements WorkflowRuntime {
   }
   getState(name: string): string | undefined {
     return this.state.get(name);
+  }
+  getExecutionSnapshot(): WorkflowExecutionSnapshot {
+    return {
+      outputs: Object.fromEntries(this.outputs),
+      artifacts: [],
+      caches: [],
+      diagnosticCount: this.diagnosticCount
+    };
   }
 }
