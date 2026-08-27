@@ -8,7 +8,7 @@ import { describe, expect, it } from 'vitest';
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
 function readActionOutputs(outputPath: string): Record<string, string> {
-  const lines = readFileSync(outputPath, 'utf8').split('\n');
+  const lines = readFileSync(outputPath, 'utf8').split(/\r?\n/u);
   const outputs: Record<string, string> = {};
   for (let index = 0; index < lines.length; index++) {
     const line = lines[index]!;
