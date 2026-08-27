@@ -1,0 +1,125 @@
+name: CI
+
+on:
+  push:
+    branches: [master, main, 'dev/**']
+  pull_request:
+    branches: [master, main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Node ${{ matrix.node-version }} / ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: ['24.15.0', '26.x']
+        os: [ubuntu-latest, macos-latest, windows-latest]
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v6
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            examples/package-lock.json
+
+      - name: Use the repository npm version
+        run: npm install --global npm@12.0.1
+
+      - name: Install dependencies
+        run: |
+          npm ci
+          npm --prefix examples ci
+
+      - name: Run the typed verification pipeline
+        uses: ./github-action
+        with:
+          file: beelzebub.ci.ts
+          task: CI.verify
+
+  quality:
+    name: Coverage, docs, audit, and package validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: test
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24.x'
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            examples/package-lock.json
+
+      - run: npm install --global npm@12.0.1
+      - run: |
+          npm ci
+          npm --prefix examples ci
+      - name: Run the typed quality pipeline
+        uses: ./github-action
+        with:
+          file: beelzebub.ci.ts
+          task: CI.quality
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  preview:
+    name: Firebase Hosting preview (PR only)
+    needs: quality
+    if: >-
+      github.event_name == 'pull_request' &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.actor != 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      checks: write
+      contents: read
+      pull-requests: write
+
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Download validated website
+        uses: actions/download-artifact@v8
+        with:
+          name: website-static
+          path: website/dist
+
+      - name: Verify Firebase credentials
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_BEELZEBUB_IO }}
+        run: |
+          if [ -z "$FIREBASE_SERVICE_ACCOUNT" ]; then
+            echo "::error::Add the FIREBASE_SERVICE_ACCOUNT_BEELZEBUB_IO repository secret before deploying previews."
+            exit 1
+          fi
+
+      - name: Deploy Firebase preview
+        uses: FirebaseExtended/action-hosting-deploy@500ac625ca2dd40cbd15f7659af953801858032a # v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_BEELZEBUB_IO }}
+          projectId: beelzebub-io
+          expires: 7d
+          firebaseToolsVersion: 15.26.0
