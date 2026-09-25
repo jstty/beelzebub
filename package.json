@@ -1,6 +1,6 @@
 {
   "name": "beelzebub",
-  "version": "2.0.0-dev",
+  "version": "2.0.0-next.1",
   "description": "One Hell of a Task Master!",
   "type": "module",
   "exports": {

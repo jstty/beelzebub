@@ -1,5 +1,5 @@
 import { afterAll, afterEach, describe, expect, it, vi } from 'vitest';
-import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 
@@ -36,6 +36,10 @@ class ExposedCLI extends BzCLI {
     this._showRootHelp(options as never);
   }
 }
+
+const manifest = JSON.parse(readFileSync(new URL('../package.json', import.meta.url), 'utf8')) as {
+  version: string;
+};
 
 const temporaryDirectories: string[] = [];
 const originalExitCode = process.exitCode;
@@ -89,7 +93,7 @@ describe('BzCLI run behavior', () => {
 
     await expect(new BzCLI().run({ args: ['--version'] })).resolves.toBeUndefined();
 
-    expect(stdout).toHaveBeenCalledWith(expect.stringMatching(/^2\.0\.0-dev\n$/));
+    expect(stdout).toHaveBeenCalledWith(`${manifest.version}\n`);
   });
 
   it('uses process arguments when an explicit argument list is omitted', async () => {
@@ -98,7 +102,7 @@ describe('BzCLI run behavior', () => {
 
     await expect(new BzCLI().run()).resolves.toBeUndefined();
 
-    expect(stdout).toHaveBeenCalledWith(expect.stringMatching(/^2\.0\.0-dev\n$/));
+    expect(stdout).toHaveBeenCalledWith(`${manifest.version}\n`);
   });
 
   it('prints help when no task file exists', async () => {
