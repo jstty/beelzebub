@@ -4,6 +4,15 @@ Notable project changes are documented here. The format follows Keep a Changelog
 
 ## 2.0.0 - Unreleased
 
+### Prereleases
+
+- `2.0.0-next.1`: first published 2.0 preview, on the npm `next` dist-tag
+  (`npm install beelzebub@next`). `next` builds may still change the API. Once the API-affecting
+  changes in `plans/v2-host-embedding-and-prerelease.md` land, `2.0.0-rc.N` builds on the `rc`
+  dist-tag freeze it, and `2.0.0` then becomes `latest`. Until then `latest` stays on 1.x.
+  Pushing a `v2.*` tag publishes the release through `.github/workflows/release.yml` with
+  npm provenance.
+
 ### Added
 
 - First-class TypeScript declarations and declaration maps.

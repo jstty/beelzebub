@@ -66,8 +66,13 @@ Tasks are **Modular, Extendable, Testable, Manageable, and Fire Resistant!**
 
 ## API
 ```shell
-npm install beelzebub
+npm install beelzebub@next
 ```
+
+2.0 is in preview. `beelzebub@next` installs the newest `2.0.0-next.N` build, and the API can
+still change between builds, so pin an exact version (for example `2.0.0-next.1`) in
+applications. Release candidates will use the `rc` dist-tag. The `latest` dist-tag, and a plain
+`npm install beelzebub`, remain on 1.x until 2.0.0 is released.
 
 To try the unreleased 2.0 branch directly from GitHub:
 
@@ -83,7 +88,7 @@ Git installs run the package's `prepare` lifecycle and build the untracked `dist
 
 ## CLI
 ```shell
-npm install -g beelzebub
+npm install -g beelzebub@next
 ```
 
 ---

@@ -1,0 +1,167 @@
+name: Release
+
+on:
+  push:
+    tags: ['v2.*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing release tag to verify and publish again, for example v2.0.0-next.1.
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+env:
+  TAG: ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
+
+jobs:
+  verify:
+    name: Verify ${{ github.event_name == 'workflow_dispatch' && inputs.tag || github.ref_name }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          ref: refs/tags/${{ env.TAG }}
+          persist-credentials: false
+
+      - name: Confirm the release tag exists
+        run: git rev-parse --verify --quiet "refs/tags/${TAG}^{commit}"
+
+      - name: Setup Node.js 24.15.0
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
+        with:
+          node-version: '24.15.0'
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            examples/package-lock.json
+
+      - name: Use the repository npm version
+        run: npm install --global npm@12.0.1
+
+      - name: Install dependencies
+        run: |
+          npm ci
+          npm --prefix examples ci
+
+      - name: Run the typed verification pipeline
+        uses: ./github-action
+        with:
+          file: beelzebub.ci.ts
+          task: CI.verify
+
+      - name: Validate the package
+        run: npm run validate-pkg
+
+  publish:
+    name: Publish to npm
+    needs: verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: npm-publish
+    permissions:
+      contents: write
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6.1.0
+        with:
+          ref: refs/tags/${{ env.TAG }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Check the tag matches package.json
+        id: version
+        run: |
+          VERSION="$(jq -r .version package.json)"
+          if [ "$TAG" != "v${VERSION}" ]; then
+            echo "::error::Tag ${TAG} does not match package.json version ${VERSION} (expected v${VERSION})."
+            exit 1
+          fi
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "name=$(jq -r .name package.json)" >> "$GITHUB_OUTPUT"
+
+      - name: Resolve the npm dist-tag
+        id: dist-tag
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          if [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+-next\.[0-9]+$ ]]; then
+            DIST_TAG=next
+          elif [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+-rc\.[0-9]+$ ]]; then
+            DIST_TAG=rc
+          elif [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            DIST_TAG=latest
+          else
+            echo "::error::Unsupported version ${VERSION}. Use X.Y.Z-next.N, X.Y.Z-rc.N, or X.Y.Z."
+            exit 1
+          fi
+
+          if [ "$DIST_TAG" = latest ]; then
+            COMMIT="$(git rev-parse HEAD)"
+            CONTAINED=false
+            for BRANCH in master main; do
+              if git rev-parse --verify --quiet "refs/remotes/origin/${BRANCH}" > /dev/null &&
+                git merge-base --is-ancestor "$COMMIT" "refs/remotes/origin/${BRANCH}"; then
+                CONTAINED=true
+              fi
+            done
+            if [ "$CONTAINED" != true ]; then
+              echo "::error::Refusing to publish ${VERSION} as latest: ${COMMIT} is not on origin/master or origin/main."
+              exit 1
+            fi
+          fi
+
+          echo "Publishing ${VERSION} with dist-tag ${DIST_TAG}"
+          echo "dist-tag=${DIST_TAG}" >> "$GITHUB_OUTPUT"
+
+      - name: Setup Node.js 24.15.0 for npm publishing
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
+        with:
+          node-version: '24.15.0'
+          registry-url: https://registry.npmjs.org
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Use the repository npm version
+        run: npm install --global npm@12.0.1
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Authenticates with npm trusted publishing (OIDC). No NPM_TOKEN secret is used.
+      - name: Publish to npm
+        env:
+          PACKAGE: ${{ steps.version.outputs.name }}
+          VERSION: ${{ steps.version.outputs.version }}
+          DIST_TAG: ${{ steps.dist-tag.outputs.dist-tag }}
+        run: |
+          if npm view "${PACKAGE}@${VERSION}" version > /dev/null 2>&1; then
+            echo "::notice::${PACKAGE}@${VERSION} is already published; skipping npm publish."
+          else
+            npm publish --provenance --access public --tag "$DIST_TAG"
+          fi
+
+      - name: Create the GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          DIST_TAG: ${{ steps.dist-tag.outputs.dist-tag }}
+        run: |
+          if gh release view "$TAG" > /dev/null 2>&1; then
+            echo "::notice::GitHub release ${TAG} already exists; skipping."
+            exit 0
+          fi
+          ARGS=(--verify-tag --generate-notes --title "$TAG")
+          if [ "$DIST_TAG" != latest ]; then
+            ARGS+=(--prerelease)
+          fi
+          gh release create "$TAG" "${ARGS[@]}"
