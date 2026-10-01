@@ -4,8 +4,10 @@ import { createHash } from 'node:crypto';
 
 import * as core from '@actions/core';
 import * as github from '@actions/github';
-import { DefaultArtifactClient, type ArtifactClient } from '@actions/artifact';
-import * as actionsCache from '@actions/cache';
+// @actions/artifact and @actions/cache load ~1,300 files between them, so
+// they load on first use instead of whenever Beelzebub is imported.
+import type { ArtifactClient } from '@actions/artifact';
+import type * as actionsCache from '@actions/cache';
 
 import {
   WorkflowSummary,
@@ -83,6 +85,28 @@ export interface GitHubCacheClient {
     enableCrossOsArchive?: boolean
   ): Promise<number>;
 }
+
+/**
+ * `@actions/cache`'s `isFeatureAvailable()` without loading the package: cache
+ * service v2 (not on GHES) needs `ACTIONS_RESULTS_URL`, v1 `ACTIONS_CACHE_URL`.
+ * A parity test pins it to the installed package.
+ */
+export function isActionsCacheAvailable(env: NodeJS.ProcessEnv = process.env): boolean {
+  const host = new URL(env.GITHUB_SERVER_URL || 'https://github.com').hostname
+    .trimEnd()
+    .toUpperCase();
+  const ghes = host !== 'GITHUB.COM' && !host.endsWith('.GHE.COM') && !host.endsWith('.LOCALHOST');
+  return !ghes && env.ACTIONS_CACHE_SERVICE_V2
+    ? Boolean(env.ACTIONS_RESULTS_URL)
+    : Boolean(env.ACTIONS_CACHE_URL);
+}
+
+/** The default cache client: `@actions/cache`, imported when a cache is first restored or saved. */
+const lazyActionsCache: GitHubCacheClient = {
+  isFeatureAvailable: () => isActionsCacheAvailable(process.env),
+  restoreCache: async (...args) => (await import('@actions/cache')).restoreCache(...args),
+  saveCache: async (...args) => (await import('@actions/cache')).saveCache(...args)
+};
 
 export interface UploadWorkflowArtifactOptions {
   rootDirectory?: string;
@@ -189,7 +213,8 @@ export class GitHubWorkflowRuntime implements WorkflowRuntime {
   readonly summary: WorkflowSummary;
   readonly env: NodeJS.ProcessEnv;
   protected readonly core: GitHubCoreAdapter;
-  protected readonly artifactClient: ArtifactClient;
+  /** Created on the first artifact upload or download unless injected. */
+  protected artifactClient: ArtifactClient | undefined;
   protected readonly cacheClient: GitHubCacheClient;
   protected readonly outputs = new Map<string, string>();
   protected readonly artifactOperations: ArtifactOperationSnapshot[] = [];
@@ -199,8 +224,8 @@ export class GitHubWorkflowRuntime implements WorkflowRuntime {
   constructor(options: GitHubRuntimeOptions = {}) {
     this.env = options.env ?? process.env;
     this.core = options.core ?? core;
-    this.artifactClient = options.artifactClient ?? new DefaultArtifactClient();
-    this.cacheClient = options.cacheClient ?? actionsCache;
+    this.artifactClient = options.artifactClient;
+    this.cacheClient = options.cacheClient ?? lazyActionsCache;
     this.context = createGitHubContext(this.env, options.payload ?? loadPayload(this.env));
     this.summary = new WorkflowSummary(options.summarySink ?? new GitHubSummarySink(this.env));
   }
@@ -271,9 +296,16 @@ export class GitHubWorkflowRuntime implements WorkflowRuntime {
     return github.getOctokit(token);
   }
 
+  protected async artifacts(): Promise<ArtifactClient> {
+    this.artifactClient ??= new (await import('@actions/artifact')).DefaultArtifactClient();
+    return this.artifactClient;
+  }
+
   async uploadArtifact(name: string, files: string[], options: UploadWorkflowArtifactOptions = {}) {
     const { rootDirectory, ...uploadOptions } = options;
-    const result = await this.artifactClient.uploadArtifact(
+    const result = await (
+      await this.artifacts()
+    ).uploadArtifact(
       name,
       files,
       rootDirectory ?? this.context.workspace ?? process.cwd(),
@@ -286,8 +318,9 @@ export class GitHubWorkflowRuntime implements WorkflowRuntime {
   async downloadArtifact(name: string, options: DownloadWorkflowArtifactOptions = {}) {
     const { findBy, ...downloadOptions } = options;
     const findOptions = findBy ? { findBy } : {};
-    const { artifact } = await this.artifactClient.getArtifact(name, findOptions);
-    const result = await this.artifactClient.downloadArtifact(artifact.id, {
+    const artifacts = await this.artifacts();
+    const { artifact } = await artifacts.getArtifact(name, findOptions);
+    const result = await artifacts.downloadArtifact(artifact.id, {
       ...downloadOptions,
       ...findOptions
     });

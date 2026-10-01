@@ -24,6 +24,10 @@ jobs:
       matrix:
         node-version: ['24.15.0', '26.x']
         os: [ubuntu-latest, macos-latest, windows-latest]
+        # Node 22 is supported (^22.12.0); one Linux leg keeps CI cost down.
+        include:
+          - node-version: '22.x'
+            os: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v6

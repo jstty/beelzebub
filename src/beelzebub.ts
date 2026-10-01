@@ -230,10 +230,10 @@ export class Beelzebub {
     }
 
     if (typeof resolvedTasks === 'function') {
-      const merged: BeelzebubConfig = util.deepMerge(
-        { ...this._config } as BeelzebubConfig,
-        config
-      );
+      // `name` and `parentPath` place one task class; an instance-level value
+      // must not rename every class added to it.
+      const { name: _name, parentPath: _parentPath, ...inherited } = this._config;
+      const merged: BeelzebubConfig = util.deepMerge({ ...inherited } as BeelzebubConfig, config);
       merged.beelzebub = this;
       const Ctor = resolvedTasks as new (cfg: BeelzebubConfig) => BzTasks;
       tasks = new Ctor(merged);

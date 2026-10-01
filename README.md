@@ -11,13 +11,13 @@ workflow components you can compose, reuse, observe, and test like application c
 
 Tasks are **Modular, Extendable, Testable, Manageable, and Fire Resistant!**
 
-> **v2.0** is a ground-up TypeScript rewrite for Node.js 24+, with ESM and CommonJS entry points and TC39 standard decorators.
+> **v2.0** is a ground-up TypeScript rewrite for Node.js 22.12+ and 24+, with ESM and CommonJS entry points and TC39 standard decorators.
 
 ## What's New in v2.0
 
 - **TypeScript-first** — full type definitions ship in the package
 - **ESM + CommonJS** — native `import` and a callable `require('beelzebub')` compatibility entry
-- **Node.js 24 LTS minimum** (`>=24.15.0`) — tested on Node 24 and Node 26
+- **Node.js 22.12+ or 24.15+** (`^22.12.0 || >=24.15.0`) — tested on Node 22, 24, and 26
 - **TypeScript 7** compilation, declarations, and strict checking
 - **TC39 standard decorators** — no Babel and no `experimentalDecorators`
 - **Legacy async/build dependencies removed** — native promises, streams, argument parsing, and ES2024 APIs replace `co`, `when`, `yargs`, Lodash, and related packages
@@ -25,7 +25,7 @@ Tasks are **Modular, Extendable, Testable, Manageable, and Fire Resistant!**
 - **Async/await tasks** are first-class. Generator tasks (`* task()` with `yield`) still supported for legacy compatibility, but no longer require `co`
 
 ### Breaking Changes from v1
-- **Node.js 24.15+** required (was Node 6+)
+- **Node.js 22.12+ or 24.15+** required (was Node 6+)
 - **Dual package entry points** — both `import bz from 'beelzebub'` and `const bz = require('beelzebub')` are supported
 - **Decorators** use the TC39 standard signature. The `@defaultTask`, `@help('...')`, `@vars({...})` usage syntax is unchanged
 - `Beelzebub.cli()` static helper removed — use `new BzCLI().run(opts)` or the `bz` binary
@@ -61,7 +61,7 @@ Tasks are **Modular, Extendable, Testable, Manageable, and Fire Resistant!**
 
 ## Requirements
 
-- Node.js **>= 24.15.0**
+- Node.js **22.12 or newer on the 22 line, or 24.15 or newer** (`^22.12.0 || >=24.15.0`)
 - An ESM or CommonJS project
 
 ## API
@@ -141,6 +141,17 @@ bz.run('MyTasks.task1').catch((error) => {
     process.exitCode = 1;
 });
 ```
+
+The CommonJS entry loads the ESM build with Node's `require(esm)`. Test runners
+that replace Node's module loader, such as Jest, may not support `require(esm)`.
+In those, load Beelzebub through Node's own loader:
+
+```js
+const { createRequire } = process.getBuiltinModule('node:module');
+const bz = createRequire(__filename)('beelzebub');
+```
+
+`require('beelzebub/package.json')` reads the installed version.
 
 ## Decorator Example
 
