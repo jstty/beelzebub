@@ -82,6 +82,9 @@ Hypersmith DP-01 asks 1–8 map to items 2, 3, 4, 8, 6, 9, 7, and 1.
 
 ### 1. Node floor
 
+**Status.** Done: the floor is `^22.12.0 || >=24.15.0`. CI adds one Node `22.x` leg on Linux
+(not all three platforms, to limit CI cost). The package smoke test parses npm's trailing JSON.
+
 **Problem.** `package.json` declares `engines.node >=24.15.0`, which forces Hypersmith (DP-01 decision D1) to upgrade its desktop Electron 37 runtime (Node 22) before it can embed Beelzebub. The code does not appear to need Node 24:
 
 - `src/` uses none of these newer APIs: `Promise.try`, `RegExp.escape`, `Float16Array`, `URLPattern`, `Error.isError`, `using`/`Symbol.dispose`, `module.registerHooks`, `process.features`, `Uint8Array.fromBase64`, iterator helpers, `fs.glob`, `path.matchesGlob`, `node:sqlite`, `process.getBuiltinModule`.
@@ -282,6 +285,16 @@ With item 7's execution store, a later `runWith({ context, signal }, ...tasks)` 
 
 ### 6. Lazy-load `@actions/*`
 
+**Status.** Done for `@actions/artifact` and `@actions/cache`, which account for most of the cost:
+importing them loads 775 and 575 files. `github.ts` imports them on first use.
+
+- `isCacheAvailable()` stays synchronous. It uses a copy of `@actions/cache`'s environment check,
+  and a parity test pins the copy to the installed package.
+- `@actions/core` and `@actions/github` (about 150 files) still load with the root entry. Loading
+  them lazily needs `init()` to stop importing `./github.js` statically, and needs `getClient()`
+  to become async.
+- The package smoke test fails if importing the root entry loads either SDK.
+
 **Problem.** `src/beelzebub.ts` statically imports `GitHubWorkflowRuntime` from `./github.js` only so `init()` can call `GitHubWorkflowRuntime.isAvailable()` (which checks `GITHUB_ACTIONS === 'true'`) and construct the runtime. `src/github.ts` statically imports `@actions/core`, `@actions/github`, `@actions/artifact`, and `@actions/cache`. Measured with a `module.registerHooks` load hook on Node 24.16 against the built `dist/`: `import('beelzebub')` loads 984 files in about 170 ms. These include 82 files from `@actions/*` and their dependencies (`undici`, `lodash`, `@azure/storage-blob`, `@typespec/ts-http-runtime`, `@protobuf-ts/runtime`, and others). `dist/workflow.js` alone loads 1 file. Local CLI runs and embedded hosts pay this cost on every load.
 
 **Proposed change** (no public API change):
@@ -383,6 +396,18 @@ interface UpsertIssueCommentOptions {
 **Tests.** The probe scenario as a regression test under both modes.
 
 **Phase.** Before rc.
+
+## Embedding fixes from Hypersmith DP-01
+
+- **A `name` in `bz.create({ name })` renamed every added task class**, so `Class.task` stopped
+  resolving and `run()` returned `[]`. This is also why "a task method named `run` is not
+  addressable" was reported: `Class.run` was only unreachable on a named instance. Fixed:
+  `add()` no longer passes the instance's `name` or `parentPath` to task classes. Regression
+  tests cover both reports.
+- **`beelzebub/package.json` is an exported subpath.**
+- **CommonJS under Jest:** the CommonJS entry relies on `require(esm)`. The README documents
+  loading through `process.getBuiltinModule('node:module').createRequire` in test runners that
+  replace Node's loader. Shipping a separate CommonJS build is not planned.
 
 ## Explicit non-goals
 

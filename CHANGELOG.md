@@ -16,17 +16,20 @@ Notable project changes are documented here. The format follows Keep a Changelog
 ### Added
 
 - First-class TypeScript declarations and declaration maps.
-- Native ESM and callable CommonJS package exports.
+- Native ESM and callable CommonJS package exports, and a `beelzebub/package.json` export.
 - TC39 standard task decorators.
 - TypeScript 7 compilation with a temporary TypeScript 6 tooling compatibility layer.
-- Vitest 4 tests, 90% coverage thresholds, tarball consumer tests, and Node 24/26 CI.
+- Vitest 4 tests, 90% coverage thresholds, tarball consumer tests, and Node 22/24/26 CI.
 - TypeDoc API documentation and a dedicated 1.x migration guide.
 - A new responsive product website with an expanded example library, integrated API reference,
   Firebase Hosting configuration, preview deployment, and automated static-site validation.
 
 ### Changed
 
-- Minimum runtime is Node.js 24.15.
+- Minimum runtime is Node.js 22.12 on the 22 line, or 24.15 (`^22.12.0 || >=24.15.0`); CI adds a
+  Node 22 leg on Linux.
+- `@actions/artifact` and `@actions/cache` load on first use, so importing Beelzebub outside
+  GitHub Actions no longer loads about 1,300 files from them.
 - Development package manager is npm 12.
 - CLI parsing uses `node:util.parseArgs` and native ESM loading.
 - Promise, generator, sequence, parallel, and stream execution use native Node and JavaScript APIs.
@@ -37,6 +40,8 @@ Notable project changes are documented here. The format follows Keep a Changelog
 
 - The CLI accepts separate values for `--file <path>` and `-f <path>` as documented.
 - Summary statistics no longer double-count earlier runs when results are added in batches.
+- A `name` in the instance configuration (`bz.create({ name })`) no longer renames every task
+  class added to that instance; classes keep their own namespace unless `add()` names them.
 
 ### Removed
 

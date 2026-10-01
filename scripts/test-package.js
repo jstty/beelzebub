@@ -37,14 +37,29 @@ function run(command, args, cwd) {
   return result.stdout.trim();
 }
 
+/** Some npm versions print lifecycle output before `--json` output; parse the trailing document. */
+function parseTrailingJson(output) {
+  const starts = [...output.matchAll(/^[[{]/gm)].map((match) => match.index).reverse();
+  for (const start of starts) {
+    try {
+      return JSON.parse(output.slice(start));
+    } catch {
+      // Not the document's start; try an earlier line.
+    }
+  }
+  throw new Error(`npm pack printed no JSON: ${output.slice(0, 200)}`);
+}
+
 function runNpm(args, cwd) {
   return run(process.execPath, [npmCli, ...args], cwd);
 }
 
 try {
-  const packResult = JSON.parse(
-    runNpm(['pack', '--json', '--ignore-scripts', '--pack-destination', scratchRoot], projectRoot)
+  const packOutput = runNpm(
+    ['pack', '--json', '--ignore-scripts', '--pack-destination', scratchRoot],
+    projectRoot
   );
+  const packResult = parseTrailingJson(packOutput);
   const packed = Array.isArray(packResult)
     ? packResult[0]
     : (packResult[manifest.name] ?? Object.values(packResult)[0]);
@@ -84,7 +99,9 @@ try {
       "const bz = require('beelzebub');",
       "const { createGitHubContext } = require('beelzebub/github');",
       "const { MemoryCommandRunner } = require('beelzebub/testing');",
+      "const { version } = require('beelzebub/package.json');",
       'const { Beelzebub, BzCLI, BzTasks, defaultTask, help, vars } = bz;',
+      "if (typeof version !== 'string' || version !== bz().version) throw new Error('package.json export failed');",
       "if (typeof bz !== 'function') throw new Error('CommonJS export is not callable');",
       "if (bz.default !== bz) throw new Error('CommonJS default export is not interoperable');",
       'for (const value of [Beelzebub, BzCLI, BzTasks, defaultTask, help, vars]) {',
@@ -98,6 +115,25 @@ try {
   );
   const cjsOutput = run(process.execPath, ['smoke.cjs'], consumerDir);
   if (cjsOutput !== 'cjs-ok') throw new Error(`Unexpected CommonJS smoke output: ${cjsOutput}`);
+
+  // Importing Beelzebub outside GitHub Actions must not load the artifact or cache SDKs.
+  writeFileSync(
+    path.join(consumerDir, 'lazy.mjs'),
+    [
+      "import { registerHooks } from 'node:module';",
+      'const loaded = [];',
+      "if (typeof registerHooks === 'function') {",
+      '  registerHooks({ load(url, context, next) { loaded.push(url); return next(url, context); } });',
+      '}',
+      "await import('beelzebub');",
+      'const heavy = loaded.filter((url) => /@actions\\/(artifact|cache)\\//.test(url));',
+      "if (heavy.length > 0) throw new Error(`Eagerly loaded: ${heavy.slice(0, 3).join(', ')}`);",
+      "console.log('lazy-ok');",
+      ''
+    ].join('\n')
+  );
+  const lazyOutput = run(process.execPath, ['lazy.mjs'], consumerDir);
+  if (lazyOutput !== 'lazy-ok') throw new Error(`Unexpected lazy-load smoke output: ${lazyOutput}`);
 
   writeFileSync(
     path.join(consumerDir, 'smoke.ts'),

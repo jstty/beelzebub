@@ -1,11 +1,11 @@
 # Migrating from Beelzebub 1.x to 2.0
 
-Beelzebub 2.0 is a breaking modernization release. It replaces the Babel implementation with typed modern JavaScript, ships ESM and CommonJS entry points, and raises the runtime baseline to Node.js 24.15.
+Beelzebub 2.0 is a breaking modernization release. It replaces the Babel implementation with typed modern JavaScript, ships ESM and CommonJS entry points, and raises the runtime baseline to Node.js 22.12 (or 24.15 on the 24 line).
 
 ## Runtime and installation
 
 - Install the 2.0 preview with `npm install beelzebub@next`. The `latest` dist-tag stays on 1.x until 2.0.0 is released, so a plain `npm install beelzebub` still installs 1.x.
-- Upgrade Node.js to 24.15 or newer. CI should also test Node 26.
+- Upgrade Node.js to 22.12 or newer (24.15 or newer on Node 24). CI should also test Node 26.
 - Use npm 12 when contributing to Beelzebub itself.
 - Existing CommonJS consumers can continue to use the callable `require('beelzebub')` API.
 - ESM consumers can use the native default and named exports.
@@ -116,7 +116,7 @@ Beelzebub ships JavaScript, source maps, declarations, and declaration maps. Con
 
 ## Migration checklist
 
-1. Upgrade Node to 24.15 or newer.
+1. Upgrade Node to 22.12 or newer (24.15 or newer on Node 24).
 2. Choose the ESM or CommonJS package entry point that fits the consuming project.
 3. Update custom decorators to the standard decorator API.
 4. Replace `Beelzebub.cli()` calls.

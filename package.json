@@ -33,7 +33,8 @@
         "types": "./dist/testing.d.cts",
         "default": "./dist/testing.cjs"
       }
-    }
+    },
+    "./package.json": "./package.json"
   },
   "main": "./dist/index.cjs",
   "types": "./dist/index.d.cts",
@@ -153,7 +154,7 @@
     "vitest": "^4.1.10"
   },
   "engines": {
-    "node": ">=24.15.0"
+    "node": "^22.12.0 || >=24.15.0"
   },
   "packageManager": "npm@12.0.1"
 }
