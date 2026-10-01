@@ -12,6 +12,8 @@ Notable project changes are documented here. The format follows Keep a Changelog
   dist-tag freeze it, and `2.0.0` then becomes `latest`. Until then `latest` stays on 1.x.
   Pushing a `v2.*` tag publishes the release through `.github/workflows/release.yml` with
   npm provenance.
+- `2.0.0-next.2`: Node 22.12+ support, `@actions/artifact` and `@actions/cache` load on first use,
+  an instance `name` no longer renames added task classes, and a `beelzebub/package.json` export.
 
 ### Added
 
