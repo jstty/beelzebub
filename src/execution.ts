@@ -26,10 +26,6 @@ const store = new AsyncLocalStorage<ExecutionFrame>();
 /** A signal that never aborts, for code running without one. */
 export const neverAbortedSignal: AbortSignal = new AbortController().signal;
 
-export function currentFrame(): ExecutionFrame | undefined {
-  return store.getStore();
-}
-
 /** The current frame when it belongs to `app`; frames of other instances are ignored. */
 export function frameFor(app: unknown): ExecutionFrame | undefined {
   const frame = store.getStore();
