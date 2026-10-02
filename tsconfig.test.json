@@ -1,0 +1,23 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "types": ["node"],
+    "noEmit": true,
+    "declaration": false,
+    "declarationMap": false,
+    "sourceMap": false,
+    "noImplicitOverride": false
+  },
+  "include": [
+    "src",
+    "test",
+    "examples",
+    "scripts",
+    "beelzebub.ci.ts",
+    "github-action/src",
+    "vitest.config.ts",
+    "eslint.config.js"
+  ],
+  "exclude": ["dist", "node_modules", "legacy"]
+}

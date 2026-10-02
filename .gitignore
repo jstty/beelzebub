@@ -1,5 +1,4 @@
 #  NPM files
-package-lock.json
 node_modules
 npm-debug.log
 
@@ -8,5 +7,18 @@ npm-debug.log
 .idea
 .vscode
 
-# test temp files
+# Build outputs
+dist
+!github-action/dist/
+!github-action/dist/index.js
+website/dist
+.firebase
+*.tsbuildinfo
+
+# Test/coverage
+coverage
 test/.coverage
+.vitest
+
+# Logs
+*.log
