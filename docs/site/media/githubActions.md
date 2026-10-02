@@ -37,6 +37,8 @@ export default class CI extends BzTasks {
 
 `$exec()` uses argument arrays without a shell by default and rejects unexpected exit codes. `$pipeline()` records stable step IDs, values, errors, timings, outcomes, and effective conclusions. Conditions can use `always()`, `success()`, `failure()`, and `cancelled()`, or an ordinary typed function.
 
+A step can also be a function: `step('report', () => buildReport())` types `result.steps.report.value`. Steps emit `$stepStart` and `$stepEnd` events as they run. When the instance's `signal` aborts, remaining ordinary steps are `cancelled`, while `always()` steps still run. See [Embedding in a host](./taskClass.md#embedding-in-a-host).
+
 ## Keep the workflow thin
 
 ```yaml

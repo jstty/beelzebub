@@ -115,6 +115,8 @@ Recommendation: lower to Node 22. Keeping 24.15 is simpler to support, but the e
 
 ### 2. `AbortSignal` through `run()`, `$pipeline`, and task context
 
+**Status.** Done, as proposed, on the item 7 execution store. Two details the proposal left open: `$beforeAll` is also skipped once the signal has aborted, and a step that runs after the abort because its `when` passed gets a fresh, unaborted signal. Otherwise `_execTaskFun` would cancel it before it started, and cleanup could never run.
+
 **Problem.** Only `ExecOptions.signal` (`src/commandRunner.ts`) accepts a signal. `NodeCommandRunner.exec` honors it; `MemoryCommandRunner.exec` (`src/testing.ts`) records it but ignores it. `Beelzebub.run()` (`src/beelzebub.ts`), `BzTasks.$pipeline` (`src/bzTasksClass.ts`), `executePipeline(definitions, execute)` (`src/pipeline.ts`), `BeelzebubConfig` (`src/types.ts`), and task methods have no signal. `PipelineOutcome` and `TaskOutcome` both declare `'cancelled'`, and `cancelled(id?)` tests for it, but `executePipeline` only writes `success`, `failure`, or `skipped`, and `_execTaskFun` only `success` or `failure`. `cancelled()` therefore can never be true. In the probe, `run()` still executed tasks after the host's `AbortController` was aborted.
 
 **Proposed API.**
@@ -159,6 +161,8 @@ Semantics, modeled on GitHub Actions:
 
 ### 3. Pipeline step events
 
+**Status.** Done, as proposed. `executePipeline` reports a throwing hook through `console.error`; `$pipeline` catches listener errors itself and logs them through the task logger.
+
 **Problem.** `executePipeline` exposes step results only in the returned `PipelineResult` (or `PipelineError.result`), after the whole pipeline finishes. While it runs, the only events are `$before`, `$after`, and `$error` from `_execTaskFun`, keyed by task name rather than step id. Skipped steps emit nothing, and function steps are recorded as a `default` task. A host cannot show live step progress.
 
 **Proposed API.** Emit two events on the existing emitter, so `app.on(name, filter, callback)` works unchanged:
@@ -187,6 +191,8 @@ app.on('$stepEnd', 'Delivery.run', (taskInfo, event: PipelineStepEndEvent) => {}
 **Phase.** Before rc.
 
 ### 4. Typed task inputs and results
+
+**Status.** Done. `PipelineStep<T>` narrows `task` to a path, a `TaskReference`, or a function, so `executePipeline` takes the wider `PipelineDefinition` (`task: unknown`); its `execute` callback also receives `{ stepId, signal }`. Function steps are recorded as `<Class>.<stepId>`.
 
 **Problem.** Almost every value that crosses the API is `unknown`: `Beelzebub.run(parent?: unknown, ...args: unknown[]): Promise<unknown>`; `PipelineStep.task: unknown`; `PipelineResult.steps` and `PipelineContext.steps` are `Record<string, PipelineStepResult>`. `PipelineStepResult<T = unknown>` and `TaskExecution<T = unknown>` are already generic, but nothing passes a type argument. `TaskFn` is `(...args: unknown[]) => unknown`, and `TaskInfo.vars` is `Record<string, unknown>`. Consumers cast every result.
 
@@ -242,6 +248,8 @@ Function steps already work at runtime: `$run(fn)` runs the function with the ta
 **Phase.** Before rc.
 
 ### 5. Dependency injection into task classes
+
+**Status.** Done, as proposed. `add(Tasks, { context })` gives one class its own value.
 
 **Current behavior** (verified in the source and with a probe script):
 
@@ -310,6 +318,8 @@ importing them loads 775 and 575 files. `github.ts` imports them on first use.
 
 ### 7. Per-execution `$emit` binding
 
+**Status.** Done with item 2. The store also lets `run()` tell nested calls from concurrent ones (item 10).
+
 **Problem.** `_execTaskFun` (`src/bzTasksClass.ts`) assigns `parent.$emit = (name, data) => this.beelzebub.emit(name, { task: fullTaskName, vars }, data)` on the shared task-class instance for every execution. When two tasks of one class overlap (`$parallel`, or two pipelines at once), the last-started execution wins. An earlier task that emits after an `await` reports the other task's name and vars. In the probe, with `$parallel('.slow', '.fast')`, the event emitted by `slow` was reported as coming from `P.fast`.
 
 **Proposed change.** Keep the `$emit(name, data)` signature. Define it once on `BzTasks.prototype`, reading the current execution from a module-level `AsyncLocalStorage` (`node:async_hooks`, available on Node 22 and 24) that `_execTaskFun` enters around hooks and the task body. The same store carries `$signal` (item 2) and a per-run `$context` (item 5). Outside an execution, `$emit` uses `{ task: this.namePath }`.
@@ -321,6 +331,8 @@ importing them loads 775 and 575 files. `github.ts` imports them on first use.
 **Phase.** Any time. If item 2 uses the store for `$signal`, land them together.
 
 ### 8. Runtime-scoped env for `LocalWorkflowRuntime`
+
+**Status.** Done, as proposed. `PATH` uses the key the platform already has (`Path` on Windows).
 
 **Problem.** `LocalWorkflowRuntime.exportVariable` sets `process.env[name]`, and `addPath` rewrites `process.env.PATH` (`src/workflow.ts`). In an embedded host, one run's exports leak into the whole process and every concurrent run. `GitHubWorkflowRuntime` delegates to `@actions/core`, which also mutates `process.env`; that is expected inside Actions. `NodeCommandRunner.exec` builds a child's environment from `process.env` plus `options.env`, so a scoped value reaches child processes only if `$exec` passes it.
 
@@ -345,6 +357,8 @@ In `scoped` mode, `exportVariable` and `addPath` update a runtime-owned map. The
 
 ### 9. `upsertIssueComment` author filter
 
+**Status.** Done, as proposed.
+
 **Problem.** `upsertIssueComment` (`src/github.ts`) updates the first comment whose `user.type === 'Bot'` and whose body contains the marker. Comments made with a user token have `type: 'User'`, so every call creates a new comment. The filter also matches any bot's comment that contains the marker, not only the caller's.
 
 **Proposed API.**
@@ -367,6 +381,8 @@ interface UpsertIssueCommentOptions {
 
 ### 10. Instance reuse
 
+**Status.** Done: the `run()` documentation, `resetRunState()`, rejection of a concurrent top-level `run()`, and a `reset()` that re-runs `init()`. Also fixed: a no-argument `bz.create()` wrote its command runner, workflow, and loggers into the shared `DefaultConfig`, so later instances shared them.
+
 **Current behavior** (source and probe):
 
 - `BzTasks._beforeAllRun` is set in `_runBeforeAll` and never reset, while `_runAfterAll` runs at the end of every top-level `run()`. In the probe, two sequential `app.run('Delivery.go')` calls ran `$beforeAll` once and `$afterAll` twice.
@@ -386,6 +402,8 @@ interface UpsertIssueCommentOptions {
 **Phase.** Documentation before rc; `resetRunState()` any time.
 
 ### 11. `failureMode: 'log'` hides pipeline failures
+
+**Status.** Done: `failureMode` is applied in `Beelzebub.run()` for the top-level run only.
 
 **Problem.** Found while verifying item 2. `BzTasks._run` (`src/bzTasksClass.ts`) returns `undefined` instead of rethrowing when `failureMode === 'log'`. `$pipeline` runs each step through `$run`, which reaches that code, so a throwing step is recorded as `success`. Probe with steps `a` (throws) and `b`: under `'throw'`, `PipelineError` with `{ a: 'failure', b: 'skipped' }`; under `'log'`, a resolved result with `{ a: 'success', b: 'success' }`.
 

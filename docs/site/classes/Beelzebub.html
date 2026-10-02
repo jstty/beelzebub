@@ -9,13 +9,18 @@
 <div class="tsd-page-title">
 <ul class="tsd-breadcrumb" aria-label="Breadcrumb">
 <li><a href="" aria-current="page">Beelzebub</a></li></ul>
-<h1>Class Beelzebub</h1></div>
+<h1>Class Beelzebub&lt;C&gt;</h1></div>
 <section class="tsd-panel tsd-comment">
 <div class="tsd-comment tsd-typography"><p>Beelzebub task orchestrator — the top-level engine that owns the task
 registry, runs tasks, and emits lifecycle events.</p>
-</div></section><aside class="tsd-sources">
+<p><code>C</code> types <code>BeelzebubConfig.context</code>, the host services task classes read as <code>$context</code>.</p>
+</div></section>
+<section class="tsd-panel">
+<h4>Type Parameters</h4>
+<ul class="tsd-type-parameter-list">
+<li><span id="c"><span class="tsd-kind-type-parameter">C</span> = <span class="tsd-signature-type">unknown</span></span></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L42">src/beelzebub.ts:42</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L45">src/beelzebub.ts:45</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -45,6 +50,7 @@ registry, runs tasks, and emits lifecycle events.</p>
 <a href="#parallel" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>parallel</span></a>
 <a href="#printhelp" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>print<wbr/>Help</span></a>
 <a href="#reset" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>reset</span></a>
+<a href="#resetrunstate" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>reset<wbr/>Run<wbr/>State</span></a>
 <a href="#run" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>run</span></a>
 <a href="#sequence" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>sequence</span></a>
 <a href="#setglobalvars" class="tsd-index-link"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>set<wbr/>Global<wbr/>Vars</span></a>
@@ -69,15 +75,19 @@ registry, runs tasks, and emits lifecycle events.</p>
 <h3 class="tsd-anchor-link" id="constructor"><span>constructor</span><a href="#constructor" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
 <li class="">
-<div class="tsd-signature tsd-anchor-link" id="constructorbeelzebub"><span class="tsd-signature-keyword">new</span> <span class="tsd-kind-constructor-signature">Beelzebub</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">config</span><span class="tsd-signature-symbol">?:</span> <a href="../interfaces/BeelzebubConfig.html" class="tsd-signature-type tsd-kind-interface">BeelzebubConfig</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">Beelzebub</a><a href="#constructorbeelzebub" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-signature tsd-anchor-link" id="constructorbeelzebub"><span class="tsd-signature-keyword">new</span> <span class="tsd-kind-constructor-signature">Beelzebub</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#constructorbeelzebubc">C</a> <span class="tsd-signature-symbol">=</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">config</span><span class="tsd-signature-symbol">?:</span> <a href="../interfaces/BeelzebubConfig.html" class="tsd-signature-type tsd-kind-interface">BeelzebubConfig</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#c">C</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">Beelzebub</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#c">C</a><span class="tsd-signature-symbol">&gt;</span><a href="#constructorbeelzebub" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
+<section class="tsd-panel">
+<h4>Type Parameters</h4>
+<ul class="tsd-type-parameter-list">
+<li><span id="constructorbeelzebubc"><span class="tsd-kind-type-parameter">C</span> = <span class="tsd-signature-type">unknown</span></span></li></ul></section>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
-<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">config</span>: <a href="../interfaces/BeelzebubConfig.html" class="tsd-signature-type tsd-kind-interface">BeelzebubConfig</a></span></li></ul></div>
-<h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">Beelzebub</a></h4><aside class="tsd-sources">
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">config</span>: <a href="../interfaces/BeelzebubConfig.html" class="tsd-signature-type tsd-kind-interface">BeelzebubConfig</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#c">C</a><span class="tsd-signature-symbol">&gt;</span></span></li></ul></div>
+<h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">Beelzebub</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#c">C</a><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L65">src/beelzebub.ts:65</a></li></ul></aside></div></li></ul></section></section></details>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L68">src/beelzebub.ts:68</a></li></ul></aside></div></li></ul></section></section></details>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="methods-1">Methods<a href="#methods-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
@@ -89,7 +99,7 @@ registry, runs tasks, and emits lifecycle events.</p>
 <div class="tsd-description">
 <h4 class="tsd-returns-title">Returns <a href="../interfaces/FlatTaskListEntry.html" class="tsd-signature-type tsd-kind-interface">FlatTaskListEntry</a><span class="tsd-signature-symbol">[]</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L320">src/beelzebub.ts:320</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L368">src/beelzebub.ts:368</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="gettasktree"><span>$get<wbr/>Task<wbr/>Tree</span><a href="#gettasktree" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -98,21 +108,21 @@ registry, runs tasks, and emits lifecycle events.</p>
 <div class="tsd-description">
 <h4 class="tsd-returns-title">Returns <a href="../interfaces/TaskTree.html" class="tsd-signature-type tsd-kind-interface">TaskTree</a></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L316">src/beelzebub.ts:316</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L364">src/beelzebub.ts:364</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="add"><span>add</span><a href="#add" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
 <li class="">
-<div class="tsd-signature tsd-anchor-link" id="add-1"><span class="tsd-kind-call-signature">add</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">Tasks</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">config</span><span class="tsd-signature-symbol">?:</span> <a href="../interfaces/BeelzebubConfig.html" class="tsd-signature-type tsd-kind-interface">BeelzebubConfig</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><a href="#add-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-signature tsd-anchor-link" id="add-1"><span class="tsd-kind-call-signature">add</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">Tasks</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">config</span><span class="tsd-signature-symbol">?:</span> <a href="../interfaces/BeelzebubConfig.html" class="tsd-signature-type tsd-kind-interface">BeelzebubConfig</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><a href="#add-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li><span><span class="tsd-kind-parameter">Tasks</span>: <span class="tsd-signature-type">unknown</span></span></li>
-<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">config</span>: <a href="../interfaces/BeelzebubConfig.html" class="tsd-signature-type tsd-kind-interface">BeelzebubConfig</a></span></li></ul></div>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">config</span>: <a href="../interfaces/BeelzebubConfig.html" class="tsd-signature-type tsd-kind-interface">BeelzebubConfig</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L218">src/beelzebub.ts:218</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L244">src/beelzebub.ts:244</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="addinitfunction"><span>add<wbr/>Init<wbr/>Function</span><a href="#addinitfunction" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -125,7 +135,7 @@ registry, runs tasks, and emits lifecycle events.</p>
 <li><span><span class="tsd-kind-parameter">func</span>: <span class="tsd-signature-symbol">()</span> <span class="tsd-signature-symbol">=&gt;</span> <span class="tsd-signature-type">unknown</span></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L154">src/beelzebub.ts:154</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L180">src/beelzebub.ts:180</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="drawbox"><span>draw<wbr/>Box</span><a href="#drawbox" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -139,7 +149,7 @@ registry, runs tasks, and emits lifecycle events.</p>
 <li><span><span class="tsd-kind-parameter">width</span>: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> = 80</span></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L378">src/beelzebub.ts:378</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L426">src/beelzebub.ts:426</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="emit"><span>emit</span><a href="#emit" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -154,16 +164,16 @@ registry, runs tasks, and emits lifecycle events.</p>
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">data</span>: <span class="tsd-signature-type">unknown</span></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L214">src/beelzebub.ts:214</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L240">src/beelzebub.ts:240</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="getconfig"><span>get<wbr/>Config</span><a href="#getconfig" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
 <li class="">
-<div class="tsd-signature tsd-anchor-link" id="getconfig-1"><span class="tsd-kind-call-signature">getConfig</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/BeelzebubConfig.html" class="tsd-signature-type tsd-kind-interface">BeelzebubConfig</a><a href="#getconfig-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-signature tsd-anchor-link" id="getconfig-1"><span class="tsd-kind-call-signature">getConfig</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/BeelzebubConfig.html" class="tsd-signature-type tsd-kind-interface">BeelzebubConfig</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#c">C</a><span class="tsd-signature-symbol">&gt;</span><a href="#getconfig-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
-<h4 class="tsd-returns-title">Returns <a href="../interfaces/BeelzebubConfig.html" class="tsd-signature-type tsd-kind-interface">BeelzebubConfig</a></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <a href="../interfaces/BeelzebubConfig.html" class="tsd-signature-type tsd-kind-interface">BeelzebubConfig</a><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#c">C</a><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L138">src/beelzebub.ts:138</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L164">src/beelzebub.ts:164</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="getexecutions"><span>get<wbr/>Executions</span><a href="#getexecutions" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -172,7 +182,7 @@ registry, runs tasks, and emits lifecycle events.</p>
 <div class="tsd-description">
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-keyword">readonly</span> <a href="../interfaces/TaskExecution.html" class="tsd-signature-type tsd-kind-interface">TaskExecution</a><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">[]</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L324">src/beelzebub.ts:324</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L372">src/beelzebub.ts:372</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="getglobalvars"><span>get<wbr/>Global<wbr/>Vars</span><a href="#getglobalvars" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -181,7 +191,7 @@ registry, runs tasks, and emits lifecycle events.</p>
 <div class="tsd-description">
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L146">src/beelzebub.ts:146</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L172">src/beelzebub.ts:172</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="getinitpromise"><span>get<wbr/>Init<wbr/>Promise</span><a href="#getinitpromise" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -192,7 +202,7 @@ registry, runs tasks, and emits lifecycle events.</p>
 </div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L159">src/beelzebub.ts:159</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L185">src/beelzebub.ts:185</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="getrunning"><span>get<wbr/>Running</span><a href="#getrunning" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -201,7 +211,7 @@ registry, runs tasks, and emits lifecycle events.</p>
 <div class="tsd-description">
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L168">src/beelzebub.ts:168</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L194">src/beelzebub.ts:194</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="getvardefsfortaskname"><span>get<wbr/>Var<wbr/>Defs<wbr/>For<wbr/>Task<wbr/>Name</span><a href="#getvardefsfortaskname" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -214,7 +224,7 @@ registry, runs tasks, and emits lifecycle events.</p>
 <li><span><span class="tsd-kind-parameter">taskName</span>: <span class="tsd-signature-type">string</span></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="../types/VarDefMap.html" class="tsd-signature-type tsd-kind-type-alias">VarDefMap</a> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">null</span> <span class="tsd-signature-symbol">|</span> <span class="tsd-signature-type">undefined</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L172">src/beelzebub.ts:172</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L198">src/beelzebub.ts:198</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="init"><span>init</span><a href="#init" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -224,10 +234,10 @@ registry, runs tasks, and emits lifecycle events.</p>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
-<li><span><span class="tsd-kind-parameter">config</span>: <a href="../interfaces/BeelzebubConfig.html" class="tsd-signature-type tsd-kind-interface">BeelzebubConfig</a><span class="tsd-signature-symbol"> = util.DefaultConfig</span></span></li></ul></div>
+<li><span><span class="tsd-kind-parameter">config</span>: <a href="../interfaces/BeelzebubConfig.html" class="tsd-signature-type tsd-kind-interface">BeelzebubConfig</a><span class="tsd-signature-symbol"> = ...</span></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L72">src/beelzebub.ts:72</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L76">src/beelzebub.ts:76</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="isloading"><span>is<wbr/>Loading</span><a href="#isloading" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -236,7 +246,7 @@ registry, runs tasks, and emits lifecycle events.</p>
 <div class="tsd-description">
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L150">src/beelzebub.ts:150</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L176">src/beelzebub.ts:176</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="on"><span>on</span><a href="#on" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -259,7 +269,7 @@ registry, runs tasks, and emits lifecycle events.</p>
 </div></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L182">src/beelzebub.ts:182</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L208">src/beelzebub.ts:208</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="parallel"><span>parallel</span><a href="#parallel" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -273,7 +283,7 @@ registry, runs tasks, and emits lifecycle events.</p>
 <li><span><span class="tsd-signature-symbol">...</span><span class="tsd-kind-parameter">args</span>: <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">[]</span></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L304">src/beelzebub.ts:304</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L352">src/beelzebub.ts:352</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="printhelp"><span>print<wbr/>Help</span><a href="#printhelp" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -282,30 +292,58 @@ registry, runs tasks, and emits lifecycle events.</p>
 <div class="tsd-description">
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L311">src/beelzebub.ts:311</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L359">src/beelzebub.ts:359</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="reset"><span>reset</span><a href="#reset" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
 <li class="">
 <div class="tsd-signature tsd-anchor-link" id="reset-1"><span class="tsd-kind-call-signature">reset</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#reset-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Return to the default configuration with no tasks, as a new instance
+would be. Event listeners are kept. Rejects while a run is in progress.</p>
+</div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L125">src/beelzebub.ts:125</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L133">src/beelzebub.ts:133</a></li></ul></aside></div></li></ul></section>
+<section class="tsd-panel tsd-member">
+<h3 class="tsd-anchor-link" id="resetrunstate"><span>reset<wbr/>Run<wbr/>State</span><a href="#resetrunstate" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
+<ul class="tsd-signatures">
+<li class="">
+<div class="tsd-signature tsd-anchor-link" id="resetrunstate-1"><span class="tsd-kind-call-signature">resetRunState</span><span class="tsd-signature-symbol">()</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">void</span><a href="#resetrunstate-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Clear per-run state so the next <code>run()</code> starts fresh: <code>$beforeAll</code> runs
+again, and executions and stats start empty. Rejects while a run is in progress.</p>
+</div>
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
+<ul>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L143">src/beelzebub.ts:143</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="run"><span>run</span><a href="#run" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
 <li class="">
-<div class="tsd-signature tsd-anchor-link" id="run-1"><span class="tsd-kind-call-signature">run</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">parent</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-symbol">...</span><span class="tsd-kind-parameter">args</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><a href="#run-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-signature tsd-anchor-link" id="run-1"><span class="tsd-kind-call-signature">run</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#runt">T</a> <span class="tsd-signature-symbol">=</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">parent</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-symbol">...</span><span class="tsd-kind-parameter">args</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#runt">T</a><span class="tsd-signature-symbol">&gt;</span><a href="#run-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
+<div class="tsd-comment tsd-typography"><p>Run tasks by path (<code>'Build.compile'</code>), reference, or function. <code>T</code> types
+the result.</p>
+<p>A host uses one instance per run, or calls <code>resetRunState()</code> between runs:
+<code>$beforeAll</code> runs once per instance, and executions and stats accumulate.
+A second top-level <code>run()</code> while one is in progress rejects; calls from
+inside a run (tasks, hooks, and event listeners) join it.</p>
+<p>With <code>failureMode: 'log'</code>, a failing top-level run logs the error and
+resolves <code>undefined</code>. Nested runs and pipeline steps always reject.</p>
+</div>
+<section class="tsd-panel">
+<h4>Type Parameters</h4>
+<ul class="tsd-type-parameter-list">
+<li><span id="runt"><span class="tsd-kind-type-parameter">T</span> = <span class="tsd-signature-type">unknown</span></span></li></ul></section>
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
 <li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">parent</span>: <span class="tsd-signature-type">unknown</span></span></li>
 <li><span><span class="tsd-signature-symbol">...</span><span class="tsd-kind-parameter">args</span>: <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">[]</span></span></li></ul></div>
-<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
+<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><a class="tsd-signature-type tsd-kind-type-parameter" href="#runt">T</a><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L268">src/beelzebub.ts:268</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L307">src/beelzebub.ts:307</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="sequence"><span>sequence</span><a href="#sequence" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -319,7 +357,7 @@ registry, runs tasks, and emits lifecycle events.</p>
 <li><span><span class="tsd-signature-symbol">...</span><span class="tsd-kind-parameter">args</span>: <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">[]</span></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L297">src/beelzebub.ts:297</a></li></ul></aside></div></li></ul></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L345">src/beelzebub.ts:345</a></li></ul></aside></div></li></ul></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="setglobalvars"><span>set<wbr/>Global<wbr/>Vars</span><a href="#setglobalvars" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
@@ -332,7 +370,7 @@ registry, runs tasks, and emits lifecycle events.</p>
 <li><span><span class="tsd-kind-parameter">vars</span>: <span class="tsd-signature-type">Record</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">,</span> <span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L142">src/beelzebub.ts:142</a></li></ul></aside></div></li></ul></section></section></details>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L168">src/beelzebub.ts:168</a></li></ul></aside></div></li></ul></section></section></details>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="properties-1">Properties<a href="#properties-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
@@ -340,52 +378,52 @@ registry, runs tasks, and emits lifecycle events.</p>
 <h3 class="tsd-anchor-link" id="events"><span>events</span><a href="#events" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">events</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">EventEmitter</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L51">src/beelzebub.ts:51</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L54">src/beelzebub.ts:54</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="helplogger"><span>help<wbr/>Logger</span><a href="#helplogger" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">helpLogger</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/LoggerLike.html" class="tsd-signature-type tsd-kind-interface">LoggerLike</a></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L53">src/beelzebub.ts:53</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L56">src/beelzebub.ts:56</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="interfacetasks"><code class="tsd-tag">Readonly</code><span>Interface<wbr/>Tasks</span><a href="#interfacetasks" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">InterfaceTasks</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-keyword">typeof</span> <a href="InterfaceTasks.html" class="tsd-signature-type tsd-kind-class">InterfaceTasks</a><span class="tsd-signature-symbol"> = InterfaceTasks</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L48">src/beelzebub.ts:48</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L51">src/beelzebub.ts:51</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="logger"><span>logger</span><a href="#logger" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">logger</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/LoggerLike.html" class="tsd-signature-type tsd-kind-interface">LoggerLike</a></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L52">src/beelzebub.ts:52</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L55">src/beelzebub.ts:55</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="name"><span>name</span><a href="#name" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">name</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> = &#39;&#39;</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L55">src/beelzebub.ts:55</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L58">src/beelzebub.ts:58</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="tasks"><code class="tsd-tag">Readonly</code><span>Tasks</span><a href="#tasks" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">Tasks</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-keyword">typeof</span> <a href="BzTasks.html" class="tsd-signature-type tsd-kind-class">BzTasks</a><span class="tsd-signature-symbol"> = BzTasks</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L47">src/beelzebub.ts:47</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L50">src/beelzebub.ts:50</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="version"><span>version</span><a href="#version" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">version</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L50">src/beelzebub.ts:50</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L53">src/beelzebub.ts:53</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="vlogger"><span>v<wbr/>Logger</span><a href="#vlogger" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">vLogger</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/VLoggerLike.html" class="tsd-signature-type tsd-kind-interface">VLoggerLike</a></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L54">src/beelzebub.ts:54</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L57">src/beelzebub.ts:57</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="interfacetasks-1"><code class="tsd-tag">Static</code> <code class="tsd-tag">Readonly</code><span>Interface<wbr/>Tasks</span><a href="#interfacetasks-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">InterfaceTasks</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-keyword">typeof</span> <a href="InterfaceTasks.html" class="tsd-signature-type tsd-kind-class">InterfaceTasks</a><span class="tsd-signature-symbol"> = InterfaceTasks</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L44">src/beelzebub.ts:44</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L47">src/beelzebub.ts:47</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member">
 <h3 class="tsd-anchor-link" id="tasks-1"><code class="tsd-tag">Static</code> <code class="tsd-tag">Readonly</code><span>Tasks</span><a href="#tasks-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">Tasks</span><span class="tsd-signature-symbol">:</span> <span class="tsd-signature-keyword">typeof</span> <a href="BzTasks.html" class="tsd-signature-type tsd-kind-class">BzTasks</a><span class="tsd-signature-symbol"> = BzTasks</span></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L43">src/beelzebub.ts:43</a></li></ul></aside></section></section></details></div>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/beelzebub.ts#L46">src/beelzebub.ts:46</a></li></ul></aside></section></section></details></div>
 <div class="col-sidebar">
 <div class="page-menu">
 <div class="tsd-navigation settings">
@@ -403,7 +441,7 @@ registry, runs tasks, and emits lifecycle events.</p>
 <details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Constructors"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Constructors</summary>
 <div><a href="#constructor"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Constructor"><use href="../assets/icons.svg#icon-512"></use></svg><span>constructor</span></a></div></details>
 <details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Methods</summary>
-<div><a href="#gettaskflatlist"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$get<wbr/>Task<wbr/>Flat<wbr/>List</span></a><a href="#gettasktree"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$get<wbr/>Task<wbr/>Tree</span></a><a href="#add"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>add</span></a><a href="#addinitfunction"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>add<wbr/>Init<wbr/>Function</span></a><a href="#drawbox"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>draw<wbr/>Box</span></a><a href="#emit"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>emit</span></a><a href="#getconfig"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Config</span></a><a href="#getexecutions"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Executions</span></a><a href="#getglobalvars"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Global<wbr/>Vars</span></a><a href="#getinitpromise"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Init<wbr/>Promise</span></a><a href="#getrunning"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Running</span></a><a href="#getvardefsfortaskname"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Var<wbr/>Defs<wbr/>For<wbr/>Task<wbr/>Name</span></a><a href="#init"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>init</span></a><a href="#isloading"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>is<wbr/>Loading</span></a><a href="#on"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>on</span></a><a href="#parallel"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>parallel</span></a><a href="#printhelp"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>print<wbr/>Help</span></a><a href="#reset"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>reset</span></a><a href="#run"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>run</span></a><a href="#sequence"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>sequence</span></a><a href="#setglobalvars"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>set<wbr/>Global<wbr/>Vars</span></a></div></details>
+<div><a href="#gettaskflatlist"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$get<wbr/>Task<wbr/>Flat<wbr/>List</span></a><a href="#gettasktree"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>$get<wbr/>Task<wbr/>Tree</span></a><a href="#add"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>add</span></a><a href="#addinitfunction"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>add<wbr/>Init<wbr/>Function</span></a><a href="#drawbox"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>draw<wbr/>Box</span></a><a href="#emit"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>emit</span></a><a href="#getconfig"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Config</span></a><a href="#getexecutions"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Executions</span></a><a href="#getglobalvars"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Global<wbr/>Vars</span></a><a href="#getinitpromise"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Init<wbr/>Promise</span></a><a href="#getrunning"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Running</span></a><a href="#getvardefsfortaskname"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>get<wbr/>Var<wbr/>Defs<wbr/>For<wbr/>Task<wbr/>Name</span></a><a href="#init"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>init</span></a><a href="#isloading"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>is<wbr/>Loading</span></a><a href="#on"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>on</span></a><a href="#parallel"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>parallel</span></a><a href="#printhelp"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>print<wbr/>Help</span></a><a href="#reset"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>reset</span></a><a href="#resetrunstate"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>reset<wbr/>Run<wbr/>State</span></a><a href="#run"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>run</span></a><a href="#sequence"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>sequence</span></a><a href="#setglobalvars"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Method"><use href="../assets/icons.svg#icon-2048"></use></svg><span>set<wbr/>Global<wbr/>Vars</span></a></div></details>
 <details open class="tsd-accordion tsd-page-navigation-section"><summary class="tsd-accordion-summary" data-key="section-Properties"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>Properties</summary>
 <div><a href="#events"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>events</span></a><a href="#helplogger"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>help<wbr/>Logger</span></a><a href="#interfacetasks"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>Interface<wbr/>Tasks</span></a><a href="#logger"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>logger</span></a><a href="#name"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>name</span></a><a href="#tasks"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>Tasks</span></a><a href="#version"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>version</span></a><a href="#vlogger"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>v<wbr/>Logger</span></a><a href="#interfacetasks-1"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>Interface<wbr/>Tasks</span></a><a href="#tasks-1"><svg class="tsd-kind-icon" viewBox="0 0 24 24" aria-label="Property"><use href="../assets/icons.svg#icon-1024"></use></svg><span>Tasks</span></a></div></details></div></details></div>
 <div class="site-menu">
