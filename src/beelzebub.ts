@@ -5,7 +5,7 @@ import Table from 'cli-table3';
 
 import { BzTasks } from './bzTasksClass.js';
 import { NodeCommandRunner } from './commandRunner.js';
-import { neverAbortedSignal, runInFrame } from './execution.js';
+import { frameFor, neverAbortedSignal, runInFrame } from './execution.js';
 import { LocalWorkflowRuntime } from './workflow.js';
 import { GitHubWorkflowRuntime } from './github.js';
 import { InterfaceTasks } from './bzInterfaceClass.js';
@@ -67,12 +67,13 @@ export class Beelzebub<C = unknown> {
 
   constructor(config?: BeelzebubConfig<C>) {
     this.version = manifest.version;
-    this.reset();
+    this._clearState();
     this.init(config);
     this.events = new EventEmitter();
   }
 
-  init(config: BeelzebubConfig = util.DefaultConfig): void {
+  // A copy, so the defaults it fills in never leak into other instances.
+  init(config: BeelzebubConfig = { ...util.DefaultConfig }): void {
     if (!config.commandRunner) config.commandRunner = new NodeCommandRunner();
     if (!config.workflow) {
       config.workflow = GitHubWorkflowRuntime.isAvailable()
@@ -125,7 +126,29 @@ export class Beelzebub<C = unknown> {
     this._stats = new BzTaskStats();
   }
 
+  /**
+   * Return to the default configuration with no tasks, as a new instance
+   * would be. Event listeners are kept. Rejects while a run is in progress.
+   */
   reset(): void {
+    if (this._tasksRunning) throw new Error('Cannot reset Beelzebub while a run is in progress.');
+    this._clearState();
+    this.init();
+  }
+
+  /**
+   * Clear per-run state so the next `run()` starts fresh: `$beforeAll` runs
+   * again, and executions and stats start empty. Rejects while a run is in progress.
+   */
+  resetRunState(): void {
+    if (this._tasksRunning) {
+      throw new Error('Cannot reset run state while a run is in progress.');
+    }
+    (this._rootTasks as unknown as { _resetRunState: () => void })._resetRunState();
+    this._stats = new BzTaskStats();
+  }
+
+  protected _clearState(): void {
     this.logger = console as unknown as LoggerLike;
     this.vLogger = { log: () => {}, info: () => {} };
     this.helpLogger = console as unknown as LoggerLike;
@@ -272,6 +295,14 @@ export class Beelzebub<C = unknown> {
   /**
    * Run tasks by path (`'Build.compile'`), reference, or function. `T` types
    * the result.
+   *
+   * A host uses one instance per run, or calls `resetRunState()` between runs:
+   * `$beforeAll` runs once per instance, and executions and stats accumulate.
+   * A second top-level `run()` while one is in progress rejects; calls from
+   * inside a run (tasks, hooks, and event listeners) join it.
+   *
+   * With `failureMode: 'log'`, a failing top-level run logs the error and
+   * resolves `undefined`. Nested runs and pipeline steps always reject.
    */
   async run<T = unknown>(parent?: unknown, ...args: unknown[]): Promise<T> {
     args.unshift(parent);
@@ -280,7 +311,12 @@ export class Beelzebub<C = unknown> {
       _run: (...a: unknown[]) => Promise<unknown>;
       _runAfterAll: () => Promise<unknown>;
     };
-    if (this._tasksRunning) return (await root._run(...args)) as T;
+    if (frameFor(this)) return (await root._run(...args)) as T;
+    if (this._tasksRunning) {
+      throw new Error(
+        'This Beelzebub instance is already running. Use one instance per concurrent run, or await the previous run().'
+      );
+    }
 
     this._tasksRunning = true;
     this._stats.start();
@@ -290,6 +326,9 @@ export class Beelzebub<C = unknown> {
       async () => {
         try {
           return (await root._run(...args)) as T;
+        } catch (error) {
+          if (this._config.failureMode === 'log') return undefined as T;
+          throw error;
         } finally {
           try {
             await root._runAfterAll();

@@ -370,6 +370,14 @@ export class BzTasks<C = unknown> {
     this._beforeAllRun = true;
   }
 
+  /** Clear per-run state: `$beforeAll` runs again, and executions and stats start empty. */
+  protected _resetRunState(): void {
+    this._beforeAllRun = false;
+    this._executions = [];
+    this._stats = new BzTaskStats();
+    for (const task of Object.values(this.$getSubTasks())) task._resetRunState();
+  }
+
   protected async _runAfterAll(): Promise<void> {
     // Sequentially run sub-tasks' afterAll, then our own.
     for (const task of Object.values(this.$getSubTasks())) {
@@ -626,7 +634,6 @@ export class BzTasks<C = unknown> {
       return await this._running;
     } catch (e) {
       this.logger.error(e);
-      if (this._config.failureMode === 'log') return undefined;
       throw e;
     }
   }
