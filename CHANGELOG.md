@@ -14,6 +14,11 @@ Notable project changes are documented here. The format follows Keep a Changelog
   npm provenance.
 - `2.0.0-next.2`: Node 22.12+ support, `@actions/artifact` and `@actions/cache` load on first use,
   an instance `name` no longer renames added task classes, and a `beelzebub/package.json` export.
+- `2.0.0-next.3`: every API change planned before the release candidate. Cancellation through
+  `signal` and `$signal`, typed host services through `context` and `$context`, `$stepStart` and
+  `$stepEnd` events, typed pipeline step values, `resetRunState()`, and scoped workflow
+  environments. `failureMode: 'log'` now applies to the top-level `run()` only, and a concurrent
+  top-level `run()` rejects.
 
 ### Added
 
