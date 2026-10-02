@@ -159,6 +159,12 @@ export interface WorkflowRuntime {
   getState(name: string): string | undefined;
   /** Redacted, provider-neutral execution data for bridge adapters and tests. */
   getExecutionSnapshot?(): WorkflowExecutionSnapshot;
+  /**
+   * Environment overrides for child processes started through `$exec`, beneath
+   * the caller's `options.env`. A runtime that scopes `exportVariable` and
+   * `addPath` to itself returns them here.
+   */
+  getEnv?(): Readonly<Record<string, string>>;
 }
 
 export interface ArtifactOperationSnapshot {
@@ -190,6 +196,25 @@ class ConsoleSummarySink implements SummarySink {
   async clear(): Promise<void> {}
 }
 
+export interface LocalWorkflowRuntimeOptions {
+  /**
+   * Where `exportVariable` and `addPath` write. `process` (the default) changes
+   * `process.env`. `scoped` keeps them on this runtime and passes them to child
+   * processes through `getEnv()`, so concurrent embedded runs don't see
+   * each other's values.
+   */
+  env?: 'process' | 'scoped';
+}
+
+/** The `PATH` key as the platform spells it (`Path` on Windows). */
+function pathKey(): string {
+  return Object.keys(process.env).find((name) => name.toUpperCase() === 'PATH') ?? 'PATH';
+}
+
+function pathSeparator(): string {
+  return process.platform === 'win32' ? ';' : ':';
+}
+
 /** Local fallback used outside a hosted workflow. */
 export class LocalWorkflowRuntime implements WorkflowRuntime {
   readonly provider = 'local';
@@ -198,10 +223,18 @@ export class LocalWorkflowRuntime implements WorkflowRuntime {
   protected readonly outputs = new Map<string, string>();
   protected readonly state = new Map<string, string>();
   protected diagnosticCount = 0;
+  protected readonly scoped: boolean;
+  protected readonly exported = new Map<string, string>();
+  protected readonly paths: string[] = [];
 
-  constructor(context: WorkflowContext = {}, sink: SummarySink = new ConsoleSummarySink()) {
+  constructor(
+    context: WorkflowContext = {},
+    sink: SummarySink = new ConsoleSummarySink(),
+    options: LocalWorkflowRuntimeOptions = {}
+  ) {
     this.context = context;
     this.summary = new WorkflowSummary(sink);
+    this.scoped = options.env === 'scoped';
   }
 
   debug(message: string): void {
@@ -235,10 +268,22 @@ export class LocalWorkflowRuntime implements WorkflowRuntime {
     this.outputs.set(name, String(value));
   }
   async exportVariable(name: string, value: unknown): Promise<void> {
-    process.env[name] = String(value);
+    if (this.scoped) this.exported.set(name, String(value));
+    else process.env[name] = String(value);
   }
   async addPath(path: string): Promise<void> {
-    process.env.PATH = `${path}${process.platform === 'win32' ? ';' : ':'}${process.env.PATH ?? ''}`;
+    if (this.scoped) this.paths.unshift(path);
+    else process.env.PATH = `${path}${pathSeparator()}${process.env.PATH ?? ''}`;
+  }
+  /** Scoped exports, with added paths before the process `PATH`; empty in `process` mode. */
+  getEnv(): Readonly<Record<string, string>> {
+    const env = Object.fromEntries(this.exported);
+    if (this.paths.length > 0) {
+      const key = pathKey();
+      const base = env[key] ?? process.env[key];
+      env[key] = [...this.paths, ...(base ? [base] : [])].join(pathSeparator());
+    }
+    return env;
   }
   async saveState(name: string, value: unknown): Promise<void> {
     this.state.set(name, String(value));

@@ -504,17 +504,22 @@ export class BzTasks<C = unknown> {
 
   /**
    * Execute a process through the configured, injectable command runner.
-   * `$signal` is passed along, combined with `options.signal`.
+   * `$signal` is passed along, combined with `options.signal`, and the workflow
+   * runtime's `getEnv()` sits beneath `options.env`.
    */
   $exec(command: string, args: readonly string[] = [], options?: ExecOptions): Promise<ExecResult> {
     const runner = this._config.commandRunner;
     if (!runner) throw new Error('No command runner is configured');
+    let execOptions = options;
+    const scopedEnv = this.workflow.getEnv?.();
+    if (scopedEnv && Object.keys(scopedEnv).length > 0) {
+      execOptions = { ...execOptions, env: { ...scopedEnv, ...execOptions?.env } };
+    }
     const signal = this.$signal;
-    if (signal === neverAbortedSignal) return runner.exec(command, args, options);
-    return runner.exec(command, args, {
-      ...options,
-      signal: combineSignals(signal, options?.signal)
-    });
+    if (signal !== neverAbortedSignal) {
+      execOptions = { ...execOptions, signal: combineSignals(signal, execOptions?.signal) };
+    }
+    return runner.exec(command, args, execOptions);
   }
 
   /**

@@ -43,6 +43,7 @@ export {
 export type { CommandRunner, ExecOptions, ExecResult } from './commandRunner.js';
 export type {
   AnnotationLocation,
+  LocalWorkflowRuntimeOptions,
   SummarySink,
   SummaryTableCell,
   SummaryWriteOptions,

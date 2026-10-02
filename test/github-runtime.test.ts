@@ -339,4 +339,43 @@ describe('GitHubWorkflowRuntime', () => {
       body: '<!-- report --> new'
     });
   });
+
+  it('matches the comment author by login, type, or predicate', async () => {
+    const comments = [
+      { id: 4, body: '<!-- report --> bot', user: { login: 'other[bot]', type: 'Bot' } },
+      { id: 5, body: '<!-- report --> mine', user: { login: 'jstty', type: 'User' } },
+      { id: 6, body: '<!-- report --> ghost', user: null }
+    ];
+    const issues = {
+      listComments: vi.fn(),
+      updateComment: vi.fn().mockResolvedValue({}),
+      createComment: vi.fn().mockResolvedValue({})
+    };
+    const client = {
+      paginate: vi.fn().mockResolvedValue(comments),
+      rest: { issues }
+    } as unknown as GitHubApiClient;
+    const options = {
+      owner: 'jstty',
+      repo: 'beelzebub',
+      issueNumber: 7,
+      marker: '<!-- report -->',
+      body: '<!-- report --> new'
+    };
+    const updated = () => issues.updateComment.mock.calls.at(-1)?.[0].comment_id;
+
+    await expect(
+      upsertIssueComment(client, { ...options, author: { login: 'jstty' } })
+    ).resolves.toBe('updated');
+    expect(updated()).toBe(5);
+    await expect(
+      upsertIssueComment(client, { ...options, author: { login: 'jstty', type: 'Bot' } })
+    ).resolves.toBe('created');
+    await expect(
+      upsertIssueComment(client, { ...options, author: (user) => user === null })
+    ).resolves.toBe('updated');
+    expect(updated()).toBe(6);
+    await expect(upsertIssueComment(client, options)).resolves.toBe('updated');
+    expect(updated()).toBe(4);
+  });
 });
