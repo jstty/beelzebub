@@ -5,6 +5,7 @@ import Table from 'cli-table3';
 
 import { BzTasks } from './bzTasksClass.js';
 import { NodeCommandRunner } from './commandRunner.js';
+import { neverAbortedSignal, runInFrame } from './execution.js';
 import { LocalWorkflowRuntime } from './workflow.js';
 import { GitHubWorkflowRuntime } from './github.js';
 import { InterfaceTasks } from './bzInterfaceClass.js';
@@ -38,8 +39,10 @@ function formatElapsed(ms: number): string {
 /**
  * Beelzebub task orchestrator — the top-level engine that owns the task
  * registry, runs tasks, and emits lifecycle events.
+ *
+ * `C` types `BeelzebubConfig.context`, the host services task classes read as `$context`.
  */
-export class Beelzebub {
+export class Beelzebub<C = unknown> {
   static readonly Tasks = BzTasks;
   static readonly InterfaceTasks = InterfaceTasks;
 
@@ -62,7 +65,7 @@ export class Beelzebub {
   protected _globalVars: Record<string, unknown> = {};
   protected _stats!: BzTaskStats;
 
-  constructor(config?: BeelzebubConfig) {
+  constructor(config?: BeelzebubConfig<C>) {
     this.version = manifest.version;
     this.reset();
     this.init(config);
@@ -135,8 +138,8 @@ export class Beelzebub {
     this._globalVars = {};
   }
 
-  getConfig(): BeelzebubConfig {
-    return this._config;
+  getConfig(): BeelzebubConfig<C> {
+    return this._config as BeelzebubConfig<C>;
   }
 
   setGlobalVars(vars: Record<string, unknown>): void {
@@ -235,6 +238,7 @@ export class Beelzebub {
       const { name: _name, parentPath: _parentPath, ...inherited } = this._config;
       const merged: BeelzebubConfig = util.deepMerge({ ...inherited } as BeelzebubConfig, config);
       merged.beelzebub = this;
+      if (config?.context !== undefined) merged.context = config.context;
       const Ctor = resolvedTasks as new (cfg: BeelzebubConfig) => BzTasks;
       tasks = new Ctor(merged);
 
@@ -265,33 +269,38 @@ export class Beelzebub {
     this._rootTasks.$addSubTasks(tasks!, config);
   }
 
-  async run(parent?: unknown, ...args: unknown[]): Promise<unknown> {
-    let entryPoint = false;
-    if (!this._tasksRunning) {
-      entryPoint = true;
-      this._tasksRunning = true;
-      this._stats.start();
-    }
-
+  /**
+   * Run tasks by path (`'Build.compile'`), reference, or function. `T` types
+   * the result.
+   */
+  async run<T = unknown>(parent?: unknown, ...args: unknown[]): Promise<T> {
     args.unshift(parent);
-    try {
-      // The root tasks are always hidden, so call the internal `_run` directly.
-      return await (
-        this._rootTasks as unknown as { _run: (...a: unknown[]) => Promise<unknown> }
-      )._run(...args);
-    } finally {
-      if (entryPoint) {
+    // The root tasks are always hidden, so call the internal methods directly.
+    const root = this._rootTasks as unknown as {
+      _run: (...a: unknown[]) => Promise<unknown>;
+      _runAfterAll: () => Promise<unknown>;
+    };
+    if (this._tasksRunning) return (await root._run(...args)) as T;
+
+    this._tasksRunning = true;
+    this._stats.start();
+    // The run frame carries the instance signal to every task it starts.
+    return runInFrame(
+      { app: this, signal: this._config.signal ?? neverAbortedSignal },
+      async () => {
         try {
-          await (
-            this._rootTasks as unknown as { _runAfterAll: () => Promise<unknown> }
-          )._runAfterAll();
+          return (await root._run(...args)) as T;
         } finally {
-          this._stats.end();
-          this._tasksRunning = false;
-          this._printSummary();
+          try {
+            await root._runAfterAll();
+          } finally {
+            this._stats.end();
+            this._tasksRunning = false;
+            this._printSummary();
+          }
         }
       }
-    }
+    );
   }
 
   sequence(parent: unknown, ...args: unknown[]): Promise<unknown> {

@@ -32,7 +32,7 @@ export interface VLoggerLike {
   info(...args: unknown[]): void;
 }
 
-export interface BeelzebubConfig {
+export interface BeelzebubConfig<C = unknown> {
   verbose?: boolean;
   silent?: boolean;
   /**
@@ -47,6 +47,17 @@ export interface BeelzebubConfig {
   workflow?: WorkflowRuntime;
   logger?: LoggerLike | null;
   helpLogger?: LoggerLike | null;
+  /**
+   * Cancels every run of this instance. Task classes read it as `$signal`
+   * (combined with any `$pipeline` signal), and `$exec` passes it to the
+   * command runner.
+   */
+  signal?: AbortSignal;
+  /**
+   * Host services for task classes, read as `$context`. Passed by reference:
+   * never cloned or merged.
+   */
+  context?: C;
   /** Internal: parent path for sub-tasks. */
   parentPath?: string;
   /** Internal: back-reference to the Beelzebub instance. */
@@ -68,9 +79,9 @@ export interface VarDef {
 
 export type VarDefMap = Record<string, VarDef>;
 
-export interface TaskInfo {
+export interface TaskInfo<V extends Record<string, unknown> = Record<string, unknown>> {
   task: string;
-  vars?: Record<string, unknown> | undefined;
+  vars?: V | undefined;
 }
 
 export type TaskOutcome = 'success' | 'failure' | 'skipped' | 'cancelled';

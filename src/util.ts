@@ -176,6 +176,10 @@ export function processConfig(
     deepClone(parentConfig) as BeelzebubConfig,
     config || {}
   );
+  // Host services keep their identity; merging would copy plain objects.
+  const host = config && config.context !== undefined ? config.context : parentConfig.context;
+  if (host === undefined) delete context._config.context;
+  else context._config.context = host;
 
   if (context._config.silent) {
     context.logger = nullLogger;

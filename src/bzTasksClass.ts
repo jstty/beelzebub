@@ -3,8 +3,21 @@ import pc from 'picocolors';
 
 import { BzTaskStats } from './bzStats.js';
 import type { ExecOptions, ExecResult } from './commandRunner.js';
+import {
+  combineSignals,
+  frameFor,
+  neverAbortedSignal,
+  runInFrame,
+  type ExecutionFrame
+} from './execution.js';
 import type { WorkflowRuntime } from './workflow.js';
-import { executePipeline, type PipelineResult, type PipelineStep } from './pipeline.js';
+import {
+  executePipeline,
+  type PipelineOptions,
+  type PipelineResult,
+  type PipelineStep,
+  type PipelineValues
+} from './pipeline.js';
 import * as util from './util.js';
 import type {
   BeelzebubConfig,
@@ -39,8 +52,10 @@ interface NormalizedTask {
  * }
  * bz().add(MyTasks);
  * ```
+ *
+ * `C` types `$context`, the host services passed as `BeelzebubConfig.context`.
  */
-export class BzTasks {
+export class BzTasks<C = unknown> {
   beelzebub: any;
   name: string;
   version: string;
@@ -67,9 +82,6 @@ export class BzTasks {
   protected _beforeAllRun = false;
   protected _stats: BzTaskStats = new BzTaskStats();
   protected _executions: TaskExecution[] = [];
-
-  // Optional context-aware emit, attached during task execution.
-  $emit!: (name: string, data?: unknown) => void;
 
   constructor(config: BeelzebubConfig = {}, hidden = false) {
     this._hidden = hidden;
@@ -162,6 +174,33 @@ export class BzTasks {
 
   $config(): BeelzebubConfig {
     return this._config;
+  }
+
+  /**
+   * Cancellation for the current execution: the instance `signal`, combined
+   * with any `$pipeline` signal. Never undefined; without either it never aborts.
+   */
+  get $signal(): AbortSignal {
+    return frameFor(this.beelzebub)?.signal ?? this._config.signal ?? neverAbortedSignal;
+  }
+
+  /** Host services from `BeelzebubConfig.context`, by reference. */
+  get $context(): C {
+    return this._config.context as C;
+  }
+
+  /**
+   * Emit a custom event as the running task. Each execution reports its own
+   * task and vars, even when tasks of one class overlap; outside an execution
+   * the event names this task class.
+   */
+  $emit(name: string, data?: unknown): void {
+    const task = frameFor(this.beelzebub)?.task;
+    const taskInfo =
+      task && task.instance === this
+        ? { task: task.name, vars: task.vars }
+        : { task: this.namePath };
+    this.beelzebub.emit(name, taskInfo, data);
   }
 
   /** Promote this task to root-level. */
@@ -325,6 +364,8 @@ export class BzTasks {
 
   // -------- Before/After All --------
   protected async _runBeforeAll(taskInfo: TaskInfo): Promise<void> {
+    // After cancellation no hook runs; the task records itself as cancelled.
+    if (this.$signal.aborted) return;
     await this._normalizeExecFuncToPromise(this.$beforeAll, this, taskInfo);
     this._beforeAllRun = true;
   }
@@ -449,20 +490,67 @@ export class BzTasks {
     return this.beelzebub.parallel(this, ...args);
   }
 
-  $run(...args: unknown[]): Promise<unknown> {
+  $run<T = unknown>(...args: unknown[]): Promise<T> {
     return this.beelzebub.run(this, ...args);
   }
 
-  /** Execute a process through the configured, injectable command runner. */
+  /**
+   * Execute a process through the configured, injectable command runner.
+   * `$signal` is passed along, combined with `options.signal`.
+   */
   $exec(command: string, args: readonly string[] = [], options?: ExecOptions): Promise<ExecResult> {
     const runner = this._config.commandRunner;
     if (!runner) throw new Error('No command runner is configured');
-    return runner.exec(command, args, options);
+    const signal = this.$signal;
+    if (signal === neverAbortedSignal) return runner.exec(command, args, options);
+    return runner.exec(command, args, {
+      ...options,
+      signal: combineSignals(signal, options?.signal)
+    });
   }
 
-  /** Run named task steps with testable conditions and continue-on-error semantics. */
-  $pipeline(steps: readonly PipelineStep[]): Promise<PipelineResult> {
-    return executePipeline(steps, (task) => this.$run(task));
+  /**
+   * Run named steps with testable conditions and continue-on-error semantics.
+   * Emits `$stepStart` and `$stepEnd` as the calling task, and resolves with
+   * step values typed by step id.
+   */
+  $pipeline<const S extends readonly PipelineStep[]>(
+    steps: S,
+    options: PipelineOptions = {}
+  ): Promise<PipelineResult<PipelineValues<S>>> {
+    const frame: ExecutionFrame = frameFor(this.beelzebub) ?? {
+      app: this.beelzebub,
+      signal: this.$signal
+    };
+    const taskInfo = frame.task
+      ? { task: frame.task.name, vars: frame.task.vars }
+      : { task: this.namePath };
+    const emit = (name: string, event: unknown): void => {
+      try {
+        this.beelzebub.emit(name, taskInfo, event);
+      } catch (error) {
+        this.logger.error(`A ${name} listener failed:`, error);
+      }
+    };
+    return executePipeline(
+      steps,
+      (task, step) =>
+        runInFrame({ ...frame, signal: step.signal }, () =>
+          this._runPipelineStep(step.stepId, task)
+        ),
+      {
+        id: options.id ?? taskInfo.task,
+        signal: combineSignals(frame.signal, options.signal),
+        onStepStart: (event) => emit('$stepStart', event),
+        onStepEnd: (event) => emit('$stepEnd', event)
+      }
+    );
+  }
+
+  /** A function step is recorded under its step id; other steps run as tasks. */
+  protected _runPipelineStep(stepId: string, task: unknown): Promise<unknown> {
+    if (typeof task === 'function') return this._execTaskFun(stepId, task as TaskFn, this, {});
+    return this.$run(task);
   }
 
   // -------- Internal scheduling --------
@@ -598,49 +686,67 @@ export class BzTasks {
     }
 
     const startedAt = new Date();
-    let statsId: number | undefined;
-    let value: unknown;
-    let taskError: Error | undefined;
-
-    try {
-      if (!parent.$hasRunBefore()) {
-        await parent._runBeforeAll(taskInfo);
-      }
-      await this._runBeforeEach(parent, taskInfo);
-
-      this.beelzebub.emit('$before', { task: fullTaskName, vars: taskInfo.vars });
-      statsId = parent._taskStatsStart(parent, taskName);
-
-      if (parent && typeof parent === 'object') {
-        parent.$emit = (name: string, data?: unknown) => {
-          this.beelzebub.emit(name, { task: fullTaskName, vars: taskInfo.vars }, data);
-        };
-      }
-
-      value = await this._normalizeExecFuncToPromise(func, parent, vars);
-      await this._normalizeExecFuncToPromise(parent.$afterEach, parent, taskInfo);
-      this.beelzebub.emit('$after', { task: fullTaskName, vars: taskInfo.vars });
-      return value;
-    } catch (error) {
-      taskError = error instanceof Error ? error : new Error(String(error));
-      this.beelzebub.emit('$error', { task: fullTaskName, vars: taskInfo.vars }, taskError);
-      throw taskError;
-    } finally {
-      if (statsId !== undefined) parent._taskStatsEnd(parent, taskName, statsId);
-      const completedAt = new Date();
-      const execution: TaskExecution = {
+    const signal = parent.$signal;
+    if (signal.aborted) {
+      // Cancelled before it started: no hook or task body runs.
+      parent._executions.push({
         task: fullTaskName,
-        outcome: taskError ? 'failure' : 'success',
-        conclusion: taskError ? 'failure' : 'success',
+        outcome: 'cancelled',
+        conclusion: 'cancelled',
+        error: toError(signal.reason),
         startedAt,
-        completedAt,
-        durationMs: completedAt.getTime() - startedAt.getTime()
-      };
-      if (taskError) execution.error = taskError;
-      else if (value !== undefined) execution.value = value;
-      parent._executions.push(execution);
-      await this._normalizeExecFuncToPromise(parent.$finallyEach, parent, taskInfo, execution);
+        completedAt: startedAt,
+        durationMs: 0
+      });
+      throw signal.reason;
     }
+
+    const frame: ExecutionFrame = {
+      app: this.beelzebub,
+      signal,
+      task: { name: fullTaskName, vars, instance: parent }
+    };
+    return runInFrame(frame, async () => {
+      let statsId: number | undefined;
+      let value: unknown;
+      let taskError: Error | undefined;
+
+      try {
+        if (!parent.$hasRunBefore()) {
+          await parent._runBeforeAll(taskInfo);
+        }
+        await this._runBeforeEach(parent, taskInfo);
+
+        this.beelzebub.emit('$before', { task: fullTaskName, vars: taskInfo.vars });
+        statsId = parent._taskStatsStart(parent, taskName);
+
+        value = await this._normalizeExecFuncToPromise(func, parent, vars);
+        await this._normalizeExecFuncToPromise(parent.$afterEach, parent, taskInfo);
+        this.beelzebub.emit('$after', { task: fullTaskName, vars: taskInfo.vars });
+        return value;
+      } catch (error) {
+        taskError = toError(error);
+        this.beelzebub.emit('$error', { task: fullTaskName, vars: taskInfo.vars }, taskError);
+        throw taskError;
+      } finally {
+        if (statsId !== undefined) parent._taskStatsEnd(parent, taskName, statsId);
+        const completedAt = new Date();
+        // A task that fails after its signal aborted was cancelled.
+        const outcome = taskError ? (signal.aborted ? 'cancelled' : 'failure') : 'success';
+        const execution: TaskExecution = {
+          task: fullTaskName,
+          outcome,
+          conclusion: outcome,
+          startedAt,
+          completedAt,
+          durationMs: completedAt.getTime() - startedAt.getTime()
+        };
+        if (taskError) execution.error = taskError;
+        else if (value !== undefined) execution.value = value;
+        parent._executions.push(execution);
+        await this._normalizeExecFuncToPromise(parent.$finallyEach, parent, taskInfo, execution);
+      }
+    });
   }
 
   protected async _runPromiseTask(
@@ -908,6 +1014,10 @@ export class BzTasks {
     }
     return vars;
   }
+}
+
+function toError(error: unknown): Error {
+  return error instanceof Error ? error : new Error(String(error));
 }
 
 /**
