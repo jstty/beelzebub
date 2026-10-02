@@ -48,6 +48,8 @@ export class MemoryCommandRunner implements CommandRunner {
     options: ExecOptions = {}
   ): Promise<ExecResult> {
     this.calls.push({ command, args: [...args], options });
+    // Like a real process, an aborted signal stops the command before it answers.
+    if (options.signal?.aborted) throw options.signal.reason;
     const response = this.responses.shift() ?? {};
     if (response.error) throw response.error;
     const result: ExecResult = {

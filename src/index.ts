@@ -8,7 +8,16 @@ import { CommandError, NodeCommandRunner } from './commandRunner.js';
 import * as decoratorsImpl from './decorators.js';
 import { TmplStrFunc } from './tmplStrFunc.js';
 import { LocalWorkflowRuntime, WorkflowSummary } from './workflow.js';
-import { PipelineError, always, cancelled, executePipeline, failure, success } from './pipeline.js';
+import {
+  PipelineCancelledError,
+  PipelineError,
+  always,
+  cancelled,
+  executePipeline,
+  failure,
+  step,
+  success
+} from './pipeline.js';
 import * as util from './util.js';
 import type { BeelzebubConfig } from './types.js';
 
@@ -20,6 +29,7 @@ export {
   InterfaceTasks,
   LocalWorkflowRuntime,
   NodeCommandRunner,
+  PipelineCancelledError,
   PipelineError,
   TmplStrFunc,
   WorkflowSummary,
@@ -27,11 +37,13 @@ export {
   cancelled,
   executePipeline,
   failure,
+  step,
   success
 };
 export type { CommandRunner, ExecOptions, ExecResult } from './commandRunner.js';
 export type {
   AnnotationLocation,
+  LocalWorkflowRuntimeOptions,
   SummarySink,
   SummaryTableCell,
   SummaryWriteOptions,
@@ -42,12 +54,20 @@ export type {
   WorkflowRuntime
 } from './workflow.js';
 export type {
+  ExecutePipelineOptions,
   PipelineCondition,
   PipelineContext,
+  PipelineDefinition,
+  PipelineOptions,
   PipelineOutcome,
   PipelineResult,
   PipelineStep,
-  PipelineStepResult
+  PipelineStepEndEvent,
+  PipelineStepEvent,
+  PipelineStepExecution,
+  PipelineStepResult,
+  PipelineValues,
+  TaskReference
 } from './pipeline.js';
 export type { CLIRunOptions } from './bzCLI.js';
 export * from './types.js';
@@ -63,12 +83,12 @@ export const decorators = { defaultTask, help, vars };
 export interface BeelzebubModule {
   (config?: BeelzebubConfig): Beelzebub;
   delete(): void;
-  create(config?: BeelzebubConfig): Beelzebub;
+  create<C = unknown>(config?: BeelzebubConfig<C>): Beelzebub<C>;
   init(...args: Parameters<Beelzebub['init']>): ReturnType<Beelzebub['init']>;
   add(...args: Parameters<Beelzebub['add']>): ReturnType<Beelzebub['add']>;
   sequence(...args: Parameters<Beelzebub['sequence']>): ReturnType<Beelzebub['sequence']>;
   parallel(...args: Parameters<Beelzebub['parallel']>): ReturnType<Beelzebub['parallel']>;
-  run(...args: Parameters<Beelzebub['run']>): ReturnType<Beelzebub['run']>;
+  run<T = unknown>(...args: Parameters<Beelzebub['run']>): Promise<T>;
   getExecutions(
     ...args: Parameters<Beelzebub['getExecutions']>
   ): ReturnType<Beelzebub['getExecutions']>;
@@ -96,7 +116,7 @@ factory.delete = () => {
   util.setInstance(null);
 };
 
-factory.create = (config?: BeelzebubConfig) => new Beelzebub(config);
+factory.create = <C = unknown>(config?: BeelzebubConfig<C>) => new Beelzebub<C>(config);
 
 function bind<
   K extends 'init' | 'add' | 'sequence' | 'parallel' | 'run' | 'getExecutions' | 'printHelp'

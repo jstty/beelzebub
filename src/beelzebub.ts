@@ -5,6 +5,7 @@ import Table from 'cli-table3';
 
 import { BzTasks } from './bzTasksClass.js';
 import { NodeCommandRunner } from './commandRunner.js';
+import { frameFor, neverAbortedSignal, runInFrame } from './execution.js';
 import { LocalWorkflowRuntime } from './workflow.js';
 import { GitHubWorkflowRuntime } from './github.js';
 import { InterfaceTasks } from './bzInterfaceClass.js';
@@ -38,8 +39,10 @@ function formatElapsed(ms: number): string {
 /**
  * Beelzebub task orchestrator — the top-level engine that owns the task
  * registry, runs tasks, and emits lifecycle events.
+ *
+ * `C` types `BeelzebubConfig.context`, the host services task classes read as `$context`.
  */
-export class Beelzebub {
+export class Beelzebub<C = unknown> {
   static readonly Tasks = BzTasks;
   static readonly InterfaceTasks = InterfaceTasks;
 
@@ -62,14 +65,15 @@ export class Beelzebub {
   protected _globalVars: Record<string, unknown> = {};
   protected _stats!: BzTaskStats;
 
-  constructor(config?: BeelzebubConfig) {
+  constructor(config?: BeelzebubConfig<C>) {
     this.version = manifest.version;
-    this.reset();
+    this._clearState();
     this.init(config);
     this.events = new EventEmitter();
   }
 
-  init(config: BeelzebubConfig = util.DefaultConfig): void {
+  // A copy, so the defaults it fills in never leak into other instances.
+  init(config: BeelzebubConfig = { ...util.DefaultConfig }): void {
     if (!config.commandRunner) config.commandRunner = new NodeCommandRunner();
     if (!config.workflow) {
       config.workflow = GitHubWorkflowRuntime.isAvailable()
@@ -122,7 +126,29 @@ export class Beelzebub {
     this._stats = new BzTaskStats();
   }
 
+  /**
+   * Return to the default configuration with no tasks, as a new instance
+   * would be. Event listeners are kept. Rejects while a run is in progress.
+   */
   reset(): void {
+    if (this._tasksRunning) throw new Error('Cannot reset Beelzebub while a run is in progress.');
+    this._clearState();
+    this.init();
+  }
+
+  /**
+   * Clear per-run state so the next `run()` starts fresh: `$beforeAll` runs
+   * again, and executions and stats start empty. Rejects while a run is in progress.
+   */
+  resetRunState(): void {
+    if (this._tasksRunning) {
+      throw new Error('Cannot reset run state while a run is in progress.');
+    }
+    (this._rootTasks as unknown as { _resetRunState: () => void })._resetRunState();
+    this._stats = new BzTaskStats();
+  }
+
+  protected _clearState(): void {
     this.logger = console as unknown as LoggerLike;
     this.vLogger = { log: () => {}, info: () => {} };
     this.helpLogger = console as unknown as LoggerLike;
@@ -135,8 +161,8 @@ export class Beelzebub {
     this._globalVars = {};
   }
 
-  getConfig(): BeelzebubConfig {
-    return this._config;
+  getConfig(): BeelzebubConfig<C> {
+    return this._config as BeelzebubConfig<C>;
   }
 
   setGlobalVars(vars: Record<string, unknown>): void {
@@ -235,6 +261,7 @@ export class Beelzebub {
       const { name: _name, parentPath: _parentPath, ...inherited } = this._config;
       const merged: BeelzebubConfig = util.deepMerge({ ...inherited } as BeelzebubConfig, config);
       merged.beelzebub = this;
+      if (config?.context !== undefined) merged.context = config.context;
       const Ctor = resolvedTasks as new (cfg: BeelzebubConfig) => BzTasks;
       tasks = new Ctor(merged);
 
@@ -265,33 +292,54 @@ export class Beelzebub {
     this._rootTasks.$addSubTasks(tasks!, config);
   }
 
-  async run(parent?: unknown, ...args: unknown[]): Promise<unknown> {
-    let entryPoint = false;
-    if (!this._tasksRunning) {
-      entryPoint = true;
-      this._tasksRunning = true;
-      this._stats.start();
+  /**
+   * Run tasks by path (`'Build.compile'`), reference, or function. `T` types
+   * the result.
+   *
+   * A host uses one instance per run, or calls `resetRunState()` between runs:
+   * `$beforeAll` runs once per instance, and executions and stats accumulate.
+   * A second top-level `run()` while one is in progress rejects; calls from
+   * inside a run (tasks, hooks, and event listeners) join it.
+   *
+   * With `failureMode: 'log'`, a failing top-level run logs the error and
+   * resolves `undefined`. Nested runs and pipeline steps always reject.
+   */
+  async run<T = unknown>(parent?: unknown, ...args: unknown[]): Promise<T> {
+    args.unshift(parent);
+    // The root tasks are always hidden, so call the internal methods directly.
+    const root = this._rootTasks as unknown as {
+      _run: (...a: unknown[]) => Promise<unknown>;
+      _runAfterAll: () => Promise<unknown>;
+    };
+    if (frameFor(this)) return (await root._run(...args)) as T;
+    if (this._tasksRunning) {
+      throw new Error(
+        'This Beelzebub instance is already running. Use one instance per concurrent run, or await the previous run().'
+      );
     }
 
-    args.unshift(parent);
-    try {
-      // The root tasks are always hidden, so call the internal `_run` directly.
-      return await (
-        this._rootTasks as unknown as { _run: (...a: unknown[]) => Promise<unknown> }
-      )._run(...args);
-    } finally {
-      if (entryPoint) {
+    this._tasksRunning = true;
+    this._stats.start();
+    // The run frame carries the instance signal to every task it starts.
+    return runInFrame(
+      { app: this, signal: this._config.signal ?? neverAbortedSignal },
+      async () => {
         try {
-          await (
-            this._rootTasks as unknown as { _runAfterAll: () => Promise<unknown> }
-          )._runAfterAll();
+          return (await root._run(...args)) as T;
+        } catch (error) {
+          if (this._config.failureMode === 'log') return undefined as T;
+          throw error;
         } finally {
-          this._stats.end();
-          this._tasksRunning = false;
-          this._printSummary();
+          try {
+            await root._runAfterAll();
+          } finally {
+            this._stats.end();
+            this._tasksRunning = false;
+            this._printSummary();
+          }
         }
       }
-    }
+    );
   }
 
   sequence(parent: unknown, ...args: unknown[]): Promise<unknown> {

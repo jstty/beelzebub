@@ -166,3 +166,53 @@ describe('workflow testing adapters', () => {
     ).toBe(true);
   });
 });
+
+describe('scoped local runtime environment', () => {
+  // Windows spells it `Path`.
+  const pathKey = Object.keys(process.env).find((name) => name.toUpperCase() === 'PATH') ?? 'PATH';
+  const separator = process.platform === 'win32' ? ';' : ':';
+
+  it('keeps exports off process.env and passes them to $exec beneath the caller env', async () => {
+    const runtime = new LocalWorkflowRuntime({}, new MemorySummarySink(), { env: 'scoped' });
+    const runner = new MemoryCommandRunner();
+    const app = bz.create(createTestConfig({ workflow: runtime, commandRunner: runner }).config);
+
+    class Env extends BzTasks {
+      async run(): Promise<void> {
+        await this.workflow.exportVariable('BEELZEBUB_TEST_VARIABLE', 'scoped');
+        await this.workflow.exportVariable('MODE', 'runtime');
+        await this.workflow.addPath('/first');
+        await this.workflow.addPath('/second');
+        await this.$exec('build', [], { env: { MODE: 'caller' } });
+      }
+    }
+
+    app.add(Env);
+    await app.run('Env.run');
+
+    expect(process.env.BEELZEBUB_TEST_VARIABLE).toBeUndefined();
+    expect(process.env.PATH).toBe(originalPath);
+    expect(runner.calls[0]!.options.env).toEqual({
+      BEELZEBUB_TEST_VARIABLE: 'scoped',
+      MODE: 'caller',
+      [pathKey]: ['/second', '/first', originalPath].join(separator)
+    });
+  });
+
+  it('uses the Windows separator and PATH spelling, and is empty in process mode', async () => {
+    const platform = Object.getOwnPropertyDescriptor(process, 'platform')!;
+    Object.defineProperty(process, 'platform', { value: 'win32' });
+    try {
+      const runtime = new LocalWorkflowRuntime({}, new MemorySummarySink(), { env: 'scoped' });
+      await runtime.addPath('C:\\tools');
+      expect(runtime.getEnv()[pathKey]).toBe(`C:\\tools;${originalPath}`);
+    } finally {
+      Object.defineProperty(process, 'platform', platform);
+    }
+
+    const shared = new LocalWorkflowRuntime({}, new MemorySummarySink());
+    await shared.exportVariable('BEELZEBUB_TEST_VARIABLE', 'shared');
+    expect(shared.getEnv()).toEqual({});
+    expect(process.env.BEELZEBUB_TEST_VARIABLE).toBe('shared');
+  });
+});

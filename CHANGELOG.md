@@ -25,6 +25,20 @@ Notable project changes are documented here. The format follows Keep a Changelog
 - TypeDoc API documentation and a dedicated 1.x migration guide.
 - A new responsive product website with an expanded example library, integrated API reference,
   Firebase Hosting configuration, preview deployment, and automated static-site validation.
+- Cancellation: `BeelzebubConfig.signal`, `$signal` on task classes, and `$pipeline(steps, { signal })`.
+  `$exec` passes the signal to the command runner; cancelled tasks and pipeline steps are recorded
+  as `cancelled`; `always()` steps still run after an abort; a cancelled pipeline rejects with
+  `PipelineCancelledError`. `MemoryCommandRunner` rejects when its signal has aborted.
+- Host services: `BeelzebubConfig.context`, passed by reference and read as `$context` on
+  `BzTasks<C>`; `bz.create<C>()` returns `Beelzebub<C>`.
+- Pipeline step events `$stepStart` and `$stepEnd`, and `onStepStart`/`onStepEnd` hooks on
+  `executePipeline`.
+- Typed pipelines: `step(id, fn)`, `PipelineStep<T>`, `PipelineValues`, `PipelineResult<V>`,
+  `run<T>()`, and `$run<T>()`.
+- `resetRunState()` for reusing an instance between runs.
+- `LocalWorkflowRuntime` option `{ env: 'scoped' }` and `WorkflowRuntime.getEnv()`, so exported
+  variables and paths reach `$exec` child processes without changing `process.env`.
+- An `author` filter on `upsertIssueComment` for comments posted with a user token.
 
 ### Changed
 
@@ -37,6 +51,11 @@ Notable project changes are documented here. The format follows Keep a Changelog
 - Promise, generator, sequence, parallel, and stream execution use native Node and JavaScript APIs.
 - Examples use TypeScript and Gulp 5.
 - Git dependencies build their untracked `dist/` output through npm's `prepare` lifecycle.
+- `failureMode: 'log'` applies to the top-level `run()` only; nested runs and pipeline steps always
+  reject.
+- A second top-level `run()` on an instance while one is in progress rejects.
+- `reset()` re-initializes the instance, so it can run again.
+- Pipeline function steps are recorded under their step id instead of `default`.
 
 ### Fixed
 
@@ -44,6 +63,11 @@ Notable project changes are documented here. The format follows Keep a Changelog
 - Summary statistics no longer double-count earlier runs when results are added in batches.
 - A `name` in the instance configuration (`bz.create({ name })`) no longer renames every task
   class added to that instance; classes keep their own namespace unless `add()` names them.
+- `$emit` reports the running task even when tasks of one class overlap; it used to report
+  whichever task started last.
+- Under `failureMode: 'log'`, a failing pipeline step was recorded as a success.
+- A no-argument `bz.create()` wrote its command runner, workflow, and loggers into the shared
+  defaults, so later instances shared them.
 
 ### Removed
 

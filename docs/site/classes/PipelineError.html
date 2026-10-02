@@ -10,14 +10,16 @@
 <ul class="tsd-breadcrumb" aria-label="Breadcrumb">
 <li><a href="" aria-current="page">PipelineError</a></li></ul>
 <h1>Class PipelineError</h1></div>
-<section class="tsd-panel tsd-hierarchy" data-refl="911">
-<h4>Hierarchy</h4>
+<section class="tsd-panel tsd-hierarchy" data-refl="974">
+<h4>Hierarchy (<a href="../hierarchy.html#PipelineError">View Summary</a>)</h4>
 <ul class="tsd-hierarchy">
 <li class="tsd-hierarchy-item"><span class="tsd-signature-type">Error</span>
 <ul class="tsd-hierarchy">
-<li class="tsd-hierarchy-item"><span class="tsd-hierarchy-target">PipelineError</span></li></ul></li></ul></section><aside class="tsd-sources">
+<li class="tsd-hierarchy-item"><span class="tsd-hierarchy-target">PipelineError</span>
+<ul class="tsd-hierarchy">
+<li class="tsd-hierarchy-item"><a href="PipelineCancelledError.html" class="tsd-signature-type tsd-kind-class">PipelineCancelledError</a></li></ul></li></ul></li></ul></section><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/pipeline.ts#L33">src/pipeline.ts:33</a></li></ul></aside>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/pipeline.ts#L101">src/pipeline.ts:101</a></li></ul></aside>
 <section class="tsd-panel-group tsd-index-group">
 <section class="tsd-panel tsd-index-panel">
 <details class="tsd-index-content tsd-accordion" open><summary class="tsd-accordion-summary tsd-index-summary"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
@@ -48,16 +50,17 @@
 <h3 class="tsd-anchor-link" id="constructor"><span>constructor</span><a href="#constructor" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <ul class="tsd-signatures">
 <li class="">
-<div class="tsd-signature tsd-anchor-link" id="constructorpipelineerror"><span class="tsd-signature-keyword">new</span> <span class="tsd-kind-constructor-signature">PipelineError</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">result</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/PipelineResult.html" class="tsd-signature-type tsd-kind-interface">PipelineResult</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">PipelineError</a><a href="#constructorpipelineerror" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
+<div class="tsd-signature tsd-anchor-link" id="constructorpipelineerror"><span class="tsd-signature-keyword">new</span> <span class="tsd-kind-constructor-signature">PipelineError</span><span class="tsd-signature-symbol">(</span><span class="tsd-kind-parameter">result</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/PipelineResult.html" class="tsd-signature-type tsd-kind-interface">PipelineResult</a><span class="tsd-signature-symbol">,</span> <span class="tsd-kind-parameter">message</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">:</span> <a href="" class="tsd-signature-type tsd-kind-class">PipelineError</a><a href="#constructorpipelineerror" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></div>
 <div class="tsd-description">
 <div class="tsd-parameters">
 <h4 class="tsd-parameters-title">Parameters</h4>
 <ul class="tsd-parameter-list">
-<li><span><span class="tsd-kind-parameter">result</span>: <a href="../interfaces/PipelineResult.html" class="tsd-signature-type tsd-kind-interface">PipelineResult</a></span></li></ul></div>
+<li><span><span class="tsd-kind-parameter">result</span>: <a href="../interfaces/PipelineResult.html" class="tsd-signature-type tsd-kind-interface">PipelineResult</a></span></li>
+<li><span><code class="tsd-tag">Optional</code><span class="tsd-kind-parameter">message</span>: <span class="tsd-signature-type">string</span></span></li></ul></div>
 <h4 class="tsd-returns-title">Returns <a href="" class="tsd-signature-type tsd-kind-class">PipelineError</a></h4><aside class="tsd-sources">
 <p>Overrides Error.constructor</p>
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/pipeline.ts#L36">src/pipeline.ts:36</a></li></ul></aside></div></li></ul></section></section></details>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/pipeline.ts#L104">src/pipeline.ts:104</a></li></ul></aside></div></li></ul></section></section></details>
 <details class="tsd-panel-group tsd-member-group tsd-accordion" open><summary class="tsd-accordion-summary" data-key="section-Methods"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true"><use href="../assets/icons.svg#icon-chevronDown"></use></svg>
 <h2 class="tsd-anchor-link" id="methods-1">Methods<a href="#methods-1" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h2></summary>
 <section>
@@ -137,7 +140,7 @@ details of error generation from the user. For instance:</p>
 <h3 class="tsd-anchor-link" id="result"><code class="tsd-tag">Readonly</code><span>result</span><a href="#result" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">result</span><span class="tsd-signature-symbol">:</span> <a href="../interfaces/PipelineResult.html" class="tsd-signature-type tsd-kind-interface">PipelineResult</a></div><aside class="tsd-sources">
 <ul>
-<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/pipeline.ts#L34">src/pipeline.ts:34</a></li></ul></aside></section>
+<li>Defined in <a href="https://github.com/jstty/beelzebub/blob/main/src/pipeline.ts#L102">src/pipeline.ts:102</a></li></ul></aside></section>
 <section class="tsd-panel tsd-member tsd-is-inherited tsd-is-external">
 <h3 class="tsd-anchor-link" id="stack"><code class="tsd-tag">Optional</code><span>stack</span><a href="#stack" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="../assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <div class="tsd-signature"><span class="tsd-kind-property">stack</span><span class="tsd-signature-symbol">?:</span> <span class="tsd-signature-type">string</span></div><aside class="tsd-sources">

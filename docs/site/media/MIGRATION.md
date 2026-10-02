@@ -77,6 +77,15 @@ New task code should migrate generator control flow to `async`/`await`:
 
 Generator tasks continue to run for compatibility.
 
+## Failures, runs, and pipelines
+
+- **`failureMode`.** The 2.0 default is `'throw'`: a failing `run()` rejects. `'log'` keeps the 1.x behavior of logging the error and resolving `undefined`, but only for the top-level `run()`. Nested runs and pipeline steps always reject, so a failing step is recorded as a failure.
+- **One run at a time.** A second top-level `run()` on an instance while one is in progress rejects. Calls from inside a run (tasks, hooks, and event listeners) still join it. Use one instance per concurrent run.
+- **Run state.** `$beforeAll` runs once per instance, and executions accumulate across runs. Call `resetRunState()` between runs to start fresh. `reset()` now returns the instance to a default configuration with no tasks, instead of leaving it unusable.
+- **Reserved configuration keys.** `context` (host services, read as `$context`) and `signal` (cancellation, read as `$signal`) are now part of `BeelzebubConfig`. Rename custom config keys with those names.
+- **`$emit`** is always available on task classes, and reports the task that is actually running.
+- **Pipeline steps** are typed: `task` is a task path, a `{ task, vars }` reference, or a function. `executePipeline` accepts any `task` value through `PipelineDefinition`, and its `execute` callback receives each step's id and signal as a second argument. Function steps are recorded under their step id instead of `default`.
+
 ## CLI task files
 
 ESM and CommonJS JavaScript task files load through Node's module system. To load `.ts` task files containing types or decorators, install `tsx` in the consuming project and register it with Node:

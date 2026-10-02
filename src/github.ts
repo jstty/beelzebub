@@ -382,15 +382,41 @@ export class GitHubWorkflowRuntime implements WorkflowRuntime {
 
 export type GitHubApiClient = ReturnType<typeof github.getOctokit>;
 
+/** The author of an existing issue comment, as GitHub reports it. */
+export interface IssueCommentAuthor {
+  login: string;
+  type: string;
+}
+
 export interface UpsertIssueCommentOptions {
   owner: string;
   repo: string;
   issueNumber: number;
   marker: string;
   body: string;
+  /**
+   * Which existing marker comment may be updated. Default: `{ type: 'Bot' }`.
+   * Comments posted with a user token have type `User`, so match them by
+   * `login`; a function decides for itself.
+   */
+  author?:
+    | { login?: string; type?: 'Bot' | 'User' | 'Organization' }
+    | ((user: IssueCommentAuthor | null) => boolean);
 }
 
-/** Create or update a bot-authored marker comment, useful for stable PR reports. */
+function authorMatches(
+  author: NonNullable<UpsertIssueCommentOptions['author']>,
+  user: IssueCommentAuthor | null
+): boolean {
+  if (typeof author === 'function') return author(user);
+  return (
+    user !== null &&
+    (author.login === undefined || user.login === author.login) &&
+    (author.type === undefined || user.type === author.type)
+  );
+}
+
+/** Create or update a marker comment (bot-authored by default), useful for stable PR reports. */
 export async function upsertIssueComment(
   client: GitHubApiClient,
   options: UpsertIssueCommentOptions
@@ -401,8 +427,14 @@ export async function upsertIssueComment(
     issue_number: options.issueNumber,
     per_page: 100
   });
+  const author = options.author ?? { type: 'Bot' };
   const previous = comments.find(
-    (comment) => comment.user?.type === 'Bot' && comment.body?.includes(options.marker)
+    (comment) =>
+      comment.body?.includes(options.marker) &&
+      authorMatches(
+        author,
+        comment.user ? { login: comment.user.login, type: comment.user.type } : null
+      )
   );
   if (previous) {
     await client.rest.issues.updateComment({
