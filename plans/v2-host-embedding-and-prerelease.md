@@ -437,6 +437,19 @@ Beelzebub stays a single-process task engine. Durability and loops belong to Hyp
 
 ## RC exit criteria
 
+**Status.** All met by `2.0.0-next.3` (2026-10-02), so `2.0.0-rc.1` freezes the same API:
+
+1. Every "before rc" item merged in #65 and #67, with tests, and `npm run check` passes.
+2. `2.0.0-next.1`, `next.2`, and `next.3` were published through `release.yml` with provenance.
+3. The consumers ran against `next.3`:
+   - Hypersmith (jstty/hypersmith.ai#73) replaced its DP-01 D4 and D5 workarounds with
+     `context`/`$context` and `signal`/`$signal`, and its CI passed. Its backend loaded the
+     package through CommonJS and ran a two-step `$pipeline` with `MemoryCommandRunner`, `context`,
+     and `signal` under Node 24.16 and under its shipped Electron 37.4.0 runtime (Node 22.18).
+   - bzci.ai (jstty/bzci.ai#86) pins the exact `2.0.0-next.3` from npm, locked by integrity,
+     and its CI passed.
+4. `CHANGELOG.md` and `MIGRATION.md` describe the 2.0 API (#67).
+
 1. Every "before rc" item (1, 2, 3, 4, 5, 11, and the documentation part of 10) is merged to `dev/v2.0` with tests, and `npm run check` passes.
 2. At least one `2.0.0-next.N` build has been published through `release.yml`, proving trusted publishing and the `npm-publish` environment.
 3. Both consumers have run against a `next` build that contains all "before rc" items:

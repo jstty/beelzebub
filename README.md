@@ -22,6 +22,7 @@ Tasks are **Modular, Extendable, Testable, Manageable, and Fire Resistant!**
 - **TC39 standard decorators** — no Babel and no `experimentalDecorators`
 - **Legacy async/build dependencies removed** — native promises, streams, argument parsing, and ES2024 APIs replace `co`, `when`, `yargs`, Lodash, and related packages
 - **Vitest 4** test suite (replaces Mocha/Chai)
+- **Embeddable** — cancellation through an `AbortSignal`, typed host services (`$context`), live pipeline step events, and typed step values for applications that run Beelzebub in-process
 - **Async/await tasks** are first-class. Generator tasks (`* task()` with `yield`) still supported for legacy compatibility, but no longer require `co`
 
 ### Breaking Changes from v1
@@ -66,13 +67,13 @@ Tasks are **Modular, Extendable, Testable, Manageable, and Fire Resistant!**
 
 ## API
 ```shell
-npm install beelzebub@next
+npm install beelzebub@rc
 ```
 
-2.0 is in preview. `beelzebub@next` installs the newest `2.0.0-next.N` build, and the API can
-still change between builds, so pin an exact version (for example `2.0.0-next.3`) in
-applications. Release candidates will use the `rc` dist-tag. The `latest` dist-tag, and a plain
-`npm install beelzebub`, remain on 1.x until 2.0.0 is released.
+2.0 is a release candidate. `beelzebub@rc` installs the newest `2.0.0-rc.N` build. The API is
+frozen, and only fixes land before 2.0.0; pin an exact version (for example `2.0.0-rc.1`) in
+applications. The `latest` dist-tag, and a plain `npm install beelzebub`, remain on 1.x until
+2.0.0 is released.
 
 To try the unreleased 2.0 branch directly from GitHub:
 
@@ -88,7 +89,7 @@ Git installs run the package's `prepare` lifecycle and build the untracked `dist
 
 ## CLI
 ```shell
-npm install -g beelzebub@next
+npm install -g beelzebub@rc
 ```
 
 ---
