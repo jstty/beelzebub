@@ -4,7 +4,7 @@ Beelzebub 2.0 is a breaking modernization release. It replaces the Babel impleme
 
 ## Runtime and installation
 
-- Install the 2.0 preview with `npm install beelzebub@next`. The `latest` dist-tag stays on 1.x until 2.0.0 is released, so a plain `npm install beelzebub` still installs 1.x.
+- Install the 2.0 release candidate with `npm install beelzebub@rc`. The `latest` dist-tag stays on 1.x until 2.0.0 is released, so a plain `npm install beelzebub` still installs 1.x.
 - Upgrade Node.js to 22.12 or newer (24.15 or newer on Node 24). CI should also test Node 26.
 - Use npm 12 when contributing to Beelzebub itself.
 - Existing CommonJS consumers can continue to use the callable `require('beelzebub')` API.

@@ -19,6 +19,9 @@ Notable project changes are documented here. The format follows Keep a Changelog
   `$stepEnd` events, typed pipeline step values, `resetRunState()`, and scoped workflow
   environments. `failureMode: 'log'` now applies to the top-level `run()` only, and a concurrent
   top-level `run()` rejects.
+- `2.0.0-rc.1`: the 2.0 API is frozen; only fixes land before `2.0.0`. Published on the `rc`
+  dist-tag (`npm install beelzebub@rc`). Hypersmith and bzci.ai both run on `2.0.0-next.3`, which
+  has the same API.
 
 ### Added
 
@@ -85,3 +88,5 @@ Notable project changes are documented here. The format follows Keep a Changelog
 - Updated all direct tooling dependencies and regenerated lockfiles.
 - Removed vulnerable example and documentation-development dependencies.
 - Added root and example audit gates.
+- The examples audit allows GHSA-vfj7-8cjw-p6xm (`braces`, which has no fixed release) until a fix
+  ships. It reaches only the examples' gulp tooling; any other high or critical advisory still fails.
