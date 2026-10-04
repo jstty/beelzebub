@@ -119,7 +119,7 @@
     "format:check": "prettier --check .",
     "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.test.json",
     "validate-pkg": "publint && attw --pack .",
-    "audit": "npm audit --audit-level=high && npm --prefix examples audit --audit-level=high",
+    "audit": "npm audit --audit-level=high && node scripts/audit-examples.js",
     "check": "npm run format:check && npm run lint && npm run typecheck && npm test && npm run coverage && npm run build && npm run test:package && npm run site:check && npm run validate-pkg && npm run audit",
     "prepare": "npm run build",
     "prepublishOnly": "npm run clean && npm run build && npm run validate-pkg"

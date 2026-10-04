@@ -88,3 +88,5 @@ Notable project changes are documented here. The format follows Keep a Changelog
 - Updated all direct tooling dependencies and regenerated lockfiles.
 - Removed vulnerable example and documentation-development dependencies.
 - Added root and example audit gates.
+- The examples audit allows GHSA-vfj7-8cjw-p6xm (`braces`, which has no fixed release) until a fix
+  ships. It reaches only the examples' gulp tooling; any other high or critical advisory still fails.
