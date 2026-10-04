@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="An AI-agent playbook for replacing shell and package-script sprawl with testable Beelzebub workflow components."
+    />
+    <meta name="theme-color" content="#140d20" />
+    <title>Migrate — Beelzebub</title>
+    <link rel="icon" href="/assets/bz-logo.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/assets/site.css" />
+    <script src="/assets/site.js" defer></script>
+    <script src="/assets/page-trace.js" defer></script>
+  </head>
+  <body class="examples-page migration-page">
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="site-header" data-header>
+      <div class="shell nav-shell">
+        <a class="brand" href="/" aria-label="Beelzebub home">
+          <span class="brand-mark"><img src="/assets/bz-logo.svg" alt="" /></span>
+          <span class="brand-name">beelzebub</span>
+          <span class="version-pill">2.0</span>
+        </a>
+
+        <button
+          class="nav-toggle"
+          type="button"
+          aria-expanded="false"
+          aria-controls="primary-nav"
+          data-nav-toggle
+        >
+          <span class="nav-toggle-line"></span>
+          <span class="nav-toggle-line"></span>
+          <span class="sr-only">Toggle navigation</span>
+        </button>
+
+        <nav class="primary-nav" id="primary-nav" aria-label="Primary" data-nav>
+          <a href="/">Overview</a>
+          <a href="/examples/">Examples</a>
+          <a href="/api/">API</a>
+          <a href="/migrate/" aria-current="page">Migrate</a>
+          <a class="nav-github" href="https://github.com/jstty/beelzebub">GitHub</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main">
+      <section class="examples-hero migration-hero">
+        <div class="shell examples-hero-inner">
+          <div>
+            <span class="eyebrow eyebrow-bright">PROJECT AUTOMATION → BEELZEBUB 2.0</span>
+            <h1>Let an AI agent turn script sprawl into <span>testable components.</span></h1>
+            <p>
+              Give an agent this playbook. It will audit package scripts, shell files, CI commands,
+              and other task runners; map them into named Beelzebub components; add focused tests;
+              preserve the commands people already use; and prove the migrated workflows still work.
+            </p>
+          </div>
+          <div class="migration-badge">
+            <span>Agent-ready playbook</span>
+            <strong>Shell → Tested code</strong>
+            <small>package.json · shell · CI · task runners</small>
+          </div>
+        </div>
+      </section>
+
+      <section class="migration-content">
+        <div class="shell migration-layout">
+          <aside class="migration-nav" aria-label="Migration sections">
+            <span>On this page</span>
+            <a href="#agent">Give this to your agent</a>
+            <a href="#scope">What this migrates</a>
+            <a href="#plan">Plan the task graph</a>
+            <a href="#example">Before and after</a>
+            <a href="#packages">Reuse task packages</a>
+            <a href="#verify">Verify the result</a>
+          </aside>
+
+          <div class="migration-main">
+            <section class="migration-section agent-migration" id="agent">
+              <span class="eyebrow">GIVE THIS TO YOUR AGENT</span>
+              <h2>A complete implementation contract, ready to paste.</h2>
+              <p>
+                The Markdown guide tells an AI coding agent what to inspect, how to model the task
+                graph, which behavior to preserve, what to test, and how to report the result.
+              </p>
+
+              <div class="agent-workflow" aria-label="Agent migration workflow">
+                <article>
+                  <span>01</span>
+                  <strong>Discover</strong>
+                  <p>
+                    Inventory scripts, shell files, task runners, CI, runtime, and existing tests.
+                  </p>
+                </article>
+                <article>
+                  <span>02</span>
+                  <strong>Design</strong>
+                  <p>Map ordering, parallelism, inputs, cleanup, and reusable task boundaries.</p>
+                </article>
+                <article>
+                  <span>03</span>
+                  <strong>Implement</strong>
+                  <p>
+                    Create composable tasks and keep current package and CI entry points stable.
+                  </p>
+                </article>
+                <article>
+                  <span>04</span>
+                  <strong>Verify</strong>
+                  <p>Compare behavior, run the full validation suite, and report every result.</p>
+                </article>
+              </div>
+
+              <div class="agent-prompt-window" aria-label="Prompt for a coding agent">
+                <div class="example-code-bar">
+                  <span>Agent prompt</span>
+                  <button type="button" data-copy-panel>
+                    <span data-copy-label>Copy prompt</span>
+                  </button>
+                </div>
+                <pre
+                  class="example-code"
+                ><code>Migrate this project's task automation from package.json scripts, shell scripts,
+CI-only commands, and other task runners to Beelzebub 2.0.
+
+Follow https://beelzebub.io/migrate/agent-guide.md as the implementation contract.
+
+First inventory every public and private automation entry point and run the existing
+validation. Preserve command names and behavior. Replace complex command chains with
+named, composable Beelzebub tasks; model ordering with $sequence(), independent work
+with $parallel(), and reuse or extend shared task packages where useful. Keep package.json
+scripts and CI steps as short wrappers around the same task graph.
+
+Use Node 24.15 or newer, choose the project's existing ESM or CommonJS format, and
+configure TypeScript task-file loading when needed. Run the full project validation and
+representative Beelzebub CLI tasks. Report changed files, commands run, results, risks,
+and manual follow-up. Do not commit, push, publish, or deploy unless explicitly authorized.</code></pre>
+                <div class="agent-guide-footer">
+                  <p>
+                    Open the raw Markdown page and give its URL or complete contents directly to
+                    your coding agent.
+                  </p>
+                  <a class="button button-primary" href="/migrate/agent-guide.md"
+                    >Open Markdown guide <span aria-hidden="true">↗</span></a
+                  >
+                </div>
+              </div>
+            </section>
+
+            <section class="migration-section" id="scope">
+              <span class="eyebrow">START WITH THE PROJECT</span>
+              <h2>Move shell logic into workflow code you can test.</h2>
+              <p>
+                The goal is not a dependency swap. It is to move scattered orchestration into one
+                readable task graph without changing the public commands, inputs, or behavior that
+                developers and CI depend on.
+              </p>
+              <div class="breaking-grid">
+                <article>
+                  <span>01</span>
+                  <strong>Package scripts</strong>
+                  <p>
+                    Untangle long chains, repeated flags, nested npm calls, and concurrency tools.
+                  </p>
+                </article>
+                <article>
+                  <span>02</span>
+                  <strong>Shell + task runners</strong>
+                  <p>
+                    Map opaque scripts, Make targets, and tool-specific pipelines into named tasks.
+                  </p>
+                </article>
+                <article>
+                  <span>03</span>
+                  <strong>CI-only commands</strong>
+                  <p>
+                    Stop duplicating workflow logic across local scripts, containers, and CI jobs.
+                  </p>
+                </article>
+              </div>
+            </section>
+
+            <section class="migration-section" id="plan">
+              <span class="eyebrow">DESIGN THE TASK GRAPH</span>
+              <h2>Preserve the commands. Replace the sprawl.</h2>
+              <p>
+                An agent should inventory every entry point before editing, then translate how the
+                work behaves—not merely copy shell strings into task methods. Each public workflow
+                should end with a focused behavioral test.
+              </p>
+              <div class="migration-table-wrap">
+                <table class="migration-table">
+                  <thead>
+                    <tr>
+                      <th scope="col">Existing automation</th>
+                      <th scope="col">Beelzebub task model</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>Long <code>&amp;&amp;</code> chains</td>
+                      <td>Explicit ordered work with <code>$sequence()</code></td>
+                    </tr>
+                    <tr>
+                      <td><code>concurrently</code> and background jobs</td>
+                      <td>Independent work with <code>$parallel()</code></td>
+                    </tr>
+                    <tr>
+                      <td>Commands copied across scripts, CI, and docs</td>
+                      <td>One named task called from every interface</td>
+                    </tr>
+                    <tr>
+                      <td>Opaque shell entry points</td>
+                      <td>Focused, typed task classes organized by domain</td>
+                    </tr>
+                    <tr>
+                      <td>Shared steps copied between repositories</td>
+                      <td>Imported task packages, subtasks, or extended task classes</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <p class="migration-note">
+                Keep familiar npm script names as short wrappers. Developers and CI keep using
+                <code>npm run verify</code>; Beelzebub owns the orchestration behind it.
+              </p>
+            </section>
+
+            <section class="migration-section" id="example">
+              <span class="eyebrow">BEFORE + AFTER</span>
+              <h2>Turn a release script into a task graph.</h2>
+              <p>
+                This is the kind of automation the agent should convert: repeated work, hidden
+                ordering, and multiple entry points that can quietly drift apart.
+              </p>
+
+              <div class="migration-code-stack">
+                <div class="diff-window" aria-label="Package scripts before migration">
+                  <div class="example-code-bar">
+                    <span>package.json · before</span>
+                    <button type="button" data-copy-panel>
+                      <span data-copy-label>Copy</span>
+                    </button>
+                  </div>
+                  <pre class="example-code"><code>{
+  "scripts": {
+    "clean": "rimraf dist artifacts",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "build": "tsc -p tsconfig.build.json",
+    "package": "node tools/package.mjs",
+    "publish:artifacts": "node tools/publish.mjs",
+    "verify": "concurrently --kill-others-on-fail \"npm:lint\" \"npm:typecheck\" \"npm:test\"",
+    "release": "npm run clean &amp;&amp; npm run verify &amp;&amp; npm run build &amp;&amp; npm run package &amp;&amp; npm run publish:artifacts",
+    "ci": "npm ci &amp;&amp; npm run clean &amp;&amp; npm run lint &amp;&amp; npm run typecheck &amp;&amp; npm test &amp;&amp; npm run build"
+  }
+}</code></pre>
+                </div>
+
+                <div class="diff-window" aria-label="Beelzebub task graph after migration">
+                  <div class="example-code-bar">
+                    <span>beelzebub.js · after</span>
+                    <button type="button" data-copy-panel>
+                      <span data-copy-label>Copy</span>
+                    </button>
+                  </div>
+                  <pre class="example-code"><code>import bz from 'beelzebub';
+import {
+  cleanOutput, lintProject, typecheckProject, testProject,
+  buildProject, packageProject, publishArtifacts
+} from './tools/project.js';
+
+export default class Project extends bz.Tasks {
+  verify() {
+    return this.$parallel('.lint', '.typecheck', '.test');
+  }
+
+  release() {
+    return this.$sequence('.clean', '.verify', '.build', '.package', '.publish');
+  }
+
+  async clean() { await cleanOutput(); }
+  async lint() { await lintProject(); }
+  async typecheck() { await typecheckProject(); }
+  async test() { await testProject(); }
+  async build() { await buildProject(); }
+  async package() { await packageProject(); }
+  async publish() { await publishArtifacts(); }
+}</code></pre>
+                </div>
+
+                <div class="diff-window" aria-label="Concise package scripts after migration">
+                  <div class="example-code-bar">
+                    <span>package.json · after</span>
+                    <button type="button" data-copy-panel>
+                      <span data-copy-label>Copy</span>
+                    </button>
+                  </div>
+                  <pre class="example-code"><code>{
+  "scripts": {
+    "clean": "bz Project.clean",
+    "lint": "bz Project.lint",
+    "typecheck": "bz Project.typecheck",
+    "test": "bz Project.test",
+    "build": "bz Project.build",
+    "package": "bz Project.package",
+    "publish:artifacts": "bz Project.publish",
+    "verify": "bz Project.verify",
+    "release": "bz Project.release",
+    "ci": "npm ci &amp;&amp; bz Project.clean Project.verify Project.build"
+  }
+}</code></pre>
+                </div>
+              </div>
+              <p class="migration-note">
+                Every original script still has an equivalent entry point. The CI dependency install
+                stays before <code>bz</code> because it must install Beelzebub before the task
+                runner can start.
+              </p>
+            </section>
+
+            <section class="migration-section" id="packages">
+              <span class="eyebrow">COMPOSE ACROSS PROJECTS</span>
+              <h2>Import shared tasks. Extend only what is different.</h2>
+              <p>
+                Beelzebub tasks can come from installed packages as well as local files. Load task
+                classes together, organize them as subtasks, or extend a shared task class and
+                override only the project-specific behavior.
+              </p>
+              <div class="diff-window" aria-label="Extending a shared Beelzebub task package">
+                <div class="example-code-bar">
+                  <span>beelzebub.js</span>
+                  <button type="button" data-copy-panel>
+                    <span data-copy-label>Copy</span>
+                  </button>
+                </div>
+                <pre class="example-code"><code>import SharedQuality from '@acme/beelzebub-quality';
+import ProjectTasks from './tasks/project.js';
+
+class Quality extends SharedQuality {
+  async lint() {
+    await lintWithProjectRules();
+  }
+}
+
+export default [Quality, ProjectTasks];</code></pre>
+              </div>
+            </section>
+
+            <section class="migration-section" id="verify">
+              <span class="eyebrow">PROVE THE MIGRATION</span>
+              <h2>Behavior first. Green checks at the end.</h2>
+              <ol class="migration-checklist">
+                <li>Inventory every automation entry point and record pre-existing failures.</li>
+                <li>
+                  Preserve command names, inputs, environment variables, order, and exit behavior.
+                </li>
+                <li>
+                  Use Node 24.15 or newer and install Beelzebub 2.0 with the project’s package
+                  manager.
+                </li>
+                <li>
+                  Exercise both <code>bz --file ./tasks.js</code> and
+                  <code>bz -f ./tasks.js</code> when documented.
+                </li>
+                <li>
+                  Run the project’s format, lint, typecheck, test, build, and package validation.
+                </li>
+                <li>
+                  Compare every converted workflow with its previous behavior and report the
+                  evidence.
+                </li>
+              </ol>
+              <div class="migration-actions">
+                <a class="button button-primary" href="/migrate/agent-guide.md"
+                  >Give the guide to an agent</a
+                >
+                <a class="button button-ink" href="/examples/">Review task patterns</a>
+              </div>
+            </section>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="shell footer-grid">
+        <div class="footer-brand">
+          <a class="brand" href="/">
+            <span class="brand-mark"><img src="/assets/bz-logo.svg" alt="" /></span>
+            <span class="brand-name">beelzebub</span>
+          </a>
+          <p>Modular, observable task orchestration for modern Node.js.</p>
+          <span class="footer-license">MIT licensed · Built with fire resistance</span>
+        </div>
+        <div class="footer-column">
+          <strong>Learn</strong>
+          <a href="/examples/">Examples</a>
+          <a href="/api/">API reference</a>
+          <a href="/migrate/">Migrate</a>
+        </div>
+        <div class="footer-column">
+          <strong>Project</strong>
+          <a href="https://github.com/jstty/beelzebub">GitHub</a>
+          <a href="https://www.npmjs.com/package/beelzebub">npm</a>
+          <a href="https://github.com/jstty/beelzebub/issues">Issues</a>
+        </div>
+        <div class="footer-column">
+          <strong>Version</strong>
+          <span>2.0.0</span>
+          <span>Node 24+</span>
+          <span>ESM + CommonJS</span>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="A cinematic Beelzebub Trace River prototype with branching task beams, live task callouts, and an execution timeline."
+    />
+    <meta name="theme-color" content="#080309" />
+    <title>Trace River Prototype — Beelzebub</title>
+    <link rel="icon" href="/assets/bz-logo.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/assets/site.css" />
+    <link rel="stylesheet" href="/assets/trace-river.css" />
+    <script src="/assets/site.js" defer></script>
+    <script src="/assets/trace-river.js" defer></script>
+  </head>
+  <body class="trace-prototype-page">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <canvas
+      class="trace-river-canvas"
+      data-trace-river
+      aria-label="Bright task execution beams splitting and merging behind the page"
+      >Animated task execution beams splitting and merging.</canvas
+    >
+    <div class="trace-river-atmosphere" aria-hidden="true"></div>
+
+    <header class="site-header trace-site-header" data-header>
+      <div class="shell nav-shell">
+        <button
+          class="nav-toggle"
+          type="button"
+          aria-expanded="false"
+          aria-controls="primary-nav"
+          data-nav-toggle
+        >
+          <span class="nav-toggle-line"></span>
+          <span class="nav-toggle-line"></span>
+          <span class="sr-only">Toggle navigation</span>
+        </button>
+        <nav class="primary-nav" id="primary-nav" aria-label="Primary" data-nav>
+          <a href="/">Overview</a>
+          <a href="/examples/">Examples</a>
+          <a href="/api/">API</a>
+          <a href="/migrate/">Migrate</a>
+          <a class="nav-github" href="https://github.com/jstty/beelzebub">GitHub</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main" class="trace-prototype-main">
+      <section class="trace-cinematic-stage" aria-labelledby="trace-title">
+        <div class="trace-cinematic-copy">
+          <a class="trace-brand-lockup" href="/" aria-label="Beelzebub home">
+            <img src="/assets/bz-logo.svg" alt="" />
+            <span>beelzebub</span>
+          </a>
+
+          <h1 id="trace-title">
+            <span><b>Agent first.</b> Stop writing shell scripts.</span>
+            <span>Build testable workflows.</span>
+          </h1>
+
+          <section
+            class="trace-agent-handoff agent-prompt-window"
+            aria-label="Agent migration prompt"
+          >
+            <button type="button" data-copy-panel>
+              <span class="trace-agent-handoff-mark" aria-hidden="true">⌘</span>
+              <span class="trace-agent-handoff-title">Have your agent do the work.</span>
+              <span class="trace-agent-handoff-label" data-copy-label>Copy agent brief →</span>
+            </button>
+            <pre hidden><code>Migrate this project's automation to Beelzebub 2.0.
+
+Follow https://beelzebub.io/migrate/agent-guide.md as the implementation contract.
+
+1. Inspect the repository before editing:
+   - Identify the package manager and lockfile.
+   - Inventory package.json scripts, shell scripts, Makefiles, task-runner files, CI commands, and every command they call.
+   - Record public command names, environment variables, ordering, parallel work, cleanup, and current validation results.
+   - Read AGENTS.md, CLAUDE.md, or the repository's equivalent agent instructions.
+
+2. Install and configure Beelzebub:
+   - Use Node.js 24.15.0 or newer.
+   - Install beelzebub@^2 with the existing package manager.
+   - Keep the project's current ESM or CommonJS module format.
+   - Add a Beelzebub task file and any TypeScript loading configuration required by the project.
+
+3. Replace shell and package-script orchestration with testable workflow components:
+   - Group related behavior into focused BzTasks classes.
+   - Use named tasks rather than copying long shell strings into methods.
+   - Use $sequence() for ordered work and $parallel() for independent work.
+   - Preserve existing inputs, exit behavior, cleanup, and environment handling.
+   - Import, extend, or compose reusable Beelzebub task packages where appropriate.
+   - Add focused behavioral tests for every public workflow.
+
+4. Keep entry points short:
+   - Replace complex package.json scripts with short `bz --file &lt;task-file&gt; &lt;Task.name&gt;` wrappers.
+   - Update local, CI, and documentation commands to call the same BZ task graph.
+   - Preserve familiar npm script aliases when people or CI depend on them.
+
+5. Update repository agent instructions:
+   - Update AGENTS.md, CLAUDE.md, or the repository's equivalent agent file.
+   - Tell future agents to use the project's `bz` tasks for build, lint, typecheck, test, packaging, release, and other automated workflows instead of reconstructing shell commands.
+   - Document the task file, canonical BZ commands, required variables, and when a new reusable workflow component should be added.
+   - Keep all safety rules and authorization boundaries already present in those files.
+
+6. Verify the migration:
+   - Run formatting, linting, typechecking, tests, build, package validation, and representative BZ CLI workflows.
+   - Compare results with the pre-migration baseline.
+   - Update relevant contributor documentation.
+   - Report changed files, commands run, results, risks, and manual follow-up.
+   - Do not commit, push, publish, deploy, or change unrelated code unless explicitly authorized.</code></pre>
+          </section>
+
+          <button
+            class="trace-install"
+            type="button"
+            data-copy="npm install beelzebub"
+            aria-label="Copy npm install beelzebub"
+          >
+            <span aria-hidden="true">&gt;_</span>
+            <code>npm install beelzebub</code>
+            <span class="trace-install-label" data-copy-label>Copy</span>
+          </button>
+
+          <div class="trace-actions">
+            <a class="trace-button trace-button-primary" href="/examples/">
+              <span aria-hidden="true">&gt;_</span> Get started
+            </a>
+            <a class="trace-button trace-button-ghost" href="/api/">
+              <span aria-hidden="true">▣</span> Documentation
+            </a>
+          </div>
+        </div>
+
+        <div class="trace-task-callouts" aria-label="Live task status">
+          <article
+            class="trace-task-callout trace-task-callout-compile"
+            data-trace-beam-marker="0"
+            data-trace-progress="0.66"
+            data-trace-offset-y="18"
+          >
+            <span class="trace-node-symbol" aria-hidden="true">◇</span>
+            <div><strong>compile</strong><code>812ms</code></div>
+          </article>
+          <article
+            class="trace-task-callout trace-task-callout-test"
+            data-trace-beam-marker="1"
+            data-trace-progress="0.66"
+            data-trace-offset-y="18"
+          >
+            <span class="trace-node-symbol" aria-hidden="true">△</span>
+            <div><strong>test</strong><code>1.42s</code></div>
+          </article>
+          <article
+            class="trace-task-callout trace-task-callout-lint"
+            data-trace-beam-marker="2"
+            data-trace-progress="0.66"
+            data-trace-offset-y="18"
+          >
+            <span class="trace-node-symbol" aria-hidden="true">✦</span>
+            <div><strong>lint</strong><code>623ms</code></div>
+          </article>
+          <article
+            class="trace-task-callout trace-task-callout-release"
+            data-trace-junction-marker="3"
+          >
+            <span class="trace-node-symbol" aria-hidden="true"></span>
+            <div><strong>release</strong><code>2.17s</code><em>success</em></div>
+          </article>
+        </div>
+
+        <div class="trace-timeline" aria-label="Execution timeline from start to completion">
+          <div class="trace-timeline-ruler" aria-hidden="true"></div>
+          <ol class="trace-timeline-times" aria-hidden="true">
+            <li>00:00</li>
+            <li>00:01</li>
+            <li>00:02</li>
+            <li>00:03</li>
+            <li>00:04</li>
+            <li>00:05</li>
+            <li>00:06</li>
+          </ol>
+          <div class="trace-timeline-event trace-timeline-branch">
+            <i aria-hidden="true"></i><strong>branch</strong><code>00:01.024</code>
+          </div>
+          <div class="trace-timeline-event trace-timeline-merge">
+            <i aria-hidden="true"></i><strong>merge</strong><code>00:03.896</code>
+          </div>
+          <div class="trace-timeline-event trace-timeline-complete">
+            <i aria-hidden="true"></i><strong>complete</strong><code>00:06.217</code>
+          </div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
